@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\ApplicationStatus;
+use Carbon\Carbon;
+use Database\Factories\JobApplicationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,15 +21,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $cover_letter_path
  * @property string|null $additional_documents_path
  * @property ApplicationStatus $status
- * @property \Carbon\Carbon $applied_at
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
+ * @property Carbon $applied_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read Applicant $applicant
  * @property-read JobListing $jobListing
  */
 final class JobApplication extends Model
 {
-    /** @use HasFactory<\Database\Factories\JobApplicationFactory> */
+    /** @use HasFactory<JobApplicationFactory> */
     use HasFactory;
 
     /**

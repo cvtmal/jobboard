@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\ApplicantFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 
 final class Applicant extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\ApplicantFactory> */
+    /** @use HasFactory<ApplicantFactory> */
     use HasFactory, Notifiable;
 
     /**

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\AdminFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 final class Admin extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\AdminFactory> */
+    /** @use HasFactory<AdminFactory> */
     use HasFactory, Notifiable;
 
     /**
