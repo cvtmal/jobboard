@@ -25,7 +25,7 @@ use Illuminate\Support\Carbon;
  * @property bool $has_analytics
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property-read Collection<int, Job> $jobs
+ * @property-read Collection<int, JobListing> $jobs
  * @property-read int|null $jobs_count
  *
  * @method static JobTierFactory factory($count = null, $state = [])
@@ -68,10 +68,10 @@ final class JobTier extends Model
     /**
      * Get the jobs associated with this job tier.
      *
-     * @return HasMany<Job, $this>
+     * @return HasMany<JobListing, $this>
      */
     public function jobs(): HasMany
     {
-        return $this->hasMany(Job::class);
+        return $this->hasMany(JobListing::class);
     }
 }

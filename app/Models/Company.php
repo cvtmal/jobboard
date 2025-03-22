@@ -45,7 +45,7 @@ use Illuminate\Notifications\Notifiable;
  * @property string|null $remember_token
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
- * @property-read Collection<int, Job> $jobs
+ * @property-read Collection<int, JobListing> $jobs
  * @property-read int|null $jobs_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
@@ -92,11 +92,11 @@ final class Company extends Authenticatable implements MustVerifyEmail
     /**
      * Get the jobs listed by this company.
      *
-     * @return HasMany<Job, $this>
+     * @return HasMany<JobListing, $this>
      */
     public function jobs(): HasMany
     {
-        return $this->hasMany(Job::class);
+        return $this->hasMany(JobListing::class);
     }
 
     /**
