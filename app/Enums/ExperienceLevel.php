@@ -11,7 +11,7 @@ enum ExperienceLevel: string
     case MID_LEVEL = 'mid-level';
     case SENIOR = 'senior';
     case EXECUTIVE = 'executive';
-    
+
     /**
      * Get all available values as an array.
      *
@@ -21,13 +21,13 @@ enum ExperienceLevel: string
     {
         return array_column(self::cases(), 'value');
     }
-    
+
     /**
      * Get the human-readable name of the experience level.
      */
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ENTRY => 'Entry Level',
             self::JUNIOR => 'Junior',
             self::MID_LEVEL => 'Mid-Level',

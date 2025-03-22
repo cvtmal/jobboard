@@ -9,7 +9,7 @@ enum JobTier: string
     case BASIC = 'basic';
     case PREMIUM = 'premium';
     case ENTERPRISE = 'enterprise';
-    
+
     /**
      * Get all available values as an array.
      *
@@ -19,13 +19,13 @@ enum JobTier: string
     {
         return array_column(self::cases(), 'value');
     }
-    
+
     /**
      * Get the human-readable name of the job tier.
      */
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::BASIC => 'Basic',
             self::PREMIUM => 'Premium',
             self::ENTERPRISE => 'Enterprise',

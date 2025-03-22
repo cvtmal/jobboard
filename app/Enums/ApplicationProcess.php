@@ -9,7 +9,7 @@ enum ApplicationProcess: string
     case EMAIL = 'email';
     case URL = 'url';
     case BOTH = 'both';
-    
+
     /**
      * Get all available values as an array.
      *
@@ -19,13 +19,13 @@ enum ApplicationProcess: string
     {
         return array_column(self::cases(), 'value');
     }
-    
+
     /**
      * Get the human-readable name of the application process.
      */
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::EMAIL => 'Email',
             self::URL => 'URL',
             self::BOTH => 'Email & URL',

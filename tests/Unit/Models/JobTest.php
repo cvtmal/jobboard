@@ -21,7 +21,7 @@ test('job factory creates valid instance', function (): void {
         ->title->not->toBeEmpty()
         ->description->not->toBeEmpty()
         ->reference_number->toContain('JOB-');
-    
+
     // Additional checks for specific fields
     // Some fields may be null since they're optional
     if ($job->employment_type !== null) {
@@ -29,21 +29,21 @@ test('job factory creates valid instance', function (): void {
             array_column(App\Enums\EmploymentType::cases(), 'value')
         );
     }
-    
+
     if ($job->workplace !== null) {
         expect($job->workplace->value)->toBeIn(
             array_column(App\Enums\Workplace::cases(), 'value')
         );
     }
-    
+
     if ($job->experience_level !== null) {
         expect($job->experience_level->value)->toBeIn(
             array_column(App\Enums\ExperienceLevel::cases(), 'value')
         );
     }
-    
+
     expect($job->status->value)->toBeIn(
-        array_column(App\Enums\JobStatus::cases(), 'value')
+        array_column(JobStatus::cases(), 'value')
     );
 });
 
@@ -54,7 +54,7 @@ test('job belongs to a company', function (): void {
     expect($job->company)
         ->toBeInstanceOf(Company::class)
         ->id->toBe($company->id);
-    
+
     expect($job->company())->toBeInstanceOf(BelongsTo::class);
 });
 

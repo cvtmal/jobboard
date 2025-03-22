@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 final class Job extends Model
 {
-    use HasFactory;
+    use HasFactory; // @phpstan-ignore-line
 
     /**
      * The table associated with the model.
@@ -53,6 +53,8 @@ final class Job extends Model
 
     /**
      * Get the company that owns the job.
+     *
+     * @return BelongsTo<Company, $this>
      */
     public function company(): BelongsTo
     {

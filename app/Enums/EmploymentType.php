@@ -13,7 +13,7 @@ enum EmploymentType: string
     case TEMPORARY = 'temporary';
     case INTERNSHIP = 'internship';
     case VOLUNTEER = 'volunteer';
-    
+
     /**
      * Get all available values as an array.
      *
@@ -23,13 +23,13 @@ enum EmploymentType: string
     {
         return array_column(self::cases(), 'value');
     }
-    
+
     /**
      * Get the human-readable name of the employment type.
      */
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::FULL_TIME => 'Full time',
             self::PART_TIME => 'Part time',
             self::FULL_PART_TIME => 'Full/Part time',

@@ -9,7 +9,7 @@ enum SalaryOption: string
     case FIXED = 'fixed';
     case RANGE = 'range';
     case NEGOTIABLE = 'negotiable';
-    
+
     /**
      * Get all available values as an array.
      *
@@ -19,13 +19,13 @@ enum SalaryOption: string
     {
         return array_column(self::cases(), 'value');
     }
-    
+
     /**
      * Get the human-readable name of the salary option.
      */
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::FIXED => 'Fixed',
             self::RANGE => 'Range',
             self::NEGOTIABLE => 'Negotiable',

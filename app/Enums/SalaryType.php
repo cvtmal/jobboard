@@ -10,7 +10,7 @@ enum SalaryType: string
     case DAILY = 'daily';
     case MONTHLY = 'monthly';
     case YEARLY = 'yearly';
-    
+
     /**
      * Get all available values as an array.
      *
@@ -20,13 +20,13 @@ enum SalaryType: string
     {
         return array_column(self::cases(), 'value');
     }
-    
+
     /**
      * Get the human-readable name of the salary type.
      */
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::HOURLY => 'Hourly',
             self::DAILY => 'Daily',
             self::MONTHLY => 'Monthly',

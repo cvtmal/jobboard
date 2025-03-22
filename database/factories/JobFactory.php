@@ -30,10 +30,10 @@ final class JobFactory extends Factory
     {
         $title = fake()->jobTitle();
         $companyId = Company::factory();
-        
+
         return [
             'company_id' => $companyId,
-            'reference_number' => 'JOB-' . Str::upper(Str::random(8)),
+            'reference_number' => 'JOB-'.Str::upper(Str::random(8)),
             'title' => $title,
             'description' => fake()->paragraphs(3, true),
             'employment_type' => fake()->optional()->randomElement(EmploymentType::cases()),

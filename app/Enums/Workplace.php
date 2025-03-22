@@ -9,7 +9,7 @@ enum Workplace: string
     case REMOTE = 'remote';
     case ONSITE = 'onsite';
     case HYBRID = 'hybrid';
-    
+
     /**
      * Get all available values as an array.
      *
@@ -19,13 +19,13 @@ enum Workplace: string
     {
         return array_column(self::cases(), 'value');
     }
-    
+
     /**
      * Get the human-readable name of the workplace type.
      */
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::REMOTE => 'Remote',
             self::ONSITE => 'Onsite',
             self::HYBRID => 'Hybrid',

@@ -11,7 +11,7 @@ enum JobStatus: string
     case PUBLISHED = 'published';
     case EXPIRED = 'expired';
     case CLOSED = 'closed';
-    
+
     /**
      * Get all available values as an array.
      *
@@ -21,13 +21,13 @@ enum JobStatus: string
     {
         return array_column(self::cases(), 'value');
     }
-    
+
     /**
      * Get the human-readable name of the job status.
      */
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::DRAFT => 'Draft',
             self::PENDING => 'Pending',
             self::PUBLISHED => 'Published',
