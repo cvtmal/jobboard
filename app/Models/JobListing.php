@@ -4,7 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Carbon\Carbon;
+use App\Enums\ApplicationProcess;
+use App\Enums\EmploymentType;
+use App\Enums\ExperienceLevel;
+use App\Enums\JobStatus;
+use App\Enums\SalaryOption;
+use App\Enums\SalaryType;
+use App\Enums\Workplace;
+use Carbon\CarbonImmutable;
 use Database\Factories\JobListingFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,41 +27,42 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $reference_number
  * @property string $title
  * @property string $description
- * @property string|null $employment_type
+ * @property EmploymentType|null $employment_type
  * @property int|null $workload_min
  * @property int|null $workload_max
- * @property Carbon|null $active_from
- * @property Carbon|null $active_until
- * @property string|null $workplace
+ * @property CarbonImmutable|null $active_from
+ * @property CarbonImmutable|null $active_until
+ * @property Workplace|null $workplace
  * @property string|null $hierarchy
- * @property string|null $experience_level
+ * @property ExperienceLevel|null $experience_level
  * @property int|null $experience_years_min
  * @property int|null $experience_years_max
  * @property string|null $education_level
- * @property string[]|null $languages
+ * @property array<array-key, mixed>|null $languages
  * @property string|null $address
  * @property string|null $postcode
  * @property string|null $city
  * @property bool $no_salary
- * @property string|null $salary_type
- * @property string|null $salary_option
- * @property float|null $salary_min
- * @property float|null $salary_max
+ * @property SalaryType|null $salary_type
+ * @property SalaryOption|null $salary_option
+ * @property numeric|null $salary_min
+ * @property numeric|null $salary_max
  * @property string|null $salary_currency
  * @property string|null $job_tier
- * @property string $application_process
+ * @property ApplicationProcess $application_process
  * @property string|null $application_email
  * @property string|null $application_url
  * @property string|null $contact_person
  * @property string|null $contact_email
  * @property string|null $internal_notes
- * @property string $status
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property-read Company $company
- * @property-read Collection<int, JobApplication> $applications
+ * @property JobStatus $status
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  * @property int|null $job_tier_id
+ * @property-read Collection<int, JobApplication> $applications
  * @property-read int|null $applications_count
+ * @property-read Company $company
+ * @property-read JobTier|null $jobTier
  *
  * @method static JobListingFactory factory($count = null, $state = [])
  * @method static Builder<static>|JobListing newModelQuery()
@@ -112,14 +120,22 @@ final class JobListing extends Model
     protected $casts = [
         'active_from' => 'date',
         'active_until' => 'date',
+        'languages' => 'array',
         'workload_min' => 'integer',
         'workload_max' => 'integer',
         'experience_years_min' => 'integer',
         'experience_years_max' => 'integer',
-        'languages' => 'array',
-        'no_salary' => 'boolean',
         'salary_min' => 'decimal:2',
         'salary_max' => 'decimal:2',
+        'no_salary' => 'boolean',
+        'employment_type' => EmploymentType::class,
+        'workplace' => Workplace::class,
+        'experience_level' => ExperienceLevel::class,
+        'salary_type' => SalaryType::class,
+        'salary_option' => SalaryOption::class,
+        'application_process' => ApplicationProcess::class,
+        'status' => JobStatus::class,
+        'salary_currency' => 'string',
     ];
 
     /**
@@ -130,6 +146,16 @@ final class JobListing extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    /**
+     * Get the job tier associated with this job listing.
+     *
+     * @return BelongsTo<JobTier, $this>
+     */
+    public function jobTier(): BelongsTo
+    {
+        return $this->belongsTo(JobTier::class);
     }
 
     /**

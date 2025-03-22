@@ -4,9 +4,18 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\ApplicationProcess;
+use App\Enums\EmploymentType;
+use App\Enums\ExperienceLevel;
+use App\Enums\JobStatus;
+use App\Enums\SalaryOption;
+use App\Enums\SalaryType;
+use App\Enums\Workplace;
 use App\Models\Company;
 use App\Models\JobListing;
+use App\Models\JobTier;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<JobListing>
@@ -20,81 +29,83 @@ final class JobListingFactory extends Factory
      */
     public function definition(): array
     {
+        $title = fake()->jobTitle();
+        $companyId = Company::factory();
+
         return [
-            'company_id' => Company::factory(),
-            'reference_number' => 'JOB-'.$this->faker->unique()->numerify('######'),
-            'title' => $this->faker->jobTitle(),
-            'description' => $this->faker->paragraphs(3, true),
-            'employment_type' => $this->faker->randomElement(['full-time', 'part-time', 'contract', 'freelance', 'internship']),
-            'workload_min' => $this->faker->randomElement([80, 90, 100]),
-            'workload_max' => 100,
-            'active_from' => $this->faker->dateTimeBetween('-1 month', 'now'),
-            'active_until' => $this->faker->dateTimeBetween('+1 month', '+3 months'),
-            'workplace' => $this->faker->randomElement(['remote', 'on-site', 'hybrid']),
-            'hierarchy' => $this->faker->randomElement(['junior', 'mid-level', 'senior', 'lead', 'manager']),
-            'experience_level' => $this->faker->randomElement(['entry', 'junior', 'mid', 'senior', 'expert']),
-            'experience_years_min' => $this->faker->numberBetween(0, 5),
-            'experience_years_max' => $this->faker->numberBetween(5, 10),
-            'education_level' => $this->faker->randomElement(['high school', 'bachelor', 'master', 'phd']),
-            'languages' => $this->faker->randomElements(['English', 'German', 'French', 'Italian'], $this->faker->numberBetween(1, 3)),
-            'address' => $this->faker->streetAddress(),
-            'postcode' => $this->faker->postcode(),
-            'city' => $this->faker->city(),
-            'no_salary' => $this->faker->boolean(20),
-            'salary_type' => $this->faker->randomElement(['yearly', 'monthly', 'hourly']),
-            'salary_option' => $this->faker->randomElement(['fixed', 'range', 'negotiable']),
-            'salary_min' => $this->faker->numberBetween(50000, 70000),
-            'salary_max' => $this->faker->numberBetween(70000, 120000),
-            'salary_currency' => 'CHF',
-            'job_tier' => $this->faker->randomElement(['basic', 'premium', 'enterprise']),
-            'application_process' => $this->faker->randomElement(['email', 'website', 'both']),
-            'application_email' => $this->faker->companyEmail(),
-            'application_url' => $this->faker->url(),
-            'contact_person' => $this->faker->name(),
-            'contact_email' => $this->faker->email(),
-            'internal_notes' => $this->faker->boolean(30) ? $this->faker->paragraph() : null,
-            'status' => $this->faker->randomElement(['draft', 'published', 'expired', 'cancelled']),
+            'company_id' => $companyId,
+            'reference_number' => 'JOB-'.Str::upper(Str::random(8)),
+            'title' => $title,
+            'description' => fake()->paragraphs(3, true),
+            'employment_type' => fake()->optional()->randomElement(EmploymentType::cases()),
+            'workload_min' => fake()->optional()->numberBetween(20, 80),
+            'workload_max' => fake()->optional()->numberBetween(80, 100),
+            'active_from' => now(),
+            'active_until' => fake()->optional()->dateTimeBetween('+1 month', '+6 months'),
+            'workplace' => fake()->optional()->randomElement(Workplace::cases()),
+            'hierarchy' => fake()->optional()->randomElement(['Reports to CTO', 'Reports to CEO', 'Team Lead', 'Department Manager']),
+            'experience_level' => fake()->optional()->randomElement(ExperienceLevel::cases()),
+            'experience_years_min' => fake()->optional()->numberBetween(0, 5),
+            'experience_years_max' => fake()->optional()->numberBetween(5, 15),
+            'education_level' => fake()->optional()->randomElement(['High School', 'Bachelor\'s degree', 'Master\'s degree', 'PhD']),
+            'languages' => fake()->optional()->randomElements(['English', 'German', 'French', 'Spanish', 'Italian'], random_int(1, 3)),
+            'address' => fake()->optional()->streetAddress(),
+            'postcode' => fake()->optional()->postcode(),
+            'city' => fake()->optional()->city(),
+            'no_salary' => fake()->boolean(30), // 30% chance of not showing salary
+            'salary_type' => fake()->optional()->randomElement(SalaryType::cases()),
+            'salary_option' => fake()->optional()->randomElement(SalaryOption::cases()),
+            'salary_min' => fake()->optional()->randomFloat(2, 30000, 80000),
+            'salary_max' => fake()->optional()->randomFloat(2, 80000, 150000),
+            'salary_currency' => fake()->optional(0.9, 'CHF')->randomElement(['CHF', 'EUR', 'USD', 'GBP']),
+            'job_tier_id' => fake()->optional()->randomElement(JobTier::all()->pluck('id')->toArray()),
+            'application_process' => fake()->randomElement(ApplicationProcess::cases()),
+            'application_email' => fake()->optional()->safeEmail(),
+            'application_url' => fake()->optional()->url(),
+            'contact_person' => fake()->optional()->name(),
+            'contact_email' => fake()->optional()->safeEmail(),
+            'internal_notes' => fake()->optional()->paragraph(),
+            'status' => fake()->randomElement(JobStatus::cases()),
         ];
     }
 
     /**
-     * Set the job listing to published status.
+     * Indicate that the job is published.
      */
-    public function published(): self
+    public function published(): static
     {
-        return $this->state([
-            'status' => 'published',
+        return $this->state(fn (array $attributes): array => [
+            'status' => JobStatus::PUBLISHED,
         ]);
     }
 
     /**
-     * Set the job listing to draft status.
+     * Indicate that the job is a draft.
      */
-    public function draft(): self
+    public function draft(): static
     {
-        return $this->state([
-            'status' => 'draft',
+        return $this->state(fn (array $attributes): array => [
+            'status' => JobStatus::DRAFT,
         ]);
     }
 
     /**
-     * Set the job listing to expired status.
+     * Indicate that the job is expired.
      */
-    public function expired(): self
+    public function expired(): static
     {
-        return $this->state([
-            'status' => 'expired',
-            'active_until' => $this->faker->dateTimeBetween('-1 month', 'now'),
+        return $this->state(fn (array $attributes): array => [
+            'status' => JobStatus::EXPIRED,
         ]);
     }
 
     /**
-     * Set the job listing to cancelled status.
+     * Indicate that the job is cancelled.
      */
-    public function cancelled(): self
+    public function cancelled(): static
     {
-        return $this->state([
-            'status' => 'cancelled',
+        return $this->state(fn (array $attributes): array => [
+            'status' => JobStatus::CLOSED,
         ]);
     }
 }
