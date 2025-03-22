@@ -14,21 +14,6 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_DATABASE: test_database
-          MYSQL_ROOT_PASSWORD: password
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-          --default-authentication-plugin=mysql_native_password
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,14 +46,10 @@ jobs:
       - name: Generate Application Key
         run: php artisan key:generate
 
-      - name: Configure Database
+      - name: Configure Database for Testing
         run: |
-          echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_PORT=3306" >> .env
-          echo "DB_DATABASE=test_database" >> .env
-          echo "DB_USERNAME=root" >> .env
-          echo "DB_PASSWORD=password" >> .env
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=:memory:" >> .env
 
       - name: Tests
         run: ./vendor/bin/pest
