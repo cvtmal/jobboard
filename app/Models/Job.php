@@ -14,6 +14,7 @@ use App\Enums\Workplace;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Job extends Model
 {
@@ -68,5 +69,15 @@ final class Job extends Model
     public function jobTier(): BelongsTo
     {
         return $this->belongsTo(JobTier::class);
+    }
+
+    /**
+     * Get the applications for this job.
+     *
+     * @return HasMany<JobApplication, $this>
+     */
+    public function applications(): HasMany
+    {
+        return $this->hasMany(JobApplication::class);
     }
 }

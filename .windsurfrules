@@ -1,3 +1,5 @@
+We're building a job board application.
+
 # Styling & UI
 - Use Tailwind CSS for styling.
 - Use Shadcn UI for components.
@@ -6,3 +8,7 @@
 # Inertia.js
 - Stick to the Inertia.js documentation for best practices.
 - Use Inertia.js for Data Fetching, Forms, File uploads, Links, Validation, Scroll Management etc.
+
+# Project Structure
+- Jobs from the Job Board are stored in the `job_listings` table.
+- Laravel jobs are stored in the `jobs` table.
