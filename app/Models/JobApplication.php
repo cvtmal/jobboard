@@ -7,6 +7,8 @@ namespace App\Models;
 use App\Enums\ApplicationStatus;
 use Carbon\Carbon;
 use Database\Factories\JobApplicationFactory;
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,6 +28,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon|null $updated_at
  * @property-read Applicant $applicant
  * @property-read JobListing $jobListing
+ *
+ * @method static JobApplicationFactory factory($count = null, $state = [])
+ * @method static Builder<static>|JobApplication newModelQuery()
+ * @method static Builder<static>|JobApplication newQuery()
+ * @method static Builder<static>|JobApplication query()
+ * @method static Builder<static>|JobApplication whereAdditionalDocumentsPath($value)
+ * @method static Builder<static>|JobApplication whereApplicantId($value)
+ * @method static Builder<static>|JobApplication whereAppliedAt($value)
+ * @method static Builder<static>|JobApplication whereCoverLetterPath($value)
+ * @method static Builder<static>|JobApplication whereCreatedAt($value)
+ * @method static Builder<static>|JobApplication whereCvPath($value)
+ * @method static Builder<static>|JobApplication whereId($value)
+ * @method static Builder<static>|JobApplication whereJobListingId($value)
+ * @method static Builder<static>|JobApplication whereStatus($value)
+ * @method static Builder<static>|JobApplication whereUpdatedAt($value)
+ *
+ * @mixin Eloquent
  */
 final class JobApplication extends Model
 {
