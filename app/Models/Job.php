@@ -49,6 +49,7 @@ final class Job extends Model
         'application_process' => ApplicationProcess::class,
         'status' => JobStatus::class,
         'job_tier' => JobTier::class,
+        'salary_currency' => 'string',
     ];
 
     /**

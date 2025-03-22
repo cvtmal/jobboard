@@ -56,6 +56,7 @@ final class JobFactory extends Factory
             'salary_option' => fake()->optional()->randomElement(SalaryOption::cases()),
             'salary_min' => fake()->optional()->randomFloat(2, 30000, 80000),
             'salary_max' => fake()->optional()->randomFloat(2, 80000, 150000),
+            'salary_currency' => fake()->optional(0.9, 'CHF')->randomElement(['CHF', 'EUR', 'USD', 'GBP']),
             'job_tier' => fake()->optional()->randomElement(JobTier::cases()),
             'application_process' => fake()->randomElement(ApplicationProcess::cases()),
             'application_email' => fake()->optional()->safeEmail(),
