@@ -8,7 +8,6 @@ use App\Enums\ApplicationProcess;
 use App\Enums\EmploymentType;
 use App\Enums\ExperienceLevel;
 use App\Enums\JobStatus;
-use App\Enums\JobTier;
 use App\Enums\SalaryOption;
 use App\Enums\SalaryType;
 use App\Enums\Workplace;
@@ -48,7 +47,6 @@ final class Job extends Model
         'salary_option' => SalaryOption::class,
         'application_process' => ApplicationProcess::class,
         'status' => JobStatus::class,
-        'job_tier' => JobTier::class,
         'salary_currency' => 'string',
     ];
 
@@ -60,5 +58,15 @@ final class Job extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    /**
+     * Get the job tier associated with this job.
+     *
+     * @return BelongsTo<JobTier, $this>
+     */
+    public function jobTier(): BelongsTo
+    {
+        return $this->belongsTo(JobTier::class);
     }
 }
