@@ -14,6 +14,18 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: test_database
+          MYSQL_USER: root
+          MYSQL_PASSWORD: secret
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping --silent" --health-interval 10s --health-timeout 5s --health-retries 3
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,6 +54,12 @@ jobs:
 
       - name: Copy Environment File
         run: cp .env.example .env
+
+      - name: Configure Database Environment
+        run: |
+          sed -i 's/DB_PORT=3312/DB_PORT=3306/g' .env
+          sed -i 's/DB_DATABASE=laravel/DB_DATABASE=test_database/g' .env
+          sed -i 's/DB_PASSWORD=/DB_PASSWORD=secret/g' .env
 
       - name: Generate Application Key
         run: php artisan key:generate
