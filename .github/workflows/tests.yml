@@ -55,14 +55,17 @@ jobs:
       - name: Copy Environment File
         run: cp .env.example .env
 
-      - name: Configure Database Environment
-        run: |
-          sed -i 's/DB_PORT=3312/DB_PORT=3306/g' .env
-          sed -i 's/DB_DATABASE=laravel/DB_DATABASE=test_database/g' .env
-          sed -i 's/DB_PASSWORD=/DB_PASSWORD=secret/g' .env
-
       - name: Generate Application Key
         run: php artisan key:generate
+
+      - name: Configure Database
+        run: |
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=test_database" >> .env
+          echo "DB_USERNAME=root" >> .env
+          echo "DB_PASSWORD=secret" >> .env
 
       - name: Tests
         run: ./vendor/bin/pest
