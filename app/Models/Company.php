@@ -36,6 +36,11 @@ final class Company extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'latitude' => 'float',
+            'longitude' => 'float',
+            'newsletter' => 'boolean',
+            'active' => 'boolean',
+            'blocked' => 'boolean',
         ];
     }
 }
