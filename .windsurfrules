@@ -1,0 +1,8 @@
+# Styling & UI
+- Use Tailwind CSS for styling.
+- Use Shadcn UI for components.
+- If you need to use something else than Shadcn UI, you can do that, but ask me first.
+
+# Inertia.js
+- Stick to the Inertia.js documentation for best practices.
+- Use Inertia.js for Data Fetching, Forms, File uploads, Links, Validation, Scroll Management etc.
