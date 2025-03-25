@@ -8,6 +8,7 @@ use App\Http\Requests\Company\Auth\LoginCompanyRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -17,9 +18,12 @@ final class AuthenticatedCompanySessionController
     /**
      * Display the company login view.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
-        return Inertia::render('company/auth/login');
+        return Inertia::render('company/auth/login', [
+            'canResetPassword' => Route::has('company.password.request'),
+            'status' => $request->session()->get('status'),
+        ]);
     }
 
     /**

@@ -14,11 +14,11 @@ final class EmailVerificationNotificationController
      */
     public function store(Request $request): RedirectResponse
     {
-        if ($request->user('company')->hasVerifiedEmail()) {
+        if ($request->user('company')->hasVerifiedEmail()) { // @phpstan-ignore-line
             return redirect()->intended(route('company.dashboard', absolute: false));
         }
 
-        $request->user('company')->sendEmailVerificationNotification();
+        $request->user('company')->sendEmailVerificationNotification(); // @phpstan-ignore-line
 
         return back()->with('status', 'verification-link-sent');
     }

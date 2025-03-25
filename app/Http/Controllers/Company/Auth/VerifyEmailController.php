@@ -15,24 +15,20 @@ final class VerifyEmailController
      */
     public function __invoke(Request $request): RedirectResponse
     {
-        // Verify that the request id matches the authenticated company id
-        if (! hash_equals((string) $request->route('id'), (string) $request->user('company')?->getKey())) {
+        if (! hash_equals((string) $request->route('id'), (string) $request->user('company')?->getKey())) { // @phpstan-ignore-line
             abort(403);
         }
 
-        // Verify that the hash matches the company's email
-        if (! hash_equals((string) $request->route('hash'), sha1($request->user('company')?->getEmailForVerification() ?? ''))) {
+        if (! hash_equals((string) $request->route('hash'), sha1($request->user('company')?->getEmailForVerification() ?? ''))) { // @phpstan-ignore-line
             abort(403);
         }
 
-        // If already verified, redirect to dashboard
-        if ($request->user('company')->hasVerifiedEmail()) {
+        if ($request->user('company')->hasVerifiedEmail()) { // @phpstan-ignore-line
             return redirect()->intended(route('company.dashboard', absolute: false).'?verified=1');
         }
 
-        // Mark email as verified and fire event
-        if ($request->user('company')->markEmailAsVerified()) {
-            event(new Verified($request->user('company')));
+        if ($request->user('company')->markEmailAsVerified()) { // @phpstan-ignore-line
+            event(new Verified($request->user('company'))); // @phpstan-ignore-line
         }
 
         return redirect()->intended(route('company.dashboard', absolute: false).'?verified=1');

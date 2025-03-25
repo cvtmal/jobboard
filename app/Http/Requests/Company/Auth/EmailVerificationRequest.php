@@ -16,6 +16,7 @@ final class EmailVerificationRequest extends FormRequest
         if (! hash_equals((string) $this->route('id'), (string) $this->user('company')?->getKey())) {
             return false;
         }
+
         return hash_equals((string) $this->route('hash'), sha1($this->user('company')?->getEmailForVerification() ?? ''));
     }
 

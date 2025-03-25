@@ -20,7 +20,7 @@ final class CompanyAuthServiceProvider extends ServiceProvider
     {
         // Register custom guard
         Auth::resolved(function (AuthManager $auth): void {
-            $auth->extend('company', function (Application $app, string $name, array $config) use ($auth): \App\Guards\CompanyGuard {
+            $auth->extend('company', function (Application $app, string $name, array $config) use ($auth): CompanyGuard {
                 $provider = $auth->createUserProvider($config['provider'] ?? null);
 
                 $guard = new CompanyGuard(
@@ -36,7 +36,7 @@ final class CompanyAuthServiceProvider extends ServiceProvider
             });
 
             // Register company provider
-            $auth->provider('company', fn(Application $app, array $config): \App\Providers\CompanyUserProvider => new CompanyUserProvider($app->make('hash')));
+            $auth->provider('company', fn (Application $app, array $config): CompanyUserProvider => new CompanyUserProvider($app->make('hash')));
         });
     }
 }

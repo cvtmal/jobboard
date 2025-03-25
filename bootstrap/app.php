@@ -26,7 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        // Register route middleware
         $middleware->alias([
             'verified.company' => EnsureCompanyEmailIsVerified::class,
         ]);
