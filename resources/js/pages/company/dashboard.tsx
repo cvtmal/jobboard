@@ -26,7 +26,7 @@ export default function CompanyDashboard({ auth }: CompanyDashboardProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Company Profile</CardTitle>
+                  <CardTitle>{auth.user.name}</CardTitle>
                   <CardDescription>Manage your company information</CardDescription>
                 </CardHeader>
                 <CardContent>
