@@ -8,7 +8,6 @@ use App\Actions\Company\CreateCompanyAction;
 use App\Http\Requests\Company\Auth\RegisterCompanyRequest;
 use App\Models\Company;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -30,9 +29,6 @@ final class RegisteredCompanyController
     public function store(RegisterCompanyRequest $request, CreateCompanyAction $action): RedirectResponse
     {
         $company = $action->execute($request->validated());
-
-        // Since Company extends Authenticatable, this is safe
-        assert($company instanceof Authenticatable);
 
         event(new Registered($company));
 

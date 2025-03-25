@@ -18,7 +18,7 @@ final class VerifyEmail extends BaseVerifyEmail
      *
      * @param  mixed  $notifiable
      */
-    protected function verificationUrl($notifiable): string
+    public function verificationUrl($notifiable): string
     {
         if (self::$createUrlCallback) {
             return call_user_func(self::$createUrlCallback, $notifiable);
@@ -40,7 +40,7 @@ final class VerifyEmail extends BaseVerifyEmail
      * @param  string  $url
      * @return MailMessage
      */
-    protected function buildMailMessage($url)
+    public function buildMailMessage($url)
     {
         return (new MailMessage)
             ->subject(Lang::get('Verify Company Email Address'))
