@@ -4,16 +4,7 @@ import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
-interface CompanyDashboardProps {
-  auth: {
-    user: {
-      name: string;
-      email: string;
-    };
-  };
-}
-
-export default function CompanyDashboard({ auth }: CompanyDashboardProps) {
+export default function CompanyDashboard({ auth }) {
   return (
     <AppLayout>
       <Head title="Company Dashboard" />
@@ -26,7 +17,7 @@ export default function CompanyDashboard({ auth }: CompanyDashboardProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>{auth.user.name}</CardTitle>
+                  <CardTitle>{auth.company.name}</CardTitle>
                   <CardDescription>Manage your company information</CardDescription>
                 </CardHeader>
                 <CardContent>

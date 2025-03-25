@@ -1,8 +1,8 @@
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 import { Transition } from '@headlessui/react';
 
-import type { BreadcrumbItem, SharedData } from '@/types';
+import type { BreadcrumbItem } from '@/types';
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -31,8 +31,7 @@ type ProfileForm = {
     description_english: string;
 };
 
-export default function CompanyProfile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
-    const { auth } = usePage<SharedData>().props;
+export default function CompanyProfile({ auth, mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Partial<ProfileForm>>({
         name: auth.company.name,

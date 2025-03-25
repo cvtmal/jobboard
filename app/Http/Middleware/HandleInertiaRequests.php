@@ -47,6 +47,7 @@ final class HandleInertiaRequests extends Middleware
             'quote' => ['message' => mb_trim($message), 'author' => mb_trim($author)], // @phpstan-ignore-line
             'auth' => [
                 'user' => $request->user(),
+                'company' => $request->user('company'),
             ],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),

@@ -3,11 +3,9 @@
 declare(strict_types=1);
 
 arch()->preset()->php();
-// Since Laravel Framework changed Model casting conventions from protected property $casts to protected function casts()
-// we need to wait for Pest PHP updates to support this.
 arch()->preset()->strict();
 arch()->preset()->laravel();
-arch()->preset()->security()->ignoring('sha1');
+arch()->preset()->security()->ignoring('sha1'); // sha1 is used in my own VerifyEmailController, which is a copy of the one from Laravel vendor
 
 arch('controllers')
     ->expect('App\Http\Controllers')
