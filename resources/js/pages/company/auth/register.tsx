@@ -1,121 +1,119 @@
-import { useForm } from '@inertiajs/react';
-import { FormEvent, useEffect } from 'react';
-import { Head, Link } from '@inertiajs/react';
-import { Input } from '@/Components/ui/input';
-import { Label } from '@/Components/ui/label';
-import { Button } from '@/Components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Components/ui/card';
+import { Head, useForm } from '@inertiajs/react';
+import { LoaderCircle } from 'lucide-react';
+import { FormEventHandler } from 'react';
+
+import InputError from '@/components/input-error';
+import TextLink from '@/components/text-link';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import AuthLayout from '@/layouts/auth-layout';
+
+type RegisterForm = {
+    name: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+};
 
 export default function CompanyRegister() {
-  const { data, setData, post, processing, errors, reset } = useForm({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-  });
+    const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+    });
 
-  useEffect(() => {
-    return () => {
-      reset('password', 'password_confirmation');
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
+        post(route('company.register'), {
+            onFinish: () => reset('password', 'password_confirmation'),
+        });
     };
-  }, []);
 
-  function submit(e: FormEvent) {
-    e.preventDefault();
-    post(route('company.register'));
-  }
+    return (
+        <AuthLayout title="Create a company account" description="Enter your details below to create your company account">
+            <Head title="Register Company" />
+            <form className="flex flex-col gap-6" onSubmit={submit}>
+                <div className="grid gap-6">
+                    <div className="grid gap-2">
+                        <Label htmlFor="name">Company Name</Label>
+                        <Input
+                            id="name"
+                            type="text"
+                            required
+                            autoFocus
+                            tabIndex={1}
+                            autoComplete="organization"
+                            value={data.name}
+                            onChange={(e) => setData('name', e.target.value)}
+                            disabled={processing}
+                            placeholder="Company name"
+                        />
+                        <InputError message={errors.name} className="mt-2" />
+                    </div>
 
-  return (
-    <>
-      <Head title="Company Registration" />
-      
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-full max-w-md">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-center">Company Registration</CardTitle>
-              <CardDescription className="text-center">Create a new company account</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={submit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Company Name</Label>
-                  <Input 
-                    id="name"
-                    name="name"
-                    value={data.name}
-                    className="mt-1 block w-full"
-                    autoComplete="organization"
-                    autoFocus
-                    onChange={(e) => setData('name', e.target.value)}
-                    required
-                  />
-                  {errors.name && <p className="text-sm text-red-600">{errors.name}</p>}
+                    <div className="grid gap-2">
+                        <Label htmlFor="email">Email address</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            required
+                            tabIndex={2}
+                            autoComplete="email"
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            disabled={processing}
+                            placeholder="email@example.com"
+                        />
+                        <InputError message={errors.email} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                            id="password"
+                            type="password"
+                            required
+                            tabIndex={3}
+                            autoComplete="new-password"
+                            value={data.password}
+                            onChange={(e) => setData('password', e.target.value)}
+                            disabled={processing}
+                            placeholder="Password"
+                        />
+                        <InputError message={errors.password} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="password_confirmation">Confirm password</Label>
+                        <Input
+                            id="password_confirmation"
+                            type="password"
+                            required
+                            tabIndex={4}
+                            autoComplete="new-password"
+                            value={data.password_confirmation}
+                            onChange={(e) => setData('password_confirmation', e.target.value)}
+                            disabled={processing}
+                            placeholder="Confirm password"
+                        />
+                        <InputError message={errors.password_confirmation} />
+                    </div>
+
+                    <Button type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>
+                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                        Create company account
+                    </Button>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email"
-                    type="email" 
-                    name="email"
-                    value={data.email}
-                    className="mt-1 block w-full"
-                    autoComplete="username"
-                    onChange={(e) => setData('email', e.target.value)}
-                    required
-                  />
-                  {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
+                <div className="text-muted-foreground text-center text-sm">
+                    Already have a company account?{' '}
+                    <TextLink href={route('company.login')} tabIndex={6}>
+                        Log in
+                    </TextLink>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input 
-                    id="password"
-                    type="password" 
-                    name="password"
-                    value={data.password}
-                    className="mt-1 block w-full"
-                    autoComplete="new-password"
-                    onChange={(e) => setData('password', e.target.value)}
-                    required
-                  />
-                  {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password_confirmation">Confirm Password</Label>
-                  <Input 
-                    id="password_confirmation"
-                    type="password" 
-                    name="password_confirmation"
-                    value={data.password_confirmation}
-                    className="mt-1 block w-full"
-                    autoComplete="new-password"
-                    onChange={(e) => setData('password_confirmation', e.target.value)}
-                    required
-                  />
-                  {errors.password_confirmation && (
-                    <p className="text-sm text-red-600">{errors.password_confirmation}</p>
-                  )}
-                </div>
-
-                <Button type="submit" className="w-full mt-6" disabled={processing}>
-                  Register
-                </Button>
-              </form>
-            </CardContent>
-            <CardFooter className="justify-center">
-              <p className="text-sm text-gray-600">
-                Already have an account?{' '}
-                <Link href={route('company.login')} className="text-blue-600 hover:underline">
-                  Log in
-                </Link>
-              </p>
-            </CardFooter>
-          </Card>
-        </div>
-      </div>
-    </>
-  );
+            </form>
+        </AuthLayout>
+    );
 }

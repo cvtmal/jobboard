@@ -1,105 +1,110 @@
-import { useForm } from '@inertiajs/react';
-import { FormEvent, useEffect } from 'react';
-import { Head, Link } from '@inertiajs/react';
-import { Input } from '@/Components/ui/input';
-import { Label } from '@/Components/ui/label';
-import { Button } from '@/Components/ui/button';
-import { Checkbox } from '@/Components/ui/checkbox';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Components/ui/card';
+import { Head, useForm } from '@inertiajs/react';
+import { LoaderCircle } from 'lucide-react';
+import { FormEventHandler } from 'react';
 
-export default function CompanyLogin() {
-  const { data, setData, post, processing, errors, reset } = useForm({
-    email: '',
-    password: '',
-    remember: false,
-  });
+import InputError from '@/components/input-error';
+import TextLink from '@/components/text-link';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import AuthLayout from '@/layouts/auth-layout';
 
-  useEffect(() => {
-    return () => {
-      reset('password');
+type LoginForm = {
+    email: string;
+    password: string;
+    remember: boolean;
+};
+
+interface LoginProps {
+    status?: string;
+    canResetPassword: boolean;
+}
+
+export default function CompanyLogin({ status, canResetPassword }: LoginProps) {
+    const { data, setData, post, processing, errors, reset } = useForm<Required<LoginForm>>({
+        email: '',
+        password: '',
+        remember: false,
+    });
+
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
+        post(route('company.login'), {
+            onFinish: () => reset('password'),
+        });
     };
-  }, []);
 
-  function submit(e: FormEvent) {
-    e.preventDefault();
-    post(route('company.login'));
-  }
+    return (
+        <AuthLayout title="Log in to your company account" description="Enter your email and password below to log in">
+            <Head title="Company Log in" />
 
-  return (
-    <>
-      <Head title="Company Login" />
-      
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-full max-w-md">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-center">Company Login</CardTitle>
-              <CardDescription className="text-center">Sign in to your company account</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={submit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email"
-                    type="email" 
-                    name="email"
-                    value={data.email}
-                    className="mt-1 block w-full"
-                    autoComplete="username"
-                    onChange={(e) => setData('email', e.target.value)}
-                  />
-                  {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
+            <form className="flex flex-col gap-6" onSubmit={submit}>
+                <div className="grid gap-6">
+                    <div className="grid gap-2">
+                        <Label htmlFor="email">Email address</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            required
+                            autoFocus
+                            tabIndex={1}
+                            autoComplete="email"
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            placeholder="email@example.com"
+                        />
+                        <InputError message={errors.email} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <div className="flex items-center">
+                            <Label htmlFor="password">Password</Label>
+                            {canResetPassword && (
+                                <TextLink href={route('company.password.request')} className="ml-auto text-sm" tabIndex={5}>
+                                    Forgot password?
+                                </TextLink>
+                            )}
+                        </div>
+                        <Input
+                            id="password"
+                            type="password"
+                            required
+                            tabIndex={2}
+                            autoComplete="current-password"
+                            value={data.password}
+                            onChange={(e) => setData('password', e.target.value)}
+                            placeholder="Password"
+                        />
+                        <InputError message={errors.password} />
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                        <Checkbox
+                            id="remember"
+                            name="remember"
+                            checked={data.remember}
+                            onClick={() => setData('remember', !data.remember)}
+                            tabIndex={3}
+                        />
+                        <Label htmlFor="remember">Remember me</Label>
+                    </div>
+
+                    <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
+                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                        Log in
+                    </Button>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input 
-                    id="password"
-                    type="password" 
-                    name="password"
-                    value={data.password}
-                    className="mt-1 block w-full"
-                    autoComplete="current-password"
-                    onChange={(e) => setData('password', e.target.value)}
-                  />
-                  {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
+                <div className="text-muted-foreground text-center text-sm">
+                    Don't have a company account?{' '}
+                    <TextLink href={route('company.register')} tabIndex={5}>
+                        Sign up
+                    </TextLink>
                 </div>
+            </form>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Checkbox 
-                      id="remember"
-                      name="remember" 
-                      checked={data.remember}
-                      onCheckedChange={(checked) => setData('remember', !!checked)}
-                    />
-                    <Label htmlFor="remember" className="text-sm">Remember me</Label>
-                  </div>
-                  
-                  {route().has('company.password.request') && (
-                    <Link href={route('company.password.request')} className="text-sm text-blue-600 hover:underline">
-                      Forgot your password?
-                    </Link>
-                  )}
-                </div>
-
-                <Button type="submit" className="w-full" disabled={processing}>
-                  Log in
-                </Button>
-              </form>
-            </CardContent>
-            <CardFooter className="justify-center">
-              <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
-                <Link href={route('company.register')} className="text-blue-600 hover:underline">
-                  Register as a company
-                </Link>
-              </p>
-            </CardFooter>
-          </Card>
-        </div>
-      </div>
-    </>
-  );
+            {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
+        </AuthLayout>
+    );
 }

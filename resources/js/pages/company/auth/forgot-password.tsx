@@ -1,79 +1,59 @@
-import { useForm } from '@inertiajs/react';
-import { FormEvent } from 'react';
-import { Head, Link } from '@inertiajs/react';
-import { Input } from '@/Components/ui/input';
-import { Label } from '@/Components/ui/label';
-import { Button } from '@/Components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Components/ui/card';
-import { Alert, AlertDescription } from '@/Components/ui/alert';
-import { PageProps } from '@/types';
+import { Head, useForm } from '@inertiajs/react';
+import { LoaderCircle } from 'lucide-react';
+import { FormEventHandler } from 'react';
 
-interface ForgotPasswordProps extends PageProps {
-  status?: string;
-}
+import InputError from '@/components/input-error';
+import TextLink from '@/components/text-link';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import AuthLayout from '@/layouts/auth-layout';
 
-export default function ForgotPassword({ status }: ForgotPasswordProps) {
-  const { data, setData, post, processing, errors } = useForm({
-    email: '',
-  });
+export default function ForgotPassword({ status }: { status?: string }) {
+    const { data, setData, post, processing, errors } = useForm({
+        email: '',
+    });
 
-  const submit = (e: FormEvent) => {
-    e.preventDefault();
-    post(route('company.password.email'));
-  };
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
 
-  return (
-    <>
-      <Head title="Forgot Password" />
+        post(route('company.password.email'));
+    };
 
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="w-full max-w-md">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-center">Forgot Password</CardTitle>
-              <CardDescription className="text-center">
-                No problem. Just let us know your email address and we will email you a password
-                reset link that will allow you to choose a new one.
-              </CardDescription>
-            </CardHeader>
+    return (
+        <AuthLayout title="Forgot password" description="No worries, we'll send you reset instructions.">
+            <Head title="Forgot Password" />
 
-            <CardContent>
-              {status && (
-                <Alert className="mb-6 bg-green-50 border-green-200">
-                  <AlertDescription>{status}</AlertDescription>
-                </Alert>
-              )}
+            {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
 
-              <form onSubmit={submit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={data.email}
-                    className="mt-1 block w-full"
-                    onChange={(e) => setData('email', e.target.value)}
-                    required
-                    autoFocus
-                  />
-                  {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
+            <form className="flex flex-col gap-6" onSubmit={submit}>
+                <div className="grid gap-6">
+                    <div className="grid gap-2">
+                        <Label htmlFor="email">Email address</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            name="email"
+                            value={data.email}
+                            className="mt-1 block w-full"
+                            autoFocus
+                            tabIndex={1}
+                            placeholder="email@example.com"
+                            onChange={(e) => setData('email', e.target.value)}
+                        />
+                        <InputError message={errors.email} />
+                    </div>
+
+                    <Button type="submit" className="w-full" tabIndex={2} disabled={processing}>
+                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                        Send reset link
+                    </Button>
                 </div>
 
-                <Button type="submit" className="w-full" disabled={processing}>
-                  Email Password Reset Link
-                </Button>
-              </form>
-            </CardContent>
-
-            <CardFooter className="justify-center">
-              <Link href={route('company.login')} className="text-sm text-blue-600 hover:underline">
-                Back to Login
-              </Link>
-            </CardFooter>
-          </Card>
-        </div>
-      </div>
-    </>
-  );
+                <TextLink href={route('company.login')} tabIndex={3} className="mx-auto text-sm">
+                    Go back to login
+                </TextLink>
+            </form>
+        </AuthLayout>
+    );
 }

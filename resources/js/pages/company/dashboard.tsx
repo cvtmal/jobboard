@@ -1,11 +1,21 @@
 import { Head } from '@inertiajs/react';
-import { PageProps } from '@/types';
-import { Button } from '@/Components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/Components/ui/card';
+import { Link } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function CompanyDashboard({ auth }: PageProps) {
+interface CompanyDashboardProps {
+  auth: {
+    user: {
+      name: string;
+      email: string;
+    };
+  };
+}
+
+export default function CompanyDashboard({ auth }: CompanyDashboardProps) {
   return (
-    <>
+    <AppLayout>
       <Head title="Company Dashboard" />
       
       <div className="py-12">
@@ -23,7 +33,9 @@ export default function CompanyDashboard({ auth }: PageProps) {
                   <p>Update your company details, logo, and other information.</p>
                 </CardContent>
                 <CardFooter>
-                  <Button>Edit Profile</Button>
+                  <Button asChild>
+                    <Link href={route('company.settings.profile')}>Edit Profile</Link>
+                  </Button>
                 </CardFooter>
               </Card>
               
@@ -65,10 +77,28 @@ export default function CompanyDashboard({ auth }: PageProps) {
                   <Button>View Analytics</Button>
                 </CardFooter>
               </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Account Settings</CardTitle>
+                  <CardDescription>Manage account security</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p>Update your password and appearance preferences.</p>
+                </CardContent>
+                <CardFooter className="flex gap-2">
+                  <Button asChild variant="outline">
+                    <Link href={route('company.settings.password')}>Password</Link>
+                  </Button>
+                  <Button asChild variant="outline">
+                    <Link href={route('company.settings.appearance')}>Appearance</Link>
+                  </Button>
+                </CardFooter>
+              </Card>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </AppLayout>
   );
 }
