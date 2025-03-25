@@ -40,7 +40,7 @@ final class NewPasswordController
         // database. Otherwise we will parse the error and return the response.
         $status = Password::broker('companies')->reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($company) use ($request) {
+            function ($company) use ($request): void {
                 $company->forceFill([
                     'password' => Hash::make($request->input('password')),
                     'remember_token' => Str::random(60),

@@ -25,7 +25,7 @@ final class CompanyUserProvider extends EloquentUserProvider
      */
     public function retrieveByCredentials(array $credentials): ?Authenticatable
     {
-        if (empty($credentials) ||
+        if ($credentials === [] ||
             (count($credentials) === 1 &&
              array_key_exists('password', $credentials))) {
             return null;
@@ -37,10 +37,12 @@ final class CompanyUserProvider extends EloquentUserProvider
         $query = $this->newModelQuery();
 
         foreach ($credentials as $key => $value) {
-            if (is_array($value) || $value instanceof Arrayable) {
+            if (is_array($value)) {
                 continue;
             }
-
+            if ($value instanceof Arrayable) {
+                continue;
+            }
             if ($key === 'password') {
                 continue;
             }

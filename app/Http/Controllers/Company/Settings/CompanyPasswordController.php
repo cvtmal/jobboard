@@ -31,7 +31,7 @@ final class CompanyPasswordController
     public function update(UpdateCompanyPasswordRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-        
+
         $request->user()->update([
             'password' => Hash::make($validated['password']),
         ]);
