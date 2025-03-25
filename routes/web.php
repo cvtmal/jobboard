@@ -15,5 +15,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
+// Company routes
+Route::middleware(['auth:company', 'verified.company'])->group(function () {
+    Route::get('company/dashboard', function () {
+        return Inertia::render('company/dashboard');
+    })->name('company.dashboard');
+});
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+require __DIR__.'/company_auth.php';

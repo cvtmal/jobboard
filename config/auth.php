@@ -47,7 +47,7 @@ return [
             'provider' => 'applicants',
         ],
         'company' => [
-            'driver' => 'session',
+            'driver' => 'company',
             'provider' => 'companies',
         ],
         'admin' => [
@@ -83,7 +83,7 @@ return [
             'model' => App\Models\Applicant::class,
         ],
         'companies' => [
-            'driver' => 'eloquent',
+            'driver' => 'company',
             'model' => App\Models\Company::class,
         ],
         'admins' => [

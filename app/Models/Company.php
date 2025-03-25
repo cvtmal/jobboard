@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Notifications\Company\VerifyEmail;
 use Carbon\CarbonImmutable;
 use Database\Factories\CompanyFactory;
 use Eloquent;
@@ -90,6 +91,11 @@ final class Company extends Authenticatable implements MustVerifyEmail
     use HasFactory, Notifiable;
 
     /**
+     * All attributes are mass assignable as per project guidelines.
+     */
+    protected $guarded = [];
+
+    /**
      * Get the jobs listed by this company.
      *
      * @return HasMany<JobListing, $this>
@@ -97,6 +103,40 @@ final class Company extends Authenticatable implements MustVerifyEmail
     public function jobs(): HasMany
     {
         return $this->hasMany(JobListing::class);
+    }
+
+    /**
+     * Determine if the company has verified their email address.
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        return ! is_null($this->email_verified_at);
+    }
+
+    /**
+     * Mark the given company's email as verified.
+     */
+    public function markEmailAsVerified(): bool
+    {
+        return $this->forceFill([
+            'email_verified_at' => $this->freshTimestamp(),
+        ])->save();
+    }
+
+    /**
+     * Send the email verification notification.
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmail);
+    }
+
+    /**
+     * Get the email address that should be used for verification.
+     */
+    public function getEmailForVerification(): string
+    {
+        return $this->email;
     }
 
     /**
