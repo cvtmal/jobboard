@@ -40,6 +40,8 @@ final class CompanyGuard extends SessionGuard
 
     /**
      * Get the session store used by the guard.
+     * Overriding the parent method to align with my preference
+     * for strict typing with explicit return type.
      */
     public function getSession(): Session
     {

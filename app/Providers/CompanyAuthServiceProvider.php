@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Auth\Providers\CompanyUserProvider;
 use App\Guards\CompanyGuard;
 use App\Models\Company;
 use Illuminate\Auth\AuthManager;
