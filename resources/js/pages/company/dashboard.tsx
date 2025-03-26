@@ -3,8 +3,9 @@ import { Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { type Auth } from '@/types';
 
-export default function CompanyDashboard({ auth }) {
+export default function CompanyDashboard({ auth }: { auth: Auth }) {
   return (
     <AppLayout>
       <Head title="Company Dashboard" />
@@ -17,7 +18,7 @@ export default function CompanyDashboard({ auth }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>{auth.company.name}</CardTitle>
+                  <CardTitle>{auth.company?.name}</CardTitle>
                   <CardDescription>Manage your company information</CardDescription>
                 </CardHeader>
                 <CardContent>

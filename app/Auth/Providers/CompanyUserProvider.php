@@ -57,6 +57,9 @@ final class CompanyUserProvider extends EloquentUserProvider
             $query->where($key, $value);
         }
 
+        // Additional check for active and not blocked company
+        $query->where('active', true)->where('blocked', false);
+
         return $query->first();
     }
 
@@ -68,6 +71,11 @@ final class CompanyUserProvider extends EloquentUserProvider
     public function validateCredentials(Authenticatable $user, array $credentials): bool
     {
         if (! $user instanceof Company) {
+            return false;
+        }
+
+        // Check if company is active and not blocked
+        if ($user->active !== true || $user->blocked === true) {
             return false;
         }
 

@@ -33,14 +33,7 @@ final class AuthenticatedCompanySessionController
      */
     public function store(LoginCompanyRequest $request): RedirectResponse
     {
-        if (! Auth::guard('company')->attempt(
-            $request->only('email', 'password'),
-            $request->boolean('remember')
-        )) {
-            throw ValidationException::withMessages([
-                'email' => 'These credentials do not match our records or your company account may be blocked.',
-            ]);
-        }
+        $request->authenticate();
 
         $request->session()->regenerate();
 

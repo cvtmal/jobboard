@@ -87,9 +87,8 @@ final class EmailVerificationRequest extends FormRequest
             return false;
         }
 
-        // Generate correct hash using HMAC SHA-256 for security
-        $appKey = $this->getAppKey();
-        $correctHash = hash_hmac('sha256', $emailStr, $appKey);
+        // Generate correct hash using SHA-1 which is Laravel's standard approach
+        $correctHash = sha1($emailStr);
 
         // Use constant-time comparison to prevent timing attacks
         return hash_equals($hashStr, $correctHash);
