@@ -18,6 +18,14 @@ final class CompanyProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $user = $this->user();
+        $userId = null;
+
+        // Ensure we have a valid Company user with an ID
+        if ($user instanceof Company && $user->id) {
+            $userId = $user->id;
+        }
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
@@ -26,7 +34,7 @@ final class CompanyProfileUpdateRequest extends FormRequest
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique(Company::class)->ignore($this->user()->id),
+                Rule::unique(Company::class)->ignore($userId),
             ],
             'address' => ['nullable', 'string', 'max:255'],
             'postcode' => ['nullable', 'string', 'max:20'],

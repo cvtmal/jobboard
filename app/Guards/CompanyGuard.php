@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Guards;
 
 use Illuminate\Auth\SessionGuard;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Session\Session;
 
 final class CompanyGuard extends SessionGuard
@@ -12,14 +13,21 @@ final class CompanyGuard extends SessionGuard
     /**
      * Attempt to authenticate a user using the given credentials.
      *
-     * @param  array{email: string, password: string}  $credentials
+     * @param  array{email?: string, password?: string}  $credentials
      * @param  bool  $remember
      */
     public function attempt(array $credentials = [], $remember = false): bool
     {
         $this->fireAttemptEvent($credentials, $remember);
 
-        $this->lastAttempted = $user = $this->provider->retrieveByCredentials($credentials);
+        $user = $this->provider->retrieveByCredentials($credentials);
+
+        // Only set lastAttempted if the user is not null
+        if ($user instanceof Authenticatable) {
+            $this->lastAttempted = $user;
+        } else {
+            return false;
+        }
 
         // If an implementation of UserInterface was returned, we'll ask the provider
         // to validate the user against the given credentials, and if they are in

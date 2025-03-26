@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Company\Settings;
 
 use App\Http\Requests\Company\Settings\UpdateCompanyPasswordRequest;
+use App\Models\Company;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,9 +32,21 @@ final class CompanyPasswordController
     public function update(UpdateCompanyPasswordRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+        $user = $request->user();
 
-        $request->user()->update([
-            'password' => Hash::make($validated['password']),
+        // Ensure we have a valid user object of Company type
+        if (! $user instanceof Company) {
+            return back()->withErrors(['general' => 'Invalid user account']);
+        }
+
+        // Ensure password is a string
+        $password = $validated['password'] ?? '';
+        if (! is_string($password)) {
+            return back()->withErrors(['password' => 'Invalid password format']);
+        }
+
+        $user->update([
+            'password' => Hash::make($password),
         ]);
 
         return back();

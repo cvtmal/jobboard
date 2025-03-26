@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Company\Settings;
 
 use App\Http\Requests\Company\Settings\CompanyProfileUpdateRequest;
+use App\Models\Company;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,6 +32,12 @@ final class CompanyProfileController
     public function update(CompanyProfileUpdateRequest $request): RedirectResponse
     {
         $company = $request->user();
+
+        // Ensure we have a valid company user
+        if (! $company instanceof Company) {
+            return back()->withErrors(['general' => 'Invalid company account']);
+        }
+
         $company->fill($request->validated());
 
         if ($company->isDirty('email')) {
@@ -52,6 +59,11 @@ final class CompanyProfileController
         ]);
 
         $company = $request->user();
+
+        // Ensure we have a valid company user
+        if (! $company instanceof Company) {
+            return back()->withErrors(['general' => 'Invalid company account']);
+        }
 
         Auth::guard('company')->logout();
 
