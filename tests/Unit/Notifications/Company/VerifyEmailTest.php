@@ -40,8 +40,8 @@ it('generates a proper verification url', function () {
     $verificationUrl = $notification->verificationUrl($company);
 
     expect($verificationUrl)->toBeString()
-        ->and($verificationUrl)->toContain('company.verification.verify')
-        ->and($verificationUrl)->toContain('id='.$company->id)
-        ->and($verificationUrl)->toContain('hash='.sha1('test@example.com'))
+        ->and($verificationUrl)->toContain('company/verify-email/'.$company->id)
+        ->and($verificationUrl)->toContain('/'.sha1('test@example.com'))
+        ->and($verificationUrl)->toContain('expires=')
         ->and($verificationUrl)->toContain('signature=');
-})->skip('This test requires a valid URL generation, which is not possible in this context.');
+});
