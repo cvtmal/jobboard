@@ -58,7 +58,7 @@ final class CompanyGuard extends SessionGuard
 
     /**
      * Log the user out of the application.
-     * 
+     *
      * Overriding to ensure we forcefully clear session data
      * and remember tokens to prevent authentication persistence.
      */
@@ -67,7 +67,7 @@ final class CompanyGuard extends SessionGuard
         $user = $this->user();
 
         // Clear the user's remember token if it exists
-        if ($this->hasUser()) {
+        if ($this->hasUser() && $user instanceof Authenticatable) {
             $this->cycleRememberToken($user);
             $this->clearUserDataFromStorage();
         }

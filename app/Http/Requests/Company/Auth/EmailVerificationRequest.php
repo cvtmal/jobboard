@@ -6,7 +6,6 @@ namespace App\Http\Requests\Company\Auth;
 
 use App\Models\Company;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Config;
 
 final class EmailVerificationRequest extends FormRequest
 {
@@ -57,7 +56,7 @@ final class EmailVerificationRequest extends FormRequest
     private function hasRequiredValues(mixed $routeId, mixed $userId, mixed $routeHash, mixed $email): bool
     {
         // Check if any value is null
-        return !($routeId === null || $userId === null || $routeHash === null || $email === null);
+        return ! ($routeId === null || $userId === null || $routeHash === null || $email === null);
     }
 
     /**
@@ -100,21 +99,5 @@ final class EmailVerificationRequest extends FormRequest
     private function toStringOrEmpty(mixed $value): string
     {
         return is_scalar($value) ? (string) $value : '';
-    }
-
-    /**
-     * Get app key for HMAC or use a secure fallback.
-     */
-    private function getAppKey(): string
-    {
-        $key = Config::get('app.key');
-
-        if (! is_scalar($key)) {
-            return 'secure-fallback-key';
-        }
-
-        $keyStr = (string) $key;
-
-        return $keyStr !== '' ? $keyStr : 'secure-fallback-key';
     }
 }
