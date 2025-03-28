@@ -1,10 +1,10 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
-import { CompanyMenuContent } from './company-menu-content';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { type SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { ChevronsUpDown } from 'lucide-react';
+import { CompanyMenuContent } from './company-menu-content';
 
 export function CompanyNavUser() {
     const { auth } = usePage<SharedData>().props;
@@ -24,7 +24,7 @@ export function CompanyNavUser() {
                         <SidebarMenuButton size="lg" className="text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent group">
                             <div className="flex flex-col items-start gap-1 overflow-hidden text-left">
                                 <div className="truncate font-medium">{auth.company.name}</div>
-                                <div className="w-full truncate text-xs text-muted-foreground">{auth.company.email}</div>
+                                <div className="text-muted-foreground w-full truncate text-xs">{auth.company.email}</div>
                             </div>
                             <ChevronsUpDown className="ml-auto size-4" />
                         </SidebarMenuButton>

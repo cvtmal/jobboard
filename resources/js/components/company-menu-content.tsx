@@ -17,20 +17,14 @@ export function CompanyMenuContent({ company }: CompanyMenuContentProps) {
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <div className="flex flex-col items-start gap-1 overflow-hidden">
                         <div className="truncate font-medium">{company.name}</div>
-                        <div className="w-full truncate text-xs text-muted-foreground">{company.email}</div>
+                        <div className="text-muted-foreground w-full truncate text-xs">{company.email}</div>
                     </div>
                 </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
-                    <Link 
-                        className="block w-full" 
-                        href={route('company.settings.profile')} 
-                        as="button" 
-                        prefetch 
-                        onClick={cleanup}
-                    >
+                    <Link className="block w-full" href={route('company.settings.profile')} as="button" prefetch onClick={cleanup}>
                         <Settings className="mr-2" />
                         Settings
                     </Link>
@@ -38,13 +32,7 @@ export function CompanyMenuContent({ company }: CompanyMenuContentProps) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-                <Link 
-                    className="block w-full" 
-                    method="post" 
-                    href={route('company.logout')} 
-                    as="button" 
-                    onClick={cleanup}
-                >
+                <Link className="block w-full" method="post" href={route('company.logout')} as="button" onClick={cleanup}>
                     <LogOut className="mr-2" />
                     Log out
                 </Link>

@@ -38,17 +38,20 @@ export default function Welcome() {
                         )}
                     </nav>
                 </header>
-                <div className="flex w-full items-center justify-center opacity-100 transition-opacity duration-750 min-h-full lg:grow starting:opacity-0">
+                <div className="flex min-h-full w-full items-center justify-center opacity-100 transition-opacity duration-750 lg:grow starting:opacity-0">
                     <main className="flex w-full max-w-[335px] flex-col-reverse items-center lg:max-w-4xl lg:flex-row">
-                        <div className="flex-1 w-full rounded-br-lg rounded-bl-lg bg-white p-6 pb-12 text-[13px] leading-[20px] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-tl-lg lg:rounded-br-none lg:p-20 dark:bg-[#161615] dark:text-[#EDEDEC] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]">
+                        <div className="w-full flex-1 rounded-br-lg rounded-bl-lg bg-white p-6 pb-12 text-[13px] leading-[20px] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-tl-lg lg:rounded-br-none lg:p-20 dark:bg-[#161615] dark:text-[#EDEDEC] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]">
                             <div className="flex flex-col items-center text-center">
                                 <h1 className="mb-1 text-3xl font-medium">Let's get started</h1>
                                 <p className="mb-2 text-[#706f6c] dark:text-[#A1A09A]">
-                                    <span className="font-bold">Laravel</span> with <span className="font-bold">React</span> and <span className="font-bold">Inertia.js</span><br/> is a powerful combination for building modern web applications.
-                                    <br/><br/>
+                                    <span className="font-bold">Laravel</span> with <span className="font-bold">React</span> and{' '}
+                                    <span className="font-bold">Inertia.js</span>
+                                    <br /> is a powerful combination for building modern web applications.
+                                    <br />
+                                    <br />
                                     We suggest starting with the following.
                                 </p>
-                                <ul className="mb-4 lg:ml-60 flex flex-col lg:mb-6 w-full max-w-lg">
+                                <ul className="mb-4 flex w-full max-w-lg flex-col lg:mb-6 lg:ml-60">
                                     <li className="relative flex items-center gap-4 py-2 before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">
                                         <span className="relative bg-white py-1 dark:bg-[#161615]">
                                             <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#e3e3e0] bg-[#FDFDFC] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] dark:border-[#3E3E3A] dark:bg-[#161615]">

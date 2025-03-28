@@ -1,8 +1,7 @@
+import { Transition } from '@headlessui/react';
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef } from 'react';
-import { Transition } from '@headlessui/react';
 
-import type { BreadcrumbItem } from '@/types';
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import CompanySettingsLayout from '@/layouts/company/settings-layout';
+import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -54,10 +54,7 @@ export default function CompanyPassword() {
 
             <CompanySettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall 
-                        title="Update password" 
-                        description="Ensure your company account is using a long, random password to stay secure" 
-                    />
+                    <HeadingSmall title="Update password" description="Ensure your company account is using a long, random password to stay secure" />
 
                     <form onSubmit={updatePassword} className="space-y-6">
                         <div className="grid gap-2">
