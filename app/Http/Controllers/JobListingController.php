@@ -49,7 +49,7 @@ final class JobListingController
         /** @var Company $company */
         $jobListing = $action->execute($company, $request->validated());
 
-        return redirect()->route('job-listings.show', $jobListing)
+        return redirect()->route('company.job-listings.index', $jobListing)
             ->with('success', 'Job created successfully.');
     }
 
