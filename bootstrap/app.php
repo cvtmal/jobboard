@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Middleware\EnsureCompanyEmailIsVerified;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Providers\AuthServiceProvider;
 use App\Providers\CompanyAuthServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -35,5 +36,6 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withProviders([
         CompanyAuthServiceProvider::class,
+        AuthServiceProvider::class,
     ])
     ->create();

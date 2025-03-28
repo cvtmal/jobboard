@@ -26,3 +26,4 @@ require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 require __DIR__.'/company_auth.php';
 require __DIR__.'/company_settings.php';
+require __DIR__.'/job_listings.php';

@@ -113,6 +113,13 @@ final class JobListing extends Model
     use HasFactory; // @phpstan-ignore-line
 
     /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $guarded = [];
+
+    /**
      * The attributes that should be cast.
      *
      * @var array<string, string>

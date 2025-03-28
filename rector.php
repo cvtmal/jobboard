@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPublicMethodParameterRector;
 use Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector;
 use Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictConstructorRector;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\DeclareStrictTypesRector;
@@ -14,7 +15,12 @@ return RectorConfig::configure()
         __DIR__.'/database',
         __DIR__.'/public',
     ])
-    ->withSkip([AddOverrideAttributeToOverriddenMethodsRector::class])
+    ->withSkip([
+        AddOverrideAttributeToOverriddenMethodsRector::class,
+        RemoveUnusedPublicMethodParameterRector::class => [
+            __DIR__.'/app/Policies',
+        ],
+    ])
     ->withRules([
         TypedPropertyFromStrictConstructorRector::class,
         DeclareStrictTypesRector::class,
