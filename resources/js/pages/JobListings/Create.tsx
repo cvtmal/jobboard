@@ -35,27 +35,27 @@ export default function Create({ errors, auth }: CreateProps) {
     city: '',
     salary_min: '',
     salary_max: '',
-    salary_type: SalaryType.YEARLY, 
-    employment_type: EmploymentType.FULL_TIME, 
-    experience_level: ExperienceLevel.MID_LEVEL, 
+    salary_type: SalaryType.YEARLY,
+    employment_type: EmploymentType.FULL_TIME,
+    experience_level: ExperienceLevel.MID_LEVEL,
     application_process: ApplicationProcess.EMAIL,
     application_email: '',
     application_url: '',
-    status: JobStatus.PUBLISHED, 
+    status: JobStatus.PUBLISHED,
     no_salary: false,
     company_id: auth.company?.id || '',
   });
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    
+
     // Check if company is authenticated
     if (!auth.company) {
       // Redirect to company login if not authenticated
       window.location.href = route('company.login');
       return;
     }
-    
+
     // Include the company ID from auth
     post(route('company.job-listings.store'), {
       onSuccess: () => {
@@ -72,7 +72,7 @@ export default function Create({ errors, auth }: CreateProps) {
   return (
     <CompanyLayout>
       <Head title="Create Job Listing" />
-      
+
       <div className="py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold tracking-tight">Create Job Listing</h1>
@@ -80,7 +80,7 @@ export default function Create({ errors, auth }: CreateProps) {
             <Button variant="outline">Back to Listings</Button>
           </Link>
         </div>
-        
+
         <form onSubmit={handleSubmit}>
           <div className="space-y-6">
             <Card>
@@ -100,7 +100,7 @@ export default function Create({ errors, auth }: CreateProps) {
                     />
                     {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="description">Job Description</Label>
                     <Textarea
@@ -111,7 +111,7 @@ export default function Create({ errors, auth }: CreateProps) {
                     />
                     {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <Label htmlFor="address">Address</Label>
@@ -125,7 +125,7 @@ export default function Create({ errors, auth }: CreateProps) {
                       />
                       {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="postcode">Postal Code</Label>
                       <Input
@@ -138,7 +138,7 @@ export default function Create({ errors, auth }: CreateProps) {
                       />
                       {errors.postcode && <p className="text-red-500 text-sm mt-1">{errors.postcode}</p>}
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="city">City</Label>
                       <Input
@@ -155,7 +155,7 @@ export default function Create({ errors, auth }: CreateProps) {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle>Job Details</CardTitle>
@@ -164,7 +164,7 @@ export default function Create({ errors, auth }: CreateProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="salary_type">Salary Type</Label>
-                    <Select 
+                    <Select
                       value={data.salary_type}
                       onValueChange={value => setData('salary_type', value as SalaryType)}
                     >
@@ -180,7 +180,7 @@ export default function Create({ errors, auth }: CreateProps) {
                     </Select>
                     {errors.salary_type && <p className="text-red-500 text-sm mt-1">{errors.salary_type}</p>}
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <Label htmlFor="salary_min">Minimum Salary</Label>
@@ -194,7 +194,7 @@ export default function Create({ errors, auth }: CreateProps) {
                       />
                       {errors.salary_min && <p className="text-red-500 text-sm mt-1">{errors.salary_min}</p>}
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="salary_max">Maximum Salary</Label>
                       <Input
@@ -208,10 +208,10 @@ export default function Create({ errors, auth }: CreateProps) {
                       {errors.salary_max && <p className="text-red-500 text-sm mt-1">{errors.salary_max}</p>}
                     </div>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="employment_type">Employment Type</Label>
-                    <Select 
+                    <Select
                       value={data.employment_type}
                       onValueChange={value => setData('employment_type', value as EmploymentType)}
                     >
@@ -230,10 +230,10 @@ export default function Create({ errors, auth }: CreateProps) {
                     </Select>
                     {errors.employment_type && <p className="text-red-500 text-sm mt-1">{errors.employment_type}</p>}
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="experience_level">Experience Level</Label>
-                    <Select 
+                    <Select
                       value={data.experience_level}
                       onValueChange={value => setData('experience_level', value as ExperienceLevel)}
                     >
@@ -253,7 +253,7 @@ export default function Create({ errors, auth }: CreateProps) {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle>Application Process</CardTitle>
@@ -277,7 +277,7 @@ export default function Create({ errors, auth }: CreateProps) {
                   </RadioGroup>
                   {errors.application_process && <p className="text-red-500 text-sm mt-1">{errors.application_process}</p>}
                 </div>
-                
+
                 {data.application_process === ApplicationProcess.EMAIL && (
                   <div>
                     <Label htmlFor="application_email">Application Email</Label>
@@ -291,7 +291,7 @@ export default function Create({ errors, auth }: CreateProps) {
                     {errors.application_email && <p className="text-red-500 text-sm mt-1">{errors.application_email}</p>}
                   </div>
                 )}
-                
+
                 {data.application_process === ApplicationProcess.EXTERNAL && (
                   <div>
                     <Label htmlFor="application_url">Application URL</Label>
@@ -308,7 +308,7 @@ export default function Create({ errors, auth }: CreateProps) {
                 )}
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle>Publishing</CardTitle>
@@ -316,7 +316,7 @@ export default function Create({ errors, auth }: CreateProps) {
               <CardContent className="space-y-4">
                 <div>
                   <Label htmlFor="status">Status</Label>
-                  <Select 
+                  <Select
                     value={data.status}
                     onValueChange={value => setData('status', value as JobStatus)}
                   >
@@ -333,7 +333,7 @@ export default function Create({ errors, auth }: CreateProps) {
                 </div>
               </CardContent>
             </Card>
-            
+
             <div className="flex justify-end space-x-2">
               <Button
                 type="button"

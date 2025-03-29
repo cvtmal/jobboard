@@ -6,6 +6,7 @@ use App\Http\Middleware\EnsureApplicantEmailIsVerified;
 use App\Http\Middleware\EnsureCompanyEmailIsVerified;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SetLocale;
 use App\Providers\ApplicantAuthServiceProvider;
 use App\Providers\AuthServiceProvider;
 use App\Providers\CompanyAuthServiceProvider;
@@ -25,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [
             HandleAppearance::class,
+            SetLocale::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);

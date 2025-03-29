@@ -36,7 +36,7 @@ export default function Index({ jobListings }: JobListingsProps) {
   return (
     <CompanyLayout>
       <Head title="Job Listings" />
-      
+
       <div className="py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold tracking-tight">Job Listings</h1>
@@ -44,7 +44,7 @@ export default function Index({ jobListings }: JobListingsProps) {
             <Button>Create Job Listing</Button>
           </Link>
         </div>
-        
+
         {jobListings.data.length === 0 ? (
           <Card>
             <CardContent className="pt-6">
@@ -92,10 +92,10 @@ export default function Index({ jobListings }: JobListingsProps) {
             ))}
           </div>
         )}
-        
+
         {jobListings.data.length > 0 && (
           <div className="mt-6 flex justify-center">
-            <Pagination 
+            <Pagination
               currentPage={jobListings.current_page}
               lastPage={jobListings.last_page}
               links={jobListings.links}

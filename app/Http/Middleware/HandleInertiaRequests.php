@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
 
@@ -48,6 +49,10 @@ final class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
                 'company' => $request->user('company'),
+            ],
+            'locale' => [
+                'current' => App::currentLocale(),
+                'available' => ['en', 'de'],
             ],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),

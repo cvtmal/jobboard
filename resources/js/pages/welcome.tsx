@@ -1,260 +1,139 @@
 import { type SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
+import { PageProps } from '@inertiajs/core';
+import { useState, useEffect } from 'react';
 
-export default function Welcome() {
-    const { auth } = usePage<SharedData>().props;
+interface WelcomeProps {
+  auth: SharedData['auth'];
+}
+
+export default function Welcome({ auth }: WelcomeProps) {
+    const currentYear = new Date().getFullYear();
 
     return (
         <>
-            <Head title="Welcome">
-                <link rel="preconnect" href="https://fonts.bunny.net" />
-                <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-            </Head>
-            <div className="flex min-h-screen flex-col items-center bg-[#FDFDFC] p-6 text-[#1b1b18] lg:justify-center lg:p-8 dark:bg-[#0a0a0a]">
-                <header className="mb-6 w-full max-w-[335px] text-sm not-has-[nav]:hidden lg:max-w-4xl">
-                    <nav className="flex items-center justify-end gap-4">
-                        {auth.user ? (
-                            <Link
-                                href={route('dashboard')}
-                                className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
-                            >
-                                Dashboard
-                            </Link>
-                        ) : (
-                            <>
-                                <Link
-                                    href={route('login')}
-                                    className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
-                                >
-                                    Log in
-                                </Link>
-                                <Link
-                                    href={route('register')}
-                                    className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
-                                >
-                                    Register
-                                </Link>
-                            </>
-                        )}
-                    </nav>
-                </header>
-                <div className="flex min-h-full w-full items-center justify-center opacity-100 transition-opacity duration-750 lg:grow starting:opacity-0">
-                    <main className="flex w-full max-w-[335px] flex-col-reverse items-center lg:max-w-4xl lg:flex-row">
-                        <div className="w-full flex-1 rounded-br-lg rounded-bl-lg bg-white p-6 pb-12 text-[13px] leading-[20px] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-tl-lg lg:rounded-br-none lg:p-20 dark:bg-[#161615] dark:text-[#EDEDEC] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]">
-                            <div className="flex flex-col items-center text-center">
-                                <h1 className="mb-1 text-3xl font-medium">Let's get started</h1>
-                                <p className="mb-2 text-[#706f6c] dark:text-[#A1A09A]">
-                                    <span className="font-bold">Laravel</span> with <span className="font-bold">React</span> and{' '}
-                                    <span className="font-bold">Inertia.js</span>
-                                    <br /> is a powerful combination for building modern web applications.
-                                    <br />
-                                    <br />
-                                    We suggest starting with the following.
-                                </p>
-                                <ul className="mb-4 flex w-full max-w-lg flex-col lg:mb-6 lg:ml-60">
-                                    <li className="relative flex items-center gap-4 py-2 before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">
-                                        <span className="relative bg-white py-1 dark:bg-[#161615]">
-                                            <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#e3e3e0] bg-[#FDFDFC] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] dark:border-[#3E3E3A] dark:bg-[#161615]">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A]" />
-                                            </span>
-                                        </span>
-                                        <span>
-                                            Read the
-                                            <a
-                                                href="https://laravel.com/docs"
-                                                target="_blank"
-                                                className="ml-1 inline-flex items-center space-x-1 font-medium text-[#f53003] underline underline-offset-4 dark:text-[#FF4433]"
-                                            >
-                                                <span>Laravel Documentation</span>
-                                                <svg
-                                                    width={10}
-                                                    height={11}
-                                                    viewBox="0 0 10 11"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    className="h-2.5 w-2.5"
-                                                >
-                                                    <path
-                                                        d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                                        stroke="currentColor"
-                                                        strokeLinecap="square"
-                                                    />
-                                                </svg>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    <li className="relative flex items-center gap-4 py-2 before:absolute before:top-0 before:bottom-1/2 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">
-                                        <span className="relative bg-white py-1 dark:bg-[#161615]">
-                                            <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#e3e3e0] bg-[#FDFDFC] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] dark:border-[#3E3E3A] dark:bg-[#161615]">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A]" />
-                                            </span>
-                                        </span>
-                                        <span>
-                                            Watch video tutorials at
-                                            <a
-                                                href="https://laracasts.com"
-                                                target="_blank"
-                                                className="ml-1 inline-flex items-center space-x-1 font-medium text-[#f53003] underline underline-offset-4 dark:text-[#FF4433]"
-                                            >
-                                                <span>Laracasts</span>
-                                                <svg
-                                                    width={10}
-                                                    height={11}
-                                                    viewBox="0 0 10 11"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    className="h-2.5 w-2.5"
-                                                >
-                                                    <path
-                                                        d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                                        stroke="currentColor"
-                                                        strokeLinecap="square"
-                                                    />
-                                                </svg>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    <li className="relative flex items-center gap-4 py-2 before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">
-                                        <span className="relative bg-white py-1 dark:bg-[#161615]">
-                                            <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#e3e3e0] bg-[#FDFDFC] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] dark:border-[#3E3E3A] dark:bg-[#161615]">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A]" />
-                                            </span>
-                                        </span>
-                                        <span>
-                                            Read the
-                                            <a
-                                                href="https://inertiajs.com/"
-                                                target="_blank"
-                                                className="ml-1 inline-flex items-center space-x-1 font-medium text-[#f53003] underline underline-offset-4 dark:text-[#FF4433]"
-                                            >
-                                                <span>Inertia.js Documentation</span>
-                                                <svg
-                                                    width={10}
-                                                    height={11}
-                                                    viewBox="0 0 10 11"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    className="h-2.5 w-2.5"
-                                                >
-                                                    <path
-                                                        d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                                        stroke="currentColor"
-                                                        strokeLinecap="square"
-                                                    />
-                                                </svg>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    <li className="relative flex items-center gap-4 py-2 before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">
-                                        <span className="relative bg-white py-1 dark:bg-[#161615]">
-                                            <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#e3e3e0] bg-[#FDFDFC] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] dark:border-[#3E3E3A] dark:bg-[#161615]">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A]" />
-                                            </span>
-                                        </span>
-                                        <span>
-                                            Read the
-                                            <a
-                                                href="https://laravel.com/docs/12.x/pint"
-                                                target="_blank"
-                                                className="ml-1 inline-flex items-center space-x-1 font-medium text-[#f53003] underline underline-offset-4 dark:text-[#FF4433]"
-                                            >
-                                                <span>Laravel Pint Documentation</span>
-                                                <svg
-                                                    width={10}
-                                                    height={11}
-                                                    viewBox="0 0 10 11"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    className="h-2.5 w-2.5"
-                                                >
-                                                    <path
-                                                        d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                                        stroke="currentColor"
-                                                        strokeLinecap="square"
-                                                    />
-                                                </svg>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    <li className="relative flex items-center gap-4 py-2 before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">
-                                        <span className="relative bg-white py-1 dark:bg-[#161615]">
-                                            <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#e3e3e0] bg-[#FDFDFC] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] dark:border-[#3E3E3A] dark:bg-[#161615]">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A]" />
-                                            </span>
-                                        </span>
-                                        <span>
-                                            Check out
-                                            <a
-                                                href="https://github.com/larastan/larastan"
-                                                target="_blank"
-                                                className="ml-1 inline-flex items-center space-x-1 font-medium text-[#f53003] underline underline-offset-4 dark:text-[#FF4433]"
-                                            >
-                                                <span>Larastan</span>
-                                                <svg
-                                                    width={10}
-                                                    height={11}
-                                                    viewBox="0 0 10 11"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    className="h-2.5 w-2.5"
-                                                >
-                                                    <path
-                                                        d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                                        stroke="currentColor"
-                                                        strokeLinecap="square"
-                                                    />
-                                                </svg>
-                                            </a>
-                                        </span>
-                                    </li>
-                                    <li className="relative flex items-center gap-4 py-2 before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">
-                                        <span className="relative bg-white py-1 dark:bg-[#161615]">
-                                            <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#e3e3e0] bg-[#FDFDFC] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] dark:border-[#3E3E3A] dark:bg-[#161615]">
-                                                <span className="h-1.5 w-1.5 rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A]" />
-                                            </span>
-                                        </span>
-                                        <span>
-                                            Read the
-                                            <a
-                                                href="https://getrector.com/documentation/"
-                                                target="_blank"
-                                                className="ml-1 inline-flex items-center space-x-1 font-medium text-[#f53003] underline underline-offset-4 dark:text-[#FF4433]"
-                                            >
-                                                <span>Rector PHP Documentation</span>
-                                                <svg
-                                                    width={10}
-                                                    height={11}
-                                                    viewBox="0 0 10 11"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    className="h-2.5 w-2.5"
-                                                >
-                                                    <path
-                                                        d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                                        stroke="currentColor"
-                                                        strokeLinecap="square"
-                                                    />
-                                                </svg>
-                                            </a>
-                                        </span>
-                                    </li>
-                                </ul>
-                                <ul className="flex gap-3 text-sm leading-normal">
-                                    <li>
-                                        <a
-                                            href="https://cloud.laravel.com"
-                                            target="_blank"
-                                            className="inline-block rounded-sm border border-black bg-[#1b1b18] px-5 py-1.5 text-sm leading-normal text-white hover:border-black hover:bg-black dark:border-[#eeeeec] dark:bg-[#eeeeec] dark:text-[#1C1C1A] dark:hover:border-white dark:hover:bg-white"
+            <Head title="Job Board | Find Your Next Career" />
+            <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-indigo-950 dark:via-purple-950 dark:to-pink-950">
+                {/* Background decorative elements */}
+                <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-blue-300 opacity-20 blur-3xl dark:bg-blue-600" />
+                <div className="absolute top-1/2 -right-24 h-96 w-96 rounded-full bg-purple-300 opacity-20 blur-3xl dark:bg-purple-600" />
+                <div className="absolute -bottom-24 left-1/3 h-96 w-96 rounded-full bg-pink-300 opacity-20 blur-3xl dark:bg-pink-600" />
+                
+                <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-8 lg:px-8">
+                    {/* Header with glassmorphism */}
+                    <header className="mb-12 w-full">
+                        <div className="flex items-center justify-between rounded-xl bg-white bg-opacity-20 p-4 backdrop-blur-lg dark:bg-gray-900 dark:bg-opacity-20">
+                            <div className="flex items-center gap-2">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-indigo-600 text-white shadow-md">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                                        <line x1="9" x2="15" y1="15" y2="15" />
+                                        <line x1="9" x2="15" y1="9" y2="9" />
+                                        <line x1="9" x2="9" y1="9" y2="15" />
+                                    </svg>
+                                </div>
+                                <span className="text-xl font-semibold text-gray-800 dark:text-white">Career Hub</span>
+                            </div>
+                            <nav className="flex items-center gap-4">
+                                {auth.user ? (
+                                    <Link
+                                        href={route('dashboard')}
+                                        className="rounded-md bg-white bg-opacity-30 px-5 py-2 text-sm font-medium text-gray-800 shadow-sm transition-all hover:bg-opacity-40 dark:bg-gray-800 dark:bg-opacity-30 dark:text-white dark:hover:bg-opacity-40"
+                                    >
+                                        Dashboard
+                                    </Link>
+                                ) : (
+                                    <>
+                                        <Link
+                                            href={route('login')}
+                                            className="rounded-md px-5 py-2 text-sm font-medium text-gray-700 transition-all hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                                         >
-                                            Deploy now
-                                        </a>
-                                    </li>
-                                </ul>
+                                            Log in
+                                        </Link>
+                                        <Link
+                                            href={route('register')}
+                                            className="rounded-md bg-white bg-opacity-30 px-5 py-2 text-sm font-medium text-gray-800 shadow-sm transition-all hover:bg-opacity-40 dark:bg-gray-800 dark:bg-opacity-30 dark:text-white dark:hover:bg-opacity-40"
+                                        >
+                                            Register
+                                        </Link>
+                                    </>
+                                )}
+                            </nav>
+                        </div>
+                    </header>
+
+                    {/* Main content with glassmorphism */}
+                    <main className="flex flex-1 flex-col items-center justify-center">
+                        <div className="rounded-2xl bg-white bg-opacity-20 p-1 shadow-xl backdrop-blur-lg dark:bg-gray-900 dark:bg-opacity-20">
+                            <div className="grid overflow-hidden rounded-xl lg:grid-cols-2">
+                                {/* Left side - content */}
+                                <div className="flex flex-col justify-center p-8 lg:p-12">
+                                    <h1 className="mb-6 text-4xl font-bold leading-tight text-gray-800 dark:text-white lg:text-5xl">
+                                        Find Your <span className="text-indigo-600 dark:text-indigo-400">Dream Job</span> Today
+                                    </h1>
+                                    <p className="mb-8 text-lg text-gray-600 dark:text-gray-300">
+                                        Connect with top employers and discover opportunities that match your skills and aspirations. Your next career move starts here.
+                                    </p>
+                                    <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+                                        <Link
+                                            href={route('job-listings.index')}
+                                            className="flex items-center justify-center rounded-md bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-md transition-all hover:bg-indigo-700"
+                                        >
+                                            Explore Jobs
+                                        </Link>
+                                        <Link
+                                            href={route('register')}
+                                            className="flex items-center justify-center rounded-md bg-white bg-opacity-50 px-6 py-3 text-base font-medium text-gray-800 shadow-md transition-all hover:bg-opacity-70 dark:bg-gray-800 dark:bg-opacity-50 dark:text-white dark:hover:bg-opacity-70"
+                                        >
+                                            Post a Job
+                                        </Link>
+                                    </div>
+                                </div>
+
+                                {/* Right side - stats */}
+                                <div className="hidden bg-white bg-opacity-10 p-12 backdrop-blur-sm dark:bg-black dark:bg-opacity-10 lg:block">
+                                    <div className="grid grid-cols-2 gap-8">
+                                        <div className="rounded-xl bg-white bg-opacity-20 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-800 dark:bg-opacity-20">
+                                            <div className="mb-2 text-3xl font-bold text-indigo-600 dark:text-indigo-400">1000+</div>
+                                            <div className="text-sm text-gray-600 dark:text-gray-300">Active Job Listings</div>
+                                        </div>
+                                        <div className="rounded-xl bg-white bg-opacity-20 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-800 dark:bg-opacity-20">
+                                            <div className="mb-2 text-3xl font-bold text-indigo-600 dark:text-indigo-400">500+</div>
+                                            <div className="text-sm text-gray-600 dark:text-gray-300">Companies Hiring</div>
+                                        </div>
+                                        <div className="rounded-xl bg-white bg-opacity-20 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-800 dark:bg-opacity-20">
+                                            <div className="mb-2 text-3xl font-bold text-indigo-600 dark:text-indigo-400">50k+</div>
+                                            <div className="text-sm text-gray-600 dark:text-gray-300">Registered Job Seekers</div>
+                                        </div>
+                                        <div className="rounded-xl bg-white bg-opacity-20 p-6 shadow-sm backdrop-blur-sm dark:bg-gray-800 dark:bg-opacity-20">
+                                            <div className="mb-2 text-3xl font-bold text-indigo-600 dark:text-indigo-400">98%</div>
+                                            <div className="text-sm text-gray-600 dark:text-gray-300">Satisfaction Rate</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Featured categories */}
+                        <div className="mt-12 w-full rounded-xl bg-white bg-opacity-20 p-8 backdrop-blur-lg dark:bg-gray-900 dark:bg-opacity-20">
+                            <h2 className="mb-6 text-center text-2xl font-semibold text-gray-800 dark:text-white">Popular Categories</h2>
+                            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+                                {['Technology', 'Marketing', 'Design', 'Finance', 'Healthcare', 'Education'].map((category) => (
+                                    <div key={category} className="flex flex-col items-center rounded-lg bg-white bg-opacity-30 p-4 text-center transition-all hover:bg-opacity-40 dark:bg-gray-800 dark:bg-opacity-30 dark:hover:bg-opacity-40">
+                                        <span className="text-sm font-medium text-gray-800 dark:text-white">{category}</span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </main>
+
+                    {/* Footer */}
+                    <footer className="mt-12 rounded-xl bg-white bg-opacity-20 p-6 text-center backdrop-blur-lg dark:bg-gray-900 dark:bg-opacity-20">
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                            &copy; {currentYear} Career Hub. All rights reserved.
+                        </p>
+                    </footer>
                 </div>
-                <div className="hidden h-14.5 lg:block"></div>
             </div>
         </>
     );
