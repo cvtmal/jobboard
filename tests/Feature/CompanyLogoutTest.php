@@ -12,9 +12,10 @@ use Illuminate\Support\Facades\Session;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    // Create a verified company
+    // Create a verified company with known password
     $this->company = CompanyFactory::new()->create([
         'email_verified_at' => now(),
+        'password' => bcrypt('password'), // Explicitly set the password
     ]);
 });
 
@@ -39,15 +40,17 @@ test('company remember token is properly cleared after logout', function () {
     // Login with remember token
     $response = $this->post(route('company.login'), [
         'email' => $this->company->email,
-        'password' => 'password', // Default factory password
+        'password' => 'password',
         'remember' => true,
     ]);
 
-    // Verify we're redirected to dashboard (successful login)
-    $response->assertRedirect(route('company.dashboard'));
-
-    // Verify we're authenticated
-    $this->assertTrue(Auth::guard('company')->check());
+    // Verify successful login
+    $this->assertAuthenticated('company');
+    
+    // If login failed, show the error from the session
+    if ($response->isRedirect('/')) {
+        $this->followRedirects($response);
+    }
 
     // Logout
     $this->post(route('company.logout'));

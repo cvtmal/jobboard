@@ -21,12 +21,24 @@ final class CreateApplicantAction
      */
     public function execute(array $data): Applicant
     {
-        $applicant = DB::transaction(fn () => Applicant::create([
+        $applicantData = [
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']), // @phpstan-ignore-line
-        ]));
+        ];
+        
+        // Add optional fields if they exist
+        foreach ([
+            'address', 'phone', 'profile_photo_path',
+            'city', 'postcode', 'country', 'bio',
+        ] as $field) {
+            if (isset($data[$field])) {
+                $applicantData[$field] = $data[$field];
+            }
+        }
+
+        $applicant = DB::transaction(fn () => Applicant::create($applicantData));
 
         event(new Registered($applicant));
 
