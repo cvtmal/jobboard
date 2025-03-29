@@ -10,25 +10,28 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
 
-class SetLocale
+final class SetLocale
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // If the locale is set in the URL, use that
-        if ($request->has('locale') && in_array($request->locale, ['en', 'de'])) {
-            Session::put('locale', $request->locale);
-            App::setLocale($request->locale);
-        } 
-        // Otherwise, try to get it from the session
-        else if (Session::has('locale') && in_array(Session::get('locale'), ['en', 'de'])) {
-            App::setLocale(Session::get('locale'));
+        if ($request->has('locale')) {
+            $localeInput = $request->input('locale');
+            if (in_array($localeInput, ['en', 'de'], true)) {
+                Session::put('locale', $localeInput);
+                App::setLocale($localeInput);
+            }
+        } elseif (Session::has('locale')) {
+            $sessionLocale = Session::get('locale');
+            if (in_array($sessionLocale, ['en', 'de'], true)) {
+                App::setLocale($sessionLocale);
+            }
         }
-        
+
         return $next($request);
     }
 }

@@ -58,7 +58,7 @@ it('creates an applicant with optional fields', function () {
         ->and($applicant->phone)->toBe('+1234567890')
         ->and($applicant->profile_photo_path)->toBe('profile/photo.jpg')
         ->and(password_verify('password123', $applicant->password))->toBeTrue();
-        
+
     Event::assertDispatched(Registered::class);
 });
 
@@ -77,6 +77,6 @@ it('properly hashes the password when creating an applicant', function () {
 
     expect($applicant->password)->not->toBe('securepassword')
         ->and(password_verify('securepassword', $applicant->password))->toBeTrue();
-        
+
     Event::assertDispatched(Registered::class);
 });

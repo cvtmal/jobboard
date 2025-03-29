@@ -19,7 +19,7 @@ it('is always authorized', function () {
 
 it('has the expected validation rules', function () {
     $rules = $this->request->rules();
-    
+
     expect($rules)->toHaveKey('first_name')
         ->and($rules['first_name'])->toContain('required')
         ->and($rules['first_name'])->toContain('string')
@@ -37,7 +37,7 @@ it('has the expected validation rules', function () {
         ->and($rules)->toHaveKey('password')
         ->and($rules['password'])->toContain('required')
         ->and($rules['password'])->toContain('confirmed');
-        
+
     // Password rule is an object, so check it differently
     $passwordRules = collect($rules['password'])->filter(fn ($rule) => $rule instanceof Password);
     expect($passwordRules)->toHaveCount(1);
@@ -48,7 +48,7 @@ it('enforces unique email validation', function () {
     Applicant::factory()->create([
         'email' => 'existing@example.com',
     ]);
-    
+
     // Set up validator with test data
     $validator = validator([
         'first_name' => 'John',
@@ -57,7 +57,7 @@ it('enforces unique email validation', function () {
         'password' => 'password123',
         'password_confirmation' => 'password123',
     ], $this->request->rules());
-    
+
     // Validation should fail due to duplicate email
     expect($validator->fails())->toBeTrue()
         ->and($validator->errors()->has('email'))->toBeTrue();
@@ -72,7 +72,7 @@ it('validates mismatched passwords', function () {
         'password' => 'password123',
         'password_confirmation' => 'differentpassword',
     ], $this->request->rules());
-    
+
     // Validation should fail due to mismatched passwords
     expect($validator->fails())->toBeTrue()
         ->and($validator->errors()->has('password'))->toBeTrue();
@@ -87,7 +87,7 @@ it('passes validation with valid data', function () {
         'password' => 'password123',
         'password_confirmation' => 'password123',
     ], $this->request->rules());
-    
+
     // Validation should pass
     expect($validator->fails())->toBeFalse();
 });

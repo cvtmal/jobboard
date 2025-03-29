@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Actions\Company\CreateCompanyAction;
 use App\Models\Company;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -13,8 +12,7 @@ uses(RefreshDatabase::class);
 it('displays the company registration page', function () {
     $this->get(route('company.register'))
         ->assertSuccessful()
-        ->assertInertia(fn (AssertableInertia $page) => 
-            $page->component('company/auth/register')
+        ->assertInertia(fn (AssertableInertia $page) => $page->component('company/auth/register')
         );
 });
 

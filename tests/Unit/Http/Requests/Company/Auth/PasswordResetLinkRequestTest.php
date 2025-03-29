@@ -10,7 +10,7 @@ uses(RefreshDatabase::class);
 
 test('it authorizes all users to request a password reset', function () {
     $request = new PasswordResetLinkRequest();
-    
+
     expect($request->authorize())->toBeTrue();
 });
 
@@ -19,7 +19,7 @@ test('it validates required email field', function () {
         ['email' => ''],
         (new PasswordResetLinkRequest())->rules()
     );
-    
+
     expect($validator->fails())->toBeTrue();
     expect($validator->errors()->has('email'))->toBeTrue();
     expect($validator->errors()->first('email'))->toContain('required');
@@ -30,7 +30,7 @@ test('it validates email format', function () {
         ['email' => 'not-an-email'],
         (new PasswordResetLinkRequest())->rules()
     );
-    
+
     expect($validator->fails())->toBeTrue();
     expect($validator->errors()->has('email'))->toBeTrue();
     expect($validator->errors()->first('email'))->toContain('valid email');
@@ -38,6 +38,6 @@ test('it validates email format', function () {
 
 test('it converts email to lowercase', function () {
     $rules = (new PasswordResetLinkRequest())->rules();
-    
+
     expect($rules['email'])->toContain('lowercase');
 });

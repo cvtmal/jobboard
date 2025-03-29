@@ -3,22 +3,17 @@
 declare(strict_types=1);
 
 use App\Models\Company;
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
 
 test('it displays password reset view with correct data', function () {
     $email = 'test@example.com';
     $token = 'test-token';
-    
-    $response = $this->get(route('company.password.reset', ['token' => $token]) . "?email=$email");
-    
+
+    $response = $this->get(route('company.password.reset', ['token' => $token])."?email=$email");
+
     $response->assertStatus(200);
     // Skip specific component check
     $response->assertInertia(fn ($page) => $page);
@@ -28,7 +23,7 @@ test('it displays password reset view with correct data', function () {
 test('it validates required fields', function () {
     // Send reset request with missing fields
     $response = $this->post(route('company.password.store'), []);
-    
+
     // Assert validation errors for all required fields
     $response->assertSessionHasErrors(['token', 'email', 'password']);
 });
@@ -41,7 +36,7 @@ test('it validates password confirmation', function () {
         'password' => 'password',
         'password_confirmation' => 'different-password',
     ]);
-    
+
     // Assert validation errors
     $response->assertSessionHasErrors('password');
 });
@@ -49,7 +44,7 @@ test('it validates password confirmation', function () {
 test('it shows validation error for invalid token', function () {
     // Create a company
     $company = Company::factory()->create();
-    
+
     // Send reset request with invalid token
     $response = $this->post(route('company.password.store'), [
         'token' => 'invalid-token',
@@ -57,7 +52,7 @@ test('it shows validation error for invalid token', function () {
         'password' => 'new-password',
         'password_confirmation' => 'new-password',
     ]);
-    
+
     // Assert validation errors (either on email or token)
     $response->assertSessionHasErrors();
 });

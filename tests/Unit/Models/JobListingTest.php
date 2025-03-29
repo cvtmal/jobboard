@@ -36,19 +36,19 @@ test('job listing factory creates valid instance', function (): void {
     // Some fields may be null since they're optional
     if ($jobListing->employment_type !== null) {
         expect($jobListing->employment_type->value)->toBeIn(
-            array_column(App\Enums\EmploymentType::cases(), 'value')
+            array_column(EmploymentType::cases(), 'value')
         );
     }
 
     if ($jobListing->workplace !== null) {
         expect($jobListing->workplace->value)->toBeIn(
-            array_column(App\Enums\Workplace::cases(), 'value')
+            array_column(Workplace::cases(), 'value')
         );
     }
 
     if ($jobListing->experience_level !== null) {
         expect($jobListing->experience_level->value)->toBeIn(
-            array_column(App\Enums\ExperienceLevel::cases(), 'value')
+            array_column(ExperienceLevel::cases(), 'value')
         );
     }
 
@@ -81,7 +81,7 @@ test('job listing belongs to a job tier', function (): void {
 
 test('job listing has many applications', function (): void {
     $jobListing = JobListing::factory()->create();
-    
+
     // Create a few applications for this job listing
     JobApplication::factory()->count(3)->create([
         'job_listing_id' => $jobListing->id,
@@ -138,8 +138,8 @@ test('job listing casts date fields properly', function (): void {
         'active_until' => $now->addWeek(),
     ]);
 
-    expect($jobListing->active_from)->toBeInstanceOf(\Carbon\CarbonInterface::class)
-        ->and($jobListing->active_until)->toBeInstanceOf(\Carbon\CarbonInterface::class);
+    expect($jobListing->active_from)->toBeInstanceOf(Carbon\CarbonInterface::class)
+        ->and($jobListing->active_until)->toBeInstanceOf(Carbon\CarbonInterface::class);
 });
 
 test('job listing casts numeric fields properly', function (): void {
@@ -201,22 +201,22 @@ test('job listing casts enum fields properly', function (): void {
 
     expect($jobListing->employment_type)->toBeInstanceOf(EmploymentType::class)
         ->and($jobListing->employment_type)->toBe(EmploymentType::FULL_TIME)
-        
+
         ->and($jobListing->workplace)->toBeInstanceOf(Workplace::class)
         ->and($jobListing->workplace)->toBe(Workplace::HYBRID)
-        
+
         ->and($jobListing->experience_level)->toBeInstanceOf(ExperienceLevel::class)
         ->and($jobListing->experience_level)->toBe(ExperienceLevel::MID_LEVEL)
-        
+
         ->and($jobListing->salary_type)->toBeInstanceOf(SalaryType::class)
         ->and($jobListing->salary_type)->toBe(SalaryType::YEARLY)
-        
+
         ->and($jobListing->salary_option)->toBeInstanceOf(SalaryOption::class)
         ->and($jobListing->salary_option)->toBe(SalaryOption::RANGE)
-        
+
         ->and($jobListing->application_process)->toBeInstanceOf(ApplicationProcess::class)
         ->and($jobListing->application_process)->toBe(ApplicationProcess::EMAIL)
-        
+
         ->and($jobListing->status)->toBeInstanceOf(JobStatus::class)
         ->and($jobListing->status)->toBe(JobStatus::PUBLISHED);
 });

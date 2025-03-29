@@ -27,7 +27,7 @@ final class CreateApplicantAction
             'email' => $data['email'],
             'password' => Hash::make($data['password']), // @phpstan-ignore-line
         ];
-        
+
         // Add optional fields if they exist
         foreach ([
             'address', 'phone', 'profile_photo_path',

@@ -46,7 +46,7 @@ test('company remember token is properly cleared after logout', function () {
 
     // Verify successful login
     $this->assertAuthenticated('company');
-    
+
     // If login failed, show the error from the session
     if ($response->isRedirect('/')) {
         $this->followRedirects($response);
