@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\EnsureApplicantEmailIsVerified;
 use App\Http\Middleware\EnsureCompanyEmailIsVerified;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Providers\ApplicantAuthServiceProvider;
 use App\Providers\AuthServiceProvider;
 use App\Providers\CompanyAuthServiceProvider;
 use Illuminate\Foundation\Application;
@@ -29,12 +31,14 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'verified.company' => EnsureCompanyEmailIsVerified::class,
+            'verified.applicant' => EnsureApplicantEmailIsVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })
     ->withProviders([
+        ApplicantAuthServiceProvider::class,
         CompanyAuthServiceProvider::class,
         AuthServiceProvider::class,
     ])

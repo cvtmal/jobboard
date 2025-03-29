@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Company\Auth;
+namespace App\Http\Controllers\Applicant\Auth;
 
-use App\Http\Requests\Company\Auth\PasswordResetLinkRequest;
+use App\Http\Requests\Applicant\Auth\PasswordResetLinkRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
@@ -17,7 +17,7 @@ final class PasswordResetLinkController
      */
     public function create(): Response
     {
-        return Inertia::render('company/auth/forgot-password');
+        return Inertia::render('applicant/auth/forgot-password');
     }
 
     /**
@@ -25,13 +25,13 @@ final class PasswordResetLinkController
      */
     public function store(PasswordResetLinkRequest $request): RedirectResponse
     {
-        $status = Password::broker('companies')->sendResetLink(
+        $status = Password::broker('applicants')->sendResetLink(
             $request->only('email')
         );
 
         return $status === Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
+            ? back()->with('status', __($status))
+            : back()->withInput($request->only('email'))
+                ->withErrors(['email' => __($status)]);
     }
 }

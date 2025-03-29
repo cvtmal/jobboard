@@ -22,8 +22,16 @@ Route::middleware(['auth:company', 'verified.company'])->group(function () {
     })->name('company.dashboard');
 });
 
+// Applicant routes
+Route::middleware(['auth:applicant', 'verified.applicant'])->group(function () {
+    Route::get('applicant/dashboard', function () {
+        return Inertia::render('applicant/dashboard');
+    })->name('applicant.dashboard');
+});
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 require __DIR__.'/company_auth.php';
+require __DIR__.'/applicant_auth.php';
 require __DIR__.'/company_settings.php';
 require __DIR__.'/job_listings.php';

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Company\Auth;
+namespace App\Http\Requests\Applicant\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules;
 
-final class RegisterCompanyRequest extends FormRequest
+final class NewPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,13 +25,9 @@ final class RegisterCompanyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:companies'],
+            'token' => ['required'],
+            'email' => ['required', 'email', 'lowercase'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'address' => ['nullable', 'string', 'max:255'],
-            'postcode' => ['nullable', 'string', 'max:20'],
-            'city' => ['nullable', 'string', 'max:100'],
-            'url' => ['nullable', 'url', 'max:255'],
         ];
     }
 }

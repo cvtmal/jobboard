@@ -91,11 +91,6 @@ final class Company extends Authenticatable implements MustVerifyEmail
     use HasFactory, Notifiable;
 
     /**
-     * All attributes are mass assignable as per project guidelines.
-     */
-    protected $guarded = [];
-
-    /**
      * Get the jobs listed by this company.
      *
      * @return HasMany<JobListing, $this>

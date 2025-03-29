@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Actions\Company;
 
 use App\Models\Company;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Throwable;
 
 final class CreateCompanyAction
 {
@@ -13,10 +16,12 @@ final class CreateCompanyAction
      * Execute the action to create a new company.
      *
      * @param  array<string, mixed>  $data  Validated data for the company
+     *
+     * @throws Throwable
      */
     public function execute(array $data): Company
     {
-        return Company::create([
+        $company = DB::transaction(fn () => Company::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']), // @phpstan-ignore-line
@@ -26,6 +31,10 @@ final class CreateCompanyAction
             'url' => $data['url'] ?? null,
             'active' => true,
             'blocked' => false,
-        ]);
+        ]));
+
+        event(new Registered($company));
+
+        return $company;
     }
 }

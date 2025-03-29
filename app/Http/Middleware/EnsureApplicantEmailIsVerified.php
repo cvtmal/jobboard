@@ -6,10 +6,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 use Symfony\Component\HttpFoundation\Response;
 
-final class EnsureCompanyEmailIsVerified
+final class EnsureApplicantEmailIsVerified
 {
     /**
      * Handle an incoming request.
@@ -18,13 +17,13 @@ final class EnsureCompanyEmailIsVerified
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = $request->user('company');
+        $user = $request->user('applicant');
 
-        // If no user is authenticated or the user is a Company but hasn't verified their email
+        // If no user is authenticated or the user is an Applicant but hasn't verified their email
         if (! $user || ! $user->hasVerifiedEmail()) {
             return $request->expectsJson()
-                ? abort(403, 'Your company email address is not verified.')
-                : Redirect::route('company.verification.notice');
+                ? abort(403, 'Your applicant email address is not verified.')
+                : redirect()->route('applicant.verification.notice');
         }
 
         return $next($request);

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Company\Auth;
+namespace App\Http\Requests\Applicant\Auth;
 
-use App\Models\Company;
+use App\Models\Applicant;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class EmailVerificationRequest extends FormRequest
@@ -14,8 +14,8 @@ final class EmailVerificationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        $user = $this->user('company');
-        if (! $user instanceof Company) {
+        $user = $this->user('applicant');
+        if (! $user instanceof Applicant) {
             return false;
         }
 

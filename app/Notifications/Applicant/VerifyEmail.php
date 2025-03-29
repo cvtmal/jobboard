@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Notifications\Company;
+namespace App\Notifications\Applicant;
 
-use App\Models\Company;
+use App\Models\Applicant;
 use Illuminate\Auth\Notifications\VerifyEmail as BaseVerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Carbon;
@@ -28,10 +28,10 @@ final class VerifyEmail extends BaseVerifyEmail
             // Fallback to default generation if callback doesn't return a string
         }
 
-        // Ensure we have a Company instance that can provide getKey and getEmailForVerification
-        if (! $notifiable instanceof Company) {
+        // Ensure we have an Applicant instance that can provide getKey and getEmailForVerification
+        if (! $notifiable instanceof Applicant) {
             // Fallback URL or throw exception if needed
-            return URL::route('company.verification.notice');
+            return URL::route('applicant.verification.notice');
         }
 
         // Since Laravel 12 might use a different config path, use the value or default to 60
@@ -49,7 +49,7 @@ final class VerifyEmail extends BaseVerifyEmail
         $hash = sha1($email);
 
         return URL::temporarySignedRoute(
-            'company.verification.verify',
+            'applicant.verification.verify',
             Carbon::now()->addMinutes($expireMinutes),
             [
                 'id' => $id,
@@ -66,9 +66,9 @@ final class VerifyEmail extends BaseVerifyEmail
     public function buildMailMessage($url): MailMessage
     {
         return (new MailMessage)
-            ->subject('Verify Company Email Address')
-            ->line('Please click the button below to verify your company email address.')
+            ->subject('Verify Applicant Email Address')
+            ->line('Please click the button below to verify your email address.')
             ->action('Verify Email Address', $url)
-            ->line('If you did not create a company account, no further action is required.');
+            ->line('If you did not create an applicant account, no further action is required.');
     }
 }

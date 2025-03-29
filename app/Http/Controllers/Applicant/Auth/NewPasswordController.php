@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Company\Auth;
+namespace App\Http\Controllers\Applicant\Auth;
 
-use App\Http\Requests\Company\Auth\NewPasswordRequest;
-use App\Models\Company;
+use App\Http\Requests\Applicant\Auth\NewPasswordRequest;
+use App\Models\Applicant;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Http\RedirectResponse;
@@ -25,8 +25,8 @@ final class NewPasswordController
      */
     public function create(Request $request): Response
     {
-        return Inertia::render('company/auth/reset-password', [
-            'email' => $request->input('email'),
+        return Inertia::render('applicant/auth/reset-password', [
+            'email' => $request->string('email'),
             'token' => $request->route('token'),
         ]);
     }
@@ -38,28 +38,28 @@ final class NewPasswordController
      */
     public function store(NewPasswordRequest $request): RedirectResponse
     {
-        $status = Password::broker('companies')->reset(
+        $status = Password::broker('applicants')->reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (CanResetPassword $company, string $password): void {
-                if (! $company instanceof Company) {
+            function (CanResetPassword $applicant, string $password): void {
+                if (! $applicant instanceof Applicant) {
                     return;
                 }
 
-                $company->forceFill([
+                $applicant->forceFill([
                     'password' => Hash::make($password),
                     'remember_token' => Str::random(60),
                 ])->save();
 
-                event(new PasswordReset($company));
+                event(new PasswordReset($applicant));
             }
         );
 
-        // If the password was successfully reset, we will redirect the company back to
-        // the application's home authenticated view. If there is an error we can
+        // If the password was successfully reset, we will redirect the applicant back to
+        // the application's login view. If there is an error we can
         // redirect them back to where they came from with their error message.
         if ($status === Password::PASSWORD_RESET) {
             return redirect()
-                ->route('company.login')
+                ->route('applicant.login')
                 ->with('status', Lang::get($status));
         }
 

@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Auth\Providers;
 
-use App\Models\Company;
+use App\Models\Applicant;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 
-final class CompanyUserProvider extends EloquentUserProvider
+final class ApplicantUserProvider extends EloquentUserProvider
 {
     /**
-     * Create a new company user provider.
+     * Create a new applicant user provider.
      */
     public function __construct(HasherContract $hasher)
     {
-        parent::__construct($hasher, Company::class);
+        parent::__construct($hasher, Applicant::class);
     }
 
     /**
@@ -39,8 +39,8 @@ final class CompanyUserProvider extends EloquentUserProvider
         // Eloquent User "model" that will be utilized by the Guard instances.
 
         // Create query and explicitly specify the model type
-        /** @var Builder<Company> $query */
-        $query = Company::query();
+        /** @var Builder<Applicant> $query */
+        $query = Applicant::query();
 
         foreach ($credentials as $key => $value) {
             if (is_array($value)) {
@@ -56,9 +56,6 @@ final class CompanyUserProvider extends EloquentUserProvider
             $query->where($key, $value);
         }
 
-        // Additional check for active and not blocked company
-        $query->where('active', true)->where('blocked', false);
-
         return $query->first();
     }
 
@@ -69,12 +66,7 @@ final class CompanyUserProvider extends EloquentUserProvider
      */
     public function validateCredentials(Authenticatable $user, array $credentials): bool
     {
-        if (! $user instanceof Company) {
-            return false;
-        }
-
-        // Check if company is active and not blocked
-        if ($user->active !== true || $user->blocked === true) {
+        if (! $user instanceof Applicant) {
             return false;
         }
 

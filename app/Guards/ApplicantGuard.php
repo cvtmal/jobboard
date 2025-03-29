@@ -8,7 +8,7 @@ use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Session\Session;
 
-final class CompanyGuard extends SessionGuard
+final class ApplicantGuard extends SessionGuard
 {
     /**
      * Attempt to authenticate a user using the given credentials.
@@ -41,7 +41,7 @@ final class CompanyGuard extends SessionGuard
 
     /**
      * Get the session store used by the guard.
-     * Overriding the parent method to align with my preference
+     * Overriding the parent method to align with preference
      * for strict typing with explicit return type.
      */
     public function getSession(): Session
