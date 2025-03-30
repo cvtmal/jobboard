@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\ApplicationProcess;
 use App\Enums\EmploymentType;
 use App\Enums\ExperienceLevel;
+use App\Enums\JobCategory;
 use App\Enums\JobStatus;
 use App\Enums\SalaryOption;
 use App\Enums\SalaryType;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -73,6 +75,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Company $company
  * @property-read JobTier|null $jobTier
  * @property-read Collection<int, JobListingAdditionalLocation> $additionalLocations
+ * @property-read Collection<int, Skill> $skills
  *
  * @method static JobListingFactory factory($count = null, $state = [])
  * @method static Builder<static>|JobListing newModelQuery()
@@ -164,6 +167,7 @@ final class JobListing extends Model
         'primary_longitude' => 'float',
         'has_multiple_locations' => 'boolean',
         'allows_remote' => 'boolean',
+        'category' => JobCategory::class,
     ];
 
     /**
@@ -284,5 +288,15 @@ final class JobListing extends Model
         if (! empty($this->postcode)) {
             $this->primary_sub_region = SwissSubRegion::detectFromPostalCode((string) $this->postcode);
         }
+    }
+
+    /**
+     * Get the skills for this job listing.
+     *
+     * @return BelongsToMany<Skill>
+     */
+    public function skills(): BelongsToMany
+    {
+        return $this->belongsToMany(Skill::class);
     }
 }

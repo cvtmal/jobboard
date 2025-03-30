@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Actions\JobListing\CreateJobListingAction;
 use App\Actions\JobListing\DeleteJobListingAction;
 use App\Actions\JobListing\UpdateJobListingAction;
+use App\Enums\JobCategory;
 use App\Http\Requests\JobListing\CreateJobListingRequest;
 use App\Http\Requests\JobListing\DeleteJobListingRequest;
 use App\Http\Requests\JobListing\UpdateJobListingRequest;
@@ -36,7 +37,9 @@ final class JobListingController
 
     public function create(): Response
     {
-        return Inertia::render('JobListings/Create');
+        return Inertia::render('JobListings/Create', [
+            'categoryOptions' => JobCategory::options(),
+        ]);
     }
 
     /**
@@ -59,6 +62,7 @@ final class JobListingController
 
         return Inertia::render('JobListings/Show', [
             'jobListing' => $jobListing,
+            'categoryLabel' => $jobListing->category?->label(),
         ]);
     }
 
@@ -73,6 +77,7 @@ final class JobListingController
 
         return Inertia::render('JobListings/Edit', [
             'jobListing' => $jobListing,
+            'categoryOptions' => JobCategory::options(),
         ]);
     }
 

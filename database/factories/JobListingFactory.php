@@ -7,6 +7,7 @@ namespace Database\Factories;
 use App\Enums\ApplicationProcess;
 use App\Enums\EmploymentType;
 use App\Enums\ExperienceLevel;
+use App\Enums\JobCategory;
 use App\Enums\JobStatus;
 use App\Enums\SalaryOption;
 use App\Enums\SalaryType;
@@ -36,6 +37,7 @@ final class JobListingFactory extends Factory
 
         return [
             'company_id' => $companyId,
+            'category' => fake()->optional(0.9)->randomElement(JobCategory::cases()),
             'reference_number' => 'JOB-'.Str::upper(Str::random(8)),
             'title' => $title,
             'description' => fake()->paragraphs(3, true),
@@ -57,7 +59,7 @@ final class JobListingFactory extends Factory
             'primary_canton_code' => fake()->optional(0.9)->randomElement(SwissCanton::cases()),
             'primary_sub_region' => function (array $attributes) {
                 if (isset($attributes['primary_canton_code'])) {
-                    $canton = SwissCanton::from($attributes['primary_canton_code']);
+                    $canton = $attributes['primary_canton_code'];
                     $subRegions = SwissSubRegion::forCanton($canton);
                     if ($subRegions !== []) {
                         return fake()->randomElement($subRegions);

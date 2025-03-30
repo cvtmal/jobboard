@@ -1,8 +1,8 @@
 import '../css/app.css';
 
-import { createRoot } from 'react-dom/client';
-import { createInertiaApp, router } from '@inertiajs/react';
+import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
 import { loadTranslations } from './utils/i18n';
 
@@ -42,19 +42,21 @@ createInertiaApp({
         const locale = props.initialPage.props.locale.current;
 
         // Load translations and store them globally
-        loadTranslations(locale).then(translations => {
-            (window as any).__translations = translations;
+        loadTranslations(locale)
+            .then((translations) => {
+                (window as any).__translations = translations;
 
-            // Set HTML lang attribute
-            document.documentElement.lang = locale;
+                // Set HTML lang attribute
+                document.documentElement.lang = locale;
 
-            // Render the app after translations are loaded
-            root.render(<App {...props} />);
-        }).catch(error => {
-            console.error('Failed to load translations:', error);
-            // Still render the app even if translations failed to load
-            root.render(<App {...props} />);
-        });
+                // Render the app after translations are loaded
+                root.render(<App {...props} />);
+            })
+            .catch((error) => {
+                console.error('Failed to load translations:', error);
+                // Still render the app even if translations failed to load
+                root.render(<App {...props} />);
+            });
     },
     progress: {
         color: '#4B5563',

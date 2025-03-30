@@ -1,7 +1,6 @@
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 import { SwissCanton } from './enums/SwissCanton';
-import { SwissRegion } from './enums/SwissRegion';
 import { SwissSubRegion } from './enums/SwissSubRegion';
 
 export interface Auth {

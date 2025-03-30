@@ -7,6 +7,7 @@ namespace App\Http\Requests\JobListing;
 use App\Enums\ApplicationProcess;
 use App\Enums\EmploymentType;
 use App\Enums\ExperienceLevel;
+use App\Enums\JobCategory;
 use App\Enums\JobStatus;
 use App\Enums\SalaryOption;
 use App\Enums\SalaryType;
@@ -34,6 +35,7 @@ final class CreateJobListingRequest extends FormRequest
     {
         return [
             'company_id' => ['required', 'integer', 'exists:companies,id'],
+            'category' => ['nullable', new Enum(JobCategory::class)],
             'reference_number' => ['nullable', 'string', 'max:255'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
