@@ -10,6 +10,8 @@ use App\Enums\ExperienceLevel;
 use App\Enums\JobStatus;
 use App\Enums\SalaryOption;
 use App\Enums\SalaryType;
+use App\Enums\SwissCanton;
+use App\Enums\SwissSubRegion;
 use App\Enums\Workplace;
 use App\Models\Company;
 use App\Models\JobListing;
@@ -52,6 +54,22 @@ final class JobListingFactory extends Factory
             'address' => fake()->optional()->streetAddress(),
             'postcode' => fake()->optional()->postcode(),
             'city' => fake()->optional()->city(),
+            'primary_canton_code' => fake()->optional(0.9)->randomElement(SwissCanton::cases()),
+            'primary_sub_region' => function (array $attributes) {
+                if (isset($attributes['primary_canton_code'])) {
+                    $canton = SwissCanton::from($attributes['primary_canton_code']);
+                    $subRegions = SwissSubRegion::forCanton($canton);
+                    if ($subRegions !== []) {
+                        return fake()->randomElement($subRegions);
+                    }
+                }
+
+                return null;
+            },
+            'primary_latitude' => fake()->optional()->latitude(45.8, 47.8),
+            'primary_longitude' => fake()->optional()->longitude(5.9, 10.5),
+            'has_multiple_locations' => fake()->boolean(20), // 20% chance of having multiple locations
+            'allows_remote' => fake()->boolean(30), // 30% chance of allowing remote work
             'no_salary' => fake()->boolean(30), // 30% chance of not showing salary
             'salary_type' => fake()->optional()->randomElement(SalaryType::cases()),
             'salary_option' => fake()->optional()->randomElement(SalaryOption::cases()),

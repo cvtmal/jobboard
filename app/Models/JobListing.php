@@ -10,6 +10,9 @@ use App\Enums\ExperienceLevel;
 use App\Enums\JobStatus;
 use App\Enums\SalaryOption;
 use App\Enums\SalaryType;
+use App\Enums\SwissCanton;
+use App\Enums\SwissRegion;
+use App\Enums\SwissSubRegion;
 use App\Enums\Workplace;
 use Carbon\CarbonImmutable;
 use Database\Factories\JobListingFactory;
@@ -42,6 +45,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $address
  * @property string|null $postcode
  * @property string|null $city
+ * @property SwissCanton|null $primary_canton_code
+ * @property SwissSubRegion|null $primary_sub_region
+ * @property float|null $primary_latitude
+ * @property float|null $primary_longitude
+ * @property bool $has_multiple_locations
+ * @property bool $allows_remote
  * @property bool $no_salary
  * @property SalaryType|null $salary_type
  * @property SalaryOption|null $salary_option
@@ -63,6 +72,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read int|null $applications_count
  * @property-read Company $company
  * @property-read JobTier|null $jobTier
+ * @property-read Collection<int, JobListingAdditionalLocation> $additionalLocations
  *
  * @method static JobListingFactory factory($count = null, $state = [])
  * @method static Builder<static>|JobListing newModelQuery()
@@ -105,6 +115,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static Builder<static>|JobListing whereWorkloadMax($value)
  * @method static Builder<static>|JobListing whereWorkloadMin($value)
  * @method static Builder<static>|JobListing whereWorkplace($value)
+ * @method static Builder<static>|JobListing wherePrimaryCantonCode($value)
+ * @method static Builder<static>|JobListing wherePrimaryLatitude($value)
+ * @method static Builder<static>|JobListing wherePrimaryLongitude($value)
+ * @method static Builder<static>|JobListing whereHasMultipleLocations($value)
+ * @method static Builder<static>|JobListing whereAllowsRemote($value)
  *
  * @mixin Eloquent
  */
@@ -143,6 +158,12 @@ final class JobListing extends Model
         'application_process' => ApplicationProcess::class,
         'status' => JobStatus::class,
         'salary_currency' => 'string',
+        'primary_canton_code' => SwissCanton::class,
+        'primary_sub_region' => SwissSubRegion::class,
+        'primary_latitude' => 'float',
+        'primary_longitude' => 'float',
+        'has_multiple_locations' => 'boolean',
+        'allows_remote' => 'boolean',
     ];
 
     /**
@@ -173,5 +194,95 @@ final class JobListing extends Model
     public function applications(): HasMany
     {
         return $this->hasMany(JobApplication::class);
+    }
+
+    /**
+     * Get the additional locations for this job listing.
+     *
+     * @return HasMany<JobListingAdditionalLocation, $this>
+     */
+    public function additionalLocations(): HasMany
+    {
+        return $this->hasMany(JobListingAdditionalLocation::class);
+    }
+
+    /**
+     * Get the primary region based on the primary canton
+     */
+    public function primaryRegion(): ?SwissRegion
+    {
+        return $this->primary_canton_code?->region();
+    }
+
+    /**
+     * Scope for jobs in a specific canton (checks both primary and additional locations)
+     *
+     * @param  Builder<JobListing>  $query
+     * @return Builder<JobListing>
+     */
+    public function scopeInCanton(Builder $query, SwissCanton $canton): Builder
+    {
+        return $query->where(function ($query) use ($canton): void {
+            $query->where('primary_canton_code', $canton->value)
+                ->orWhereHas('additionalLocations', function ($query) use ($canton): void {
+                    $query->where('canton_code', $canton->value);
+                });
+        });
+    }
+
+    /**
+     * Scope for jobs in a specific region (checks both primary and additional locations)
+     *
+     * @param  Builder<JobListing>  $query
+     * @return Builder<JobListing>
+     */
+    public function scopeInRegion(Builder $query, SwissRegion $region): Builder
+    {
+        $cantonCodes = $region->cantonCodes();
+
+        return $query->where(function ($query) use ($cantonCodes): void {
+            $query->whereIn('primary_canton_code', $cantonCodes)
+                ->orWhereHas('additionalLocations', function ($query) use ($cantonCodes): void {
+                    $query->whereIn('canton_code', $cantonCodes);
+                });
+        });
+    }
+
+    /**
+     * Scope for remote jobs
+     *
+     * @param  Builder<JobListing>  $query
+     * @return Builder<JobListing>
+     */
+    public function scopeRemote(Builder $query): Builder
+    {
+        return $query->where('allows_remote', true);
+    }
+
+    /**
+     * Scope for jobs in a specific sub-region
+     *
+     * @param  Builder<JobListing>  $query
+     * @return Builder<JobListing>
+     */
+    public function scopeInSubRegion(Builder $query, SwissSubRegion $subRegion): Builder
+    {
+        return $query->where(function ($query) use ($subRegion): void {
+            $query->where('primary_sub_region', $subRegion->value)
+                ->orWhereHas('additionalLocations', function ($query) use ($subRegion): void {
+                    $query->where('sub_region', $subRegion->value);
+                });
+        });
+    }
+
+    /**
+     * Detect and set the sub-region based on postal code
+     * If the postal code doesn't match any defined sub-region, it will leave the field null
+     */
+    public function detectAndSetSubRegion(): void
+    {
+        if (! empty($this->postcode)) {
+            $this->primary_sub_region = SwissSubRegion::detectFromPostalCode((string) $this->postcode);
+        }
     }
 }

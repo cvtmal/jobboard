@@ -4,3 +4,6 @@ export { CompanyNavUser } from './company-nav-user';
 export { NavUser } from './nav-user';
 export { UserInfo } from './user-info';
 export { UserMenuContent } from './user-menu-content';
+
+// Export job listings components
+export { LocationFilter, LocationFilterExample } from './job-listings';

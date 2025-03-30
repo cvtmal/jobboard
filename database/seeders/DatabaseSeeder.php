@@ -21,5 +21,11 @@ final class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // Call the job listings seeder
+        $this->call([
+            BasicJobListingSeeder::class,
+            JobTierSeeder::class,
+        ]);
     }
 }
