@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\JobListingController;
+use App\Http\Controllers\PublicJobListingController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -28,5 +29,5 @@ Route::middleware(['auth:company', 'verified.company'])->group(function () {
 });
 
 // Public job viewing route
-Route::get('jobs/{jobListing}', [JobListingController::class, 'publicShow'])
+Route::get('jobs/{jobListing}', [PublicJobListingController::class, 'show'])
     ->name('jobs.show');
