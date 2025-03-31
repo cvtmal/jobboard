@@ -26,3 +26,7 @@ Route::middleware(['auth:company', 'verified.company'])->group(function () {
     Route::delete('company/job-listings/{jobListing}', [JobListingController::class, 'destroy'])
         ->name('company.job-listings.destroy');
 });
+
+// Public job viewing route
+Route::get('jobs/{jobListing}', [JobListingController::class, 'publicShow'])
+    ->name('jobs.show');

@@ -121,4 +121,21 @@ final class JobListingController
         return redirect()->route('job-listings.index')
             ->with('success', 'Job listing deleted successfully.');
     }
+
+    /**
+     * Display the public view of a job listing.
+     */
+    public function publicShow(JobListing $jobListing): Response
+    {
+        // Only show published jobs to the public
+        if ($jobListing->status !== \App\Enums\JobStatus::PUBLISHED) {
+            abort(404);
+        }
+
+        $jobListing->load('company');
+
+        return Inertia::render('Jobs/Show', [
+            'jobListing' => $jobListing,
+        ]);
+    }
 }
