@@ -92,10 +92,20 @@ export default function Welcome({ auth, jobListings = [] }: WelcomeProps) {
 
     return (
         <div className={isDarkMode ? 'dark' : ''}>
-            <div className={`relative min-h-screen antialiased ${isDarkMode ? 'bg-gray-950 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
-                {/* Cyber grid background */}
-                <div className="pointer-events-none fixed inset-0 bg-gradient-to-b from-transparent to-black opacity-5 dark:opacity-20" />
-                <div className="bg-grid-white/[0.03] bg-grid-12/12 dark:bg-grid-white/[0.03] pointer-events-none fixed inset-0" />
+            <div className={`relative min-h-screen antialiased overflow-hidden ${isDarkMode ? 'bg-gray-950 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
+                {/* Highly visible grid pattern across the entire screen in dark mode */}
+                <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px] dark:bg-[linear-gradient(to_right,#ffffff12_1px,transparent_1px),linear-gradient(to_bottom,#ffffff12_1px,transparent_1px)]" />
+                
+                {/* Dark strong vignette effect with very dark edges */}
+                <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_center,transparent_10%,rgba(0,0,0,0.85)_90%)] opacity-0 dark:opacity-100"></div>
+                
+                {/* Bright center spotlight */}
+                <div className="pointer-events-none fixed inset-0">
+                    <div className="absolute left-1/2 top-1/2 h-[900px] w-[1400px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(circle_at_center,rgba(130,100,255,0.25)_0%,rgba(120,80,255,0.15)_20%,transparent_60%)] opacity-0 dark:opacity-100 dark:mix-blend-lighten"></div>
+                    
+                    {/* Extra brighter spotlight in the center for more contrast */}
+                    <div className="absolute left-1/2 top-1/2 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(circle_at_center,rgba(170,140,255,0.3)_0%,transparent_70%)] opacity-0 dark:opacity-100 dark:mix-blend-lighten"></div>
+                </div>
 
                 <div className="relative mx-auto max-w-7xl">
                     <header className="px-4 pt-8 pb-6 sm:px-6 lg:px-8">
@@ -191,10 +201,11 @@ export default function Welcome({ auth, jobListings = [] }: WelcomeProps) {
 
                     <main className="px-4 pb-12 sm:px-6 lg:px-8">
                         {/* Main hero section */}
-                        <main className="mx-auto max-w-6xl pb-16">
+                        <main className="mx-auto max-w-6xl pb-16 relative">
                             <div className="mb-16 flex flex-col items-center justify-center text-center">
+                                {/* Focal point for vignette effect */}
                                 <div
-                                    className={`mb-8 inline-flex items-center rounded-full ${
+                                    className={`relative z-10 mb-8 inline-flex items-center rounded-full ${
                                         isDarkMode ? 'bg-gray-800/50 text-indigo-400' : 'bg-indigo-50 text-indigo-600'
                                     } px-3 py-1 text-sm backdrop-blur-sm`}
                                 >
@@ -385,7 +396,7 @@ export default function Welcome({ auth, jobListings = [] }: WelcomeProps) {
                                                                 <path
                                                                     strokeLinecap="round"
                                                                     strokeLinejoin="round"
-                                                                    d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"
+                                                                    d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21m-4.773-4.227-1.591 1.591M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
                                                                 />
                                                             </svg>
                                                         )}
