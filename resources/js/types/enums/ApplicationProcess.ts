@@ -3,8 +3,8 @@
  */
 export enum ApplicationProcess {
     EMAIL = 'email',
-    EXTERNAL = 'external',
-    INTERNAL = 'internal',
+    URL = 'url',
+    BOTH = 'both',
 }
 
 /**
@@ -14,10 +14,10 @@ export function getApplicationProcessLabel(process: ApplicationProcess): string 
     switch (process) {
         case ApplicationProcess.EMAIL:
             return 'Email';
-        case ApplicationProcess.EXTERNAL:
+        case ApplicationProcess.URL:
             return 'External Website';
-        case ApplicationProcess.INTERNAL:
-            return 'Internal Application Form';
+        case ApplicationProcess.BOTH:
+            return 'Both Email and External Website';
         default:
             return 'Unknown';
     }

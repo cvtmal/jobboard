@@ -3,7 +3,9 @@
  */
 export enum JobStatus {
     DRAFT = 'draft',
+    PENDING = 'pending',
     PUBLISHED = 'published',
+    EXPIRED = 'expired',
     CLOSED = 'closed',
 }
 
@@ -14,8 +16,12 @@ export function getJobStatusLabel(status: JobStatus): string {
     switch (status) {
         case JobStatus.DRAFT:
             return 'Draft';
+        case JobStatus.PENDING:
+            return 'Pending';
         case JobStatus.PUBLISHED:
             return 'Published';
+        case JobStatus.EXPIRED:
+            return 'Expired';
         case JobStatus.CLOSED:
             return 'Closed';
         default:

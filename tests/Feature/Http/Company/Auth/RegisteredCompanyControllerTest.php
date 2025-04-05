@@ -19,6 +19,9 @@ it('displays the company registration page', function () {
 it('registers a new company', function () {
     $companyData = [
         'name' => 'Test Company',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'phone_number' => '+1234567890',
         'email' => 'test-company@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',
@@ -34,6 +37,9 @@ it('registers a new company', function () {
     // Verify company was created in the database
     $this->assertDatabaseHas('companies', [
         'name' => 'Test Company',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'phone_number' => '+1234567890',
         'email' => 'test-company@example.com',
         'address' => '123 Test Street',
         'postcode' => '12345',
@@ -51,15 +57,21 @@ it('validates company registration data', function () {
     // Missing required fields
     $response = $this->post(route('company.register'), [
         'name' => '',
+        'first_name' => '',
+        'last_name' => '',
+        'phone_number' => '',
         'email' => '',
         'password' => '',
     ]);
 
-    $response->assertSessionHasErrors(['name', 'email', 'password']);
+    $response->assertSessionHasErrors(['name', 'first_name', 'last_name', 'phone_number', 'email', 'password']);
 
     // Invalid email
     $response = $this->post(route('company.register'), [
         'name' => 'Test Company',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'phone_number' => '+1234567890',
         'email' => 'not-an-email',
         'password' => 'password123',
         'password_confirmation' => 'password123',
@@ -70,6 +82,9 @@ it('validates company registration data', function () {
     // Password confirmation mismatch
     $response = $this->post(route('company.register'), [
         'name' => 'Test Company',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'phone_number' => '+1234567890',
         'email' => 'test-company@example.com',
         'password' => 'password123',
         'password_confirmation' => 'different-password',
@@ -80,6 +95,9 @@ it('validates company registration data', function () {
     // Invalid URL
     $response = $this->post(route('company.register'), [
         'name' => 'Test Company',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'phone_number' => '+1234567890',
         'email' => 'test-company@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',
@@ -98,6 +116,9 @@ it('prevents duplicate company email registrations', function () {
     // Try to register another company with the same email
     $response = $this->post(route('company.register'), [
         'name' => 'Duplicate Company',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'phone_number' => '+1234567890',
         'email' => 'existing@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',

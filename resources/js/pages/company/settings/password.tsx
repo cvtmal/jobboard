@@ -7,7 +7,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AppLayout from '@/layouts/app-layout';
+import CompanyLayout from '@/layouts/company-layout';
 import CompanySettingsLayout from '@/layouts/company/settings-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -49,7 +49,7 @@ export default function CompanyPassword() {
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <CompanyLayout breadcrumbs={breadcrumbs}>
             <Head title="Company Password" />
 
             <CompanySettingsLayout>
@@ -117,6 +117,6 @@ export default function CompanyPassword() {
                     </form>
                 </div>
             </CompanySettingsLayout>
-        </AppLayout>
+        </CompanyLayout>
     );
 }

@@ -1,12 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import AppLayout from '@/layouts/app-layout';
+import CompanyLayout from '@/layouts/company-layout';
 import { type Auth } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 
 export default function CompanyDashboard({ auth }: { auth: Auth }) {
     return (
-        <AppLayout>
+        <CompanyLayout>
             <Head title="Company Dashboard" />
 
             <div className="py-12">
@@ -90,6 +90,6 @@ export default function CompanyDashboard({ auth }: { auth: Auth }) {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </CompanyLayout>
     );
 }

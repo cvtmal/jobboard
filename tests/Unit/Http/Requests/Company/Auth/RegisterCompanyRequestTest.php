@@ -26,6 +26,21 @@ it('has the expected validation rules', function () {
         ->and($rules['name'])->toContain('string')
         ->and($rules['name'])->toContain('max:255')
 
+        ->and($rules)->toHaveKey('first_name')
+        ->and($rules['first_name'])->toContain('required')
+        ->and($rules['first_name'])->toContain('string')
+        ->and($rules['first_name'])->toContain('max:255')
+
+        ->and($rules)->toHaveKey('last_name')
+        ->and($rules['last_name'])->toContain('required')
+        ->and($rules['last_name'])->toContain('string')
+        ->and($rules['last_name'])->toContain('max:255')
+
+        ->and($rules)->toHaveKey('phone_number')
+        ->and($rules['phone_number'])->toContain('required')
+        ->and($rules['phone_number'])->toContain('string')
+        ->and($rules['phone_number'])->toContain('max:50')
+
         ->and($rules)->toHaveKey('email')
         ->and($rules['email'])->toContain('required')
         ->and($rules['email'])->toContain('email')
@@ -72,6 +87,9 @@ it('enforces unique email validation for companies', function () {
     // Set up validator with test data
     $validator = validator([
         'name' => 'Test Company',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'phone_number' => '+1234567890',
         'email' => 'existing@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',
@@ -86,6 +104,9 @@ it('validates mismatched passwords for company registration', function () {
     // Set up validator with test data that has mismatched passwords
     $validator = validator([
         'name' => 'Test Company',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'phone_number' => '+1234567890',
         'email' => 'new-company@example.com',
         'password' => 'password123',
         'password_confirmation' => 'differentpassword',
@@ -100,6 +121,9 @@ it('validates optional company fields', function () {
     // Invalid URL
     $validator = validator([
         'name' => 'Test Company',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'phone_number' => '+1234567890',
         'email' => 'valid@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',
@@ -115,6 +139,9 @@ it('passes validation with valid company data', function () {
     // Set up validator with valid test data
     $validator = validator([
         'name' => 'Test Company',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'phone_number' => '+1234567890',
         'email' => 'new-company@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',

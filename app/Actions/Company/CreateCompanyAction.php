@@ -23,6 +23,9 @@ final class CreateCompanyAction
     {
         $company = DB::transaction(fn () => Company::create([
             'name' => $data['name'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'phone_number' => $data['phone_number'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']), // @phpstan-ignore-line
             'address' => $data['address'] ?? null,

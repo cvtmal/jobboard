@@ -19,6 +19,10 @@ Route::middleware(['auth:company', 'verified.company'])->group(function () {
     Route::get('company/dashboard', function () {
         return Inertia::render('company/dashboard');
     })->name('company.dashboard');
+
+    Route::get('company/onboarding', function () {
+        return Inertia::render('company/onboarding');
+    })->name('company.onboarding');
 });
 
 // Applicant routes

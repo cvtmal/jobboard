@@ -83,7 +83,6 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
-    const isCompany = !!auth.company;
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -91,7 +90,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={isCompany ? '/company/dashboard' : '/dashboard'} prefetch>
+                            <Link href="/dashboard" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -105,7 +104,7 @@ export function AppSidebar() {
 
             <SidebarFooter>
                 <NavFooter items={footerNavItems} className="mt-auto" />
-                {isCompany ? <CompanyNavUser /> : <NavUser />}
+                <NavUser />
             </SidebarFooter>
         </Sidebar>
     );

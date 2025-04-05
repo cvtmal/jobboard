@@ -21,6 +21,9 @@ use Illuminate\Notifications\Notifiable;
 /**
  * @property int $id
  * @property string $name
+ * @property string|null $first_name
+ * @property string|null $last_name
+ * @property string|null $phone_number
  * @property string|null $address
  * @property string|null $postcode
  * @property string|null $city
@@ -67,14 +70,17 @@ use Illuminate\Notifications\Notifiable;
  * @method static Builder<static>|Company whereDescriptionItalian($value)
  * @method static Builder<static>|Company whereEmail($value)
  * @method static Builder<static>|Company whereEmailVerifiedAt($value)
+ * @method static Builder<static>|Company whereFirstName($value)
  * @method static Builder<static>|Company whereId($value)
  * @method static Builder<static>|Company whereInternalNotes($value)
+ * @method static Builder<static>|Company whereLastName($value)
  * @method static Builder<static>|Company whereLatitude($value)
  * @method static Builder<static>|Company whereLogo($value)
  * @method static Builder<static>|Company whereLongitude($value)
  * @method static Builder<static>|Company whereName($value)
  * @method static Builder<static>|Company whereNewsletter($value)
  * @method static Builder<static>|Company wherePassword($value)
+ * @method static Builder<static>|Company wherePhoneNumber($value)
  * @method static Builder<static>|Company wherePostcode($value)
  * @method static Builder<static>|Company whereRememberToken($value)
  * @method static Builder<static>|Company whereSize($value)

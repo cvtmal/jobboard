@@ -13,6 +13,9 @@ it('creates a company with required fields', function () {
 
     $data = [
         'name' => 'Test Company',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'phone_number' => '+1234567890',
         'email' => 'test@example.com',
         'password' => 'password123',
     ];
@@ -21,6 +24,9 @@ it('creates a company with required fields', function () {
 
     expect($company)->toBeInstanceOf(Company::class)
         ->and($company->name)->toBe('Test Company')
+        ->and($company->first_name)->toBe('John')
+        ->and($company->last_name)->toBe('Doe')
+        ->and($company->phone_number)->toBe('+1234567890')
         ->and($company->email)->toBe('test@example.com')
         ->and($company->active)->toBeTrue()
         ->and($company->blocked)->toBeFalse()
@@ -32,6 +38,9 @@ it('creates a company with optional fields', function () {
 
     $data = [
         'name' => 'Test Company',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'phone_number' => '+1234567890',
         'email' => 'test@example.com',
         'password' => 'password123',
         'address' => '123 Test Street',
@@ -44,6 +53,9 @@ it('creates a company with optional fields', function () {
 
     expect($company)->toBeInstanceOf(Company::class)
         ->and($company->name)->toBe('Test Company')
+        ->and($company->first_name)->toBe('John')
+        ->and($company->last_name)->toBe('Doe')
+        ->and($company->phone_number)->toBe('+1234567890')
         ->and($company->email)->toBe('test@example.com')
         ->and($company->address)->toBe('123 Test Street')
         ->and($company->postcode)->toBe('12345')
