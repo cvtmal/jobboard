@@ -159,13 +159,14 @@ export default function EditJobListing({ auth, jobListing, categoryOptions, erro
                         <SelectValue placeholder="Select employment type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value={EmploymentType.FULL_TIME}>Full Time</SelectItem>
-                        <SelectItem value={EmploymentType.PART_TIME}>Part Time</SelectItem>
-                        <SelectItem value={EmploymentType.FULL_PART_TIME}>Full/Part Time</SelectItem>
-                        <SelectItem value={EmploymentType.CONTRACT}>Contract</SelectItem>
-                        <SelectItem value={EmploymentType.TEMPORARY}>Temporary</SelectItem>
+                        <SelectItem value={EmploymentType.PERMANENT}>Permanent position</SelectItem>
+                        <SelectItem value={EmploymentType.TEMPORARY}>Temporary employment</SelectItem>
+                        <SelectItem value={EmploymentType.FREELANCE}>Freelance</SelectItem>
                         <SelectItem value={EmploymentType.INTERNSHIP}>Internship</SelectItem>
-                        <SelectItem value={EmploymentType.VOLUNTEER}>Volunteer</SelectItem>
+                        <SelectItem value={EmploymentType.SIDE_JOB}>Side job</SelectItem>
+                        <SelectItem value={EmploymentType.APPRENTICESHIP}>Apprenticeship</SelectItem>
+                        <SelectItem value={EmploymentType.WORKING_STUDENT}>Working student</SelectItem>
+                        <SelectItem value={EmploymentType.INTERIM}>Interim</SelectItem>
                       </SelectContent>
                     </Select>
                     {errors.employment_type && <p className="mt-1 text-sm text-red-500">{errors.employment_type}</p>}

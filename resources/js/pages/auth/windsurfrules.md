@@ -1,4 +1,4 @@
-# We're building a job board application.
+We're building a job board application.
 
 # Styling & UI
 - Use Tailwind CSS for styling.

@@ -27,6 +27,8 @@ final class CreateCustomJobListingAction
             $jobData = [
                 'company_id' => $company->id,
                 'title' => $data['title'],
+                'workload_min' => $data['workload_min'],
+                'workload_max' => $data['workload_max'],
                 'description' => $this->formatDescription($data),
                 'workplace' => $data['workplace'],
                 'status' => $data['status'],

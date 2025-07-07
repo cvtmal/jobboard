@@ -2,13 +2,14 @@
  * TypeScript enum that mirrors the PHP EmploymentType enum
  */
 export enum EmploymentType {
-    FULL_TIME = 'full-time',
-    PART_TIME = 'part-time',
-    FULL_PART_TIME = 'full-part-time',
-    CONTRACT = 'contract',
+    PERMANENT = 'permanent',
     TEMPORARY = 'temporary',
+    FREELANCE = 'freelance',
     INTERNSHIP = 'internship',
-    VOLUNTEER = 'volunteer',
+    SIDE_JOB = 'side-job',
+    APPRENTICESHIP = 'apprenticeship',
+    WORKING_STUDENT = 'working-student',
+    INTERIM = 'interim',
 }
 
 /**
@@ -16,20 +17,22 @@ export enum EmploymentType {
  */
 export function getEmploymentTypeLabel(type: EmploymentType): string {
     switch (type) {
-        case EmploymentType.FULL_TIME:
-            return 'Full Time';
-        case EmploymentType.PART_TIME:
-            return 'Part Time';
-        case EmploymentType.FULL_PART_TIME:
-            return 'Full/Part Time';
-        case EmploymentType.CONTRACT:
-            return 'Contract';
+        case EmploymentType.PERMANENT:
+            return 'Permanent position';
         case EmploymentType.TEMPORARY:
-            return 'Temporary';
+            return 'Temporary employment';
+        case EmploymentType.FREELANCE:
+            return 'Freelance';
         case EmploymentType.INTERNSHIP:
             return 'Internship';
-        case EmploymentType.VOLUNTEER:
-            return 'Volunteer';
+        case EmploymentType.SIDE_JOB:
+            return 'Side job';
+        case EmploymentType.APPRENTICESHIP:
+            return 'Apprenticeship';
+        case EmploymentType.WORKING_STUDENT:
+            return 'Working student';
+        case EmploymentType.INTERIM:
+            return 'Interim';
         default:
             return '';
     }

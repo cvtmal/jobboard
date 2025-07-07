@@ -19,6 +19,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
+use Illuminate\Http\Request;
 
 final class JobListingController
 {
@@ -57,10 +58,9 @@ final class JobListingController
         $company = $request->user('company');
 
         /** @var Company $company */
-        $action->execute($company, $request->validated());
+        $jobListing = $action->execute($company, $request->validated());
 
-        return redirect()->route('company.job-listings.index')
-            ->with('success', 'Job listing created successfully.');
+        return redirect()->route('company.job-listings.screening', $jobListing);
     }
 
     public function show(JobListing $jobListing): Response
@@ -112,6 +112,35 @@ final class JobListingController
 
         return redirect()->route('company.job-listings.show', $jobListing)
             ->with('success', 'Job listing updated successfully.');
+    }
+
+    /**
+     * @throws AuthorizationException
+     */
+    public function editScreening(JobListing $jobListing): Response
+    {
+        $this->authorize('update', $jobListing);
+
+        return Inertia::render('company/job-listings/screening', [
+            'jobListing' => $jobListing,
+        ]);
+    }
+
+    /**
+     * @throws Throwable
+     * @throws AuthorizationException
+     */
+    public function updateScreening(Request $request, JobListing $jobListing): RedirectResponse
+    {
+        $this->authorize('update', $jobListing);
+
+        $jobListing->update($request->validate([
+            'application_documents' => 'nullable|array',
+            'screening_questions' => 'nullable|array',
+        ]));
+
+        return redirect()->route('company.job-listings.show', $jobListing)
+            ->with('success', 'Screening questions and application requirements added successfully.');
     }
 
     /**

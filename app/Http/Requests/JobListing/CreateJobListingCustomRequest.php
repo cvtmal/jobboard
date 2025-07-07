@@ -34,6 +34,8 @@ final class CreateJobListingCustomRequest extends FormRequest
         return [
             'company_id' => ['required', 'integer', 'exists:companies,id'],
             'title' => ['required', 'string', 'max:255'],
+            'workload_min' => ['required', 'numeric', 'min:0'],
+            'workload_max' => ['required', 'numeric', 'min:0', 'max:100', 'gte:workload_min'],
             'company_description' => ['nullable', 'string'],
             'description' => ['required', 'string'],
             'requirements' => ['required', 'string'],
@@ -47,7 +49,7 @@ final class CreateJobListingCustomRequest extends FormRequest
             // Job details
             'application_language' => ['required', 'string', 'in:english,german,french,italian'],
             'category' => ['required', new Enum(JobCategory::class)],
-            'employment_type' => ['required', 'string', 'in:employee,interim,apprenticeship,internship,working_student,traineeship,side_job,freelance'],
+            'employment_type' => ['required', 'string', 'in:permanent,temporary,freelance,internship,side-job,apprenticeship,working-student,interim'],
             'seniority_level' => ['nullable', 'string', 'in:no_experience,junior,mid_level,professional,senior,lead'],
 
             // Salary
@@ -72,15 +74,15 @@ final class CreateJobListingCustomRequest extends FormRequest
         // Map custom employment type to standard EmploymentType enum
         if ($this->has('employment_type')) {
             $mappedType = match ($this->input('employment_type')) {
-                'employee' => EmploymentType::FULL_TIME->value,
-                'interim' => EmploymentType::TEMPORARY->value,
-                'apprenticeship' => EmploymentType::INTERNSHIP->value,
+                'permanent' => EmploymentType::PERMANENT->value,
+                'temporary' => EmploymentType::TEMPORARY->value,
+                'freelance' => EmploymentType::FREELANCE->value,
                 'internship' => EmploymentType::INTERNSHIP->value,
-                'working_student' => EmploymentType::PART_TIME->value,
-                'traineeship' => EmploymentType::INTERNSHIP->value,
-                'side_job' => EmploymentType::PART_TIME->value,
-                'freelance' => EmploymentType::CONTRACT->value,
-                default => EmploymentType::FULL_TIME->value,
+                'side-job' => EmploymentType::SIDE_JOB->value,
+                'apprenticeship' => EmploymentType::APPRENTICESHIP->value,
+                'working-student' => EmploymentType::WORKING_STUDENT->value,
+                'interim' => EmploymentType::INTERIM->value,
+                default => EmploymentType::PERMANENT->value,
             };
 
             $this->merge([

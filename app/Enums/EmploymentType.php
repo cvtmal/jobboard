@@ -6,13 +6,14 @@ namespace App\Enums;
 
 enum EmploymentType: string
 {
-    case FULL_TIME = 'full-time';
-    case PART_TIME = 'part-time';
-    case FULL_PART_TIME = 'full-part-time';
-    case CONTRACT = 'contract';
+    case PERMANENT = 'permanent';
     case TEMPORARY = 'temporary';
+    case FREELANCE = 'freelance';
     case INTERNSHIP = 'internship';
-    case VOLUNTEER = 'volunteer';
+    case SIDE_JOB = 'side-job';
+    case APPRENTICESHIP = 'apprenticeship';
+    case WORKING_STUDENT = 'working-student';
+    case INTERIM = 'interim';
 
     /**
      * Get all available values as an array.
@@ -30,13 +31,14 @@ enum EmploymentType: string
     public function label(): string
     {
         return match ($this) {
-            self::FULL_TIME => 'Full time',
-            self::PART_TIME => 'Part time',
-            self::FULL_PART_TIME => 'Full/Part time',
-            self::CONTRACT => 'Contract',
-            self::TEMPORARY => 'Temporary',
+            self::PERMANENT => 'Permanent position',
+            self::TEMPORARY => 'Temporary employment',
+            self::FREELANCE => 'Freelance',
             self::INTERNSHIP => 'Internship',
-            self::VOLUNTEER => 'Volunteer',
+            self::SIDE_JOB => 'Side job',
+            self::APPRENTICESHIP => 'Apprenticeship',
+            self::WORKING_STUDENT => 'Working student',
+            self::INTERIM => 'Interim',
         };
     }
 }

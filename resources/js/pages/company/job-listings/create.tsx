@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import CompanyLayout from '@/layouts/company-layout';
 import { useAppearance } from '@/hooks/use-appearance';
@@ -27,13 +28,14 @@ export default function CreateJobListing({ auth, errors, categoryOptions }: Prop
   const { appearance } = useAppearance();
 
   const { data, setData, post, processing } = useForm({
-    // Basic job information
     title: '',
     company_description: '',
     description: '',
     requirements: '',
     benefits: '',
     final_words: '',
+    workload_min: 80,
+    workload_max: 100,
 
     // Location information
     workplace: Workplace.ONSITE,
@@ -42,7 +44,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions }: Prop
     // Application details
     application_language: ApplicationLanguage.ENGLISH,
     category: '',
-    employment_type: CustomEmploymentType.EMPLOYEE,
+    employment_type: CustomEmploymentType.PERMANENT,
     seniority_level: SeniorityLevel.MID_LEVEL,
 
     // Salary information
@@ -67,11 +69,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions }: Prop
       return;
     }
 
-    post(route('company.job-listings.store'), {
-      onSuccess: () => {
-        window.location.href = route('company.job-listings.index');
-      },
-    });
+    post(route('company.job-listings.store'));
   };
 
   return (
@@ -293,17 +291,46 @@ export default function CreateJobListing({ auth, errors, categoryOptions }: Prop
                       <SelectValue placeholder="Select employment type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={CustomEmploymentType.EMPLOYEE}>Employee</SelectItem>
-                      <SelectItem value={CustomEmploymentType.INTERIM}>Interim</SelectItem>
-                      <SelectItem value={CustomEmploymentType.APPRENTICESHIP}>Apprenticeship</SelectItem>
-                      <SelectItem value={CustomEmploymentType.INTERNSHIP}>Internship</SelectItem>
-                      <SelectItem value={CustomEmploymentType.WORKING_STUDENT}>Working Student</SelectItem>
-                      <SelectItem value={CustomEmploymentType.TRAINEESHIP}>Traineeship</SelectItem>
-                      <SelectItem value={CustomEmploymentType.SIDE_JOB}>Side Job</SelectItem>
+                      <SelectItem value={CustomEmploymentType.PERMANENT}>Permanent position</SelectItem>
+                      <SelectItem value={CustomEmploymentType.TEMPORARY}>Temporary employment</SelectItem>
                       <SelectItem value={CustomEmploymentType.FREELANCE}>Freelance</SelectItem>
+                      <SelectItem value={CustomEmploymentType.INTERNSHIP}>Internship</SelectItem>
+                      <SelectItem value={CustomEmploymentType.SIDE_JOB}>Side job</SelectItem>
+                      <SelectItem value={CustomEmploymentType.APPRENTICESHIP}>Apprenticeship</SelectItem>
+                      <SelectItem value={CustomEmploymentType.WORKING_STUDENT}>Working student</SelectItem>
+                      <SelectItem value={CustomEmploymentType.INTERIM}>Interim</SelectItem>
                     </SelectContent>
                   </Select>
                   {errors.employment_type && <p className="mt-1 text-sm text-red-500">{errors.employment_type}</p>}
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <Label htmlFor="workload" className="text-base">
+                      Workload Range <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="mt-6 px-2">
+                      <Slider
+                          id="workload"
+                          min={10}
+                          max={100}
+                          step={10}
+                          value={[data.workload_min, data.workload_max]}
+                          onValueChange={(values) => {
+                            setData('workload_min', values[0]);
+                            setData('workload_max', values[1]);
+                          }}
+                      />
+                    </div>
+                    <div className="mt-2 flex justify-between text-sm text-muted-foreground">
+                      <span>Current range: {data.workload_min}% - {data.workload_max}%</span>
+                    </div>
+                    {(errors.workload_min || errors.workload_max) && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {errors.workload_min || errors.workload_max}
+                        </p>
+                    )}
+                  </div>
                 </div>
 
                 <div>
@@ -435,7 +462,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions }: Prop
                 Cancel
               </Button>
               <Button type="submit" disabled={processing}>
-                Create Job Listing
+                Create and Continue to Screening
               </Button>
             </div>
           </form>
