@@ -14,7 +14,7 @@ it('displays the company registration page', function () {
         ->assertSuccessful()
         ->assertInertia(fn (AssertableInertia $page) => $page->component('company/auth/register')
         );
-});
+})->group('vite');
 
 it('registers a new company', function () {
     $companyData = [

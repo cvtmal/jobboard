@@ -15,7 +15,7 @@ test('it displays password request view', function () {
     $response->assertStatus(200);
     // Skip specific component check
     $response->assertInertia(fn ($page) => $page);
-});
+})->group('vite');
 
 test('it sends password reset link for valid email', function () {
     // Create a company

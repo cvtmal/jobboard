@@ -25,7 +25,7 @@ describe('index', function () {
             ->get(route('company.job-listings.index'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('JobListings/Index')
+                ->component('company/job-listings/index')
                 ->has('jobListings.data', 5)
                 ->has('jobListings.data.0', fn (Assert $listing) => $listing
                     ->has('id')
@@ -81,7 +81,7 @@ describe('create', function () {
             ->get(route('company.job-listings.create'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('JobListings/Create')
+                ->component('company/job-listings/create')
                 // Verify no errors are passed initially
                 ->where('errors', [])
             );
@@ -101,6 +101,14 @@ describe('store', function () {
         $jobData = [
             'title' => 'PHP Developer',
             'description' => 'We are looking for a PHP developer to join our team.',
+            'workload_min' => 80,
+            'workload_max' => 100,
+            'requirements' => 'Experience with PHP, Laravel, and MySQL',
+            'workplace' => 'remote',
+            'office_location' => 'Zurich, Switzerland',
+            'application_language' => 'english',
+            'category' => 'software_engineering',
+            'employment_type' => 'permanent',
             'application_process' => ApplicationProcess::EMAIL->value,
             'status' => JobStatus::DRAFT->value,
             'company_id' => $company->id,
@@ -130,19 +138,21 @@ describe('store', function () {
         $jobData = [
             'title' => 'Senior PHP Developer',
             'description' => 'We are looking for an experienced PHP developer to join our team.',
-            'address' => 'Bahnhofstrasse 1',
-            'city' => 'Zurich',
-            'postcode' => '8001',
-            'salary_min' => '80000',
-            'salary_max' => '120000',
-            'salary_type' => 'yearly', // Using the correct enum value
-            'employment_type' => 'full-time', // Using the correct enum value
-            'experience_level' => 'mid-level', // Using the correct enum value
+            'workload_min' => 80,
+            'workload_max' => 100,
+            'requirements' => 'Experience with PHP, Laravel, and MySQL',
+            'workplace' => 'hybrid',
+            'office_location' => 'Bahnhofstrasse 1, Zurich',
+            'application_language' => 'english',
+            'category' => 'software_engineering',
+            'employment_type' => 'permanent',
+            'salary_min' => 80000,
+            'salary_max' => 120000,
+            'salary_period' => 'yearly',
+            'seniority_level' => 'mid_level',
             'application_process' => ApplicationProcess::EMAIL->value,
-            'application_email' => 'careers@example.com',
             'status' => JobStatus::PUBLISHED->value,
             'company_id' => $company->id,
-            'no_salary' => false,
         ];
 
         // Act
@@ -159,20 +169,13 @@ describe('store', function () {
         // Check if the job listing was actually created with all the fields
         $this->assertDatabaseHas('job_listings', [
             'title' => 'Senior PHP Developer',
-            'description' => 'We are looking for an experienced PHP developer to join our team.',
-            'address' => 'Bahnhofstrasse 1',
-            'city' => 'Zurich',
-            'postcode' => '8001',
+            'city' => 'Bahnhofstrasse 1, Zurich', // office_location gets mapped to city
             'salary_min' => 80000,
             'salary_max' => 120000,
-            'salary_type' => 'yearly',
-            'employment_type' => 'full-time',
-            'experience_level' => 'mid-level',
+            'experience_level' => 'mid-level', // seniority_level gets mapped to experience_level
             'application_process' => ApplicationProcess::EMAIL->value,
-            'application_email' => 'careers@example.com',
             'status' => JobStatus::PUBLISHED->value,
             'company_id' => $company->id,
-            'no_salary' => false,
         ]);
     });
 
@@ -217,7 +220,7 @@ describe('show', function () {
             ->get(route('company.job-listings.show', $jobListing))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('JobListings/Show')
+                ->component('company/job-listings/show')
                 ->has('jobListing', fn (Assert $listing) => $listing
                     ->has('id')
                     ->has('title')
@@ -278,7 +281,7 @@ describe('edit', function () {
             ->get(route('company.job-listings.edit', $jobListing))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('JobListings/Edit')
+                ->component('company/job-listings/edit')
                 ->has('jobListing', fn (Assert $listing) => $listing
                     ->has('id')
                     ->has('title')

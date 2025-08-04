@@ -34,7 +34,7 @@ test('company cannot access protected routes after logout', function () {
     $response = $this->get(route('company.dashboard'));
     $response->assertStatus(302);
     $response->assertRedirect('/login');
-});
+})->group('vite');
 
 test('company remember token is properly cleared after logout', function () {
     // Login with remember token
@@ -66,7 +66,7 @@ test('company remember token is properly cleared after logout', function () {
     // Try to access dashboard without credentials (should fail even with cookie)
     $response = $this->get(route('company.dashboard'));
     $response->assertStatus(302); // Should redirect to login
-});
+})->group('vite');
 
 test('company session is properly invalidated after logout', function () {
     // Login

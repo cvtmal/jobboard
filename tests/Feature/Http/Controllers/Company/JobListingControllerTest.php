@@ -56,12 +56,17 @@ final class JobListingControllerTest extends TestCase
             ->post(route('company.job-listings.store'), [
                 'title' => 'Test Job Listing',
                 'description' => 'This is a test job description',
+                'workload_min' => 80,
+                'workload_max' => 100,
+                'requirements' => 'Experience with PHP and Laravel',
                 'workplace' => Workplace::REMOTE->value,
-                'status' => JobStatus::DRAFT->value,
-                'application_process' => 'internal',
-                'category' => 'software_engineering',
                 'office_location' => 'Zurich',
                 'application_language' => 'english',
+                'category' => 'software_engineering',
+                'employment_type' => 'permanent',
+                'status' => JobStatus::DRAFT->value,
+                'application_process' => 'email',
+                'company_id' => $company->id,
             ]);
 
         $response->assertRedirect();

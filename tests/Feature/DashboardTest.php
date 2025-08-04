@@ -14,4 +14,4 @@ test('authenticated users can visit the dashboard', function () {
     $this->actingAs($user = User::factory()->create());
 
     $this->get('/dashboard')->assertOk();
-});
+})->group('vite');

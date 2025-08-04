@@ -15,7 +15,7 @@ it('displays the login page', function () {
     $response->assertInertia(fn (AssertableInertia $page) => $page->has('canResetPassword')
         ->has('status')
     );
-});
+})->group('vite');
 
 it('logs in an applicant with valid credentials', function () {
     // Create an applicant with known credentials

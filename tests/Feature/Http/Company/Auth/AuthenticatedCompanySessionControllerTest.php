@@ -16,7 +16,7 @@ it('displays the company login page', function () {
             ->has('canResetPassword')
             ->has('status')
         );
-});
+})->group('vite');
 
 it('authenticates a company with valid credentials', function () {
     // Create a company

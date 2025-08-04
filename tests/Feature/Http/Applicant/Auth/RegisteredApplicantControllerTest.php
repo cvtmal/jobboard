@@ -16,7 +16,7 @@ it('displays the registration page', function () {
     // Skip Inertia component assertion as we don't know the exact path
     // Just check that we get an Inertia response
     $response->assertInertia(fn (AssertableInertia $page) => $page);
-});
+})->group('vite');
 
 it('registers a new applicant', function () {
     // Use a real integration test with the actual action

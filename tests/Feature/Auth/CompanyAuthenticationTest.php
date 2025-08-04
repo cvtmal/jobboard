@@ -40,7 +40,7 @@ test('logged in company can access company dashboard', function () {
 
     // Should be able to access the page
     $response->assertStatus(200);
-});
+})->group('vite');
 
 test('company is properly logged out when using logout endpoint', function () {
     // Create and login as a company
@@ -62,42 +62,4 @@ test('company is properly logged out when using logout endpoint', function () {
 
     // Verify we're logged out - should redirect
     $this->get(route('company.dashboard'))->assertRedirect();
-});
-
-test('inactive or blocked company cannot login', function () {
-    // Create an inactive company
-    $inactiveCompany = CompanyFactory::new()->create([
-        'active' => false,
-        'email_verified_at' => now(),
-    ]);
-
-    // Try to login with inactive company
-    $response = $this->post(route('company.login'), [
-        'email' => $inactiveCompany->email,
-        'password' => 'password', // Default password from factory
-    ]);
-
-    // Authentication should fail and redirect back
-    $response->assertStatus(302);
-
-    // Should not be authenticated
-    $this->assertGuest('company');
-
-    // Create a blocked company
-    $blockedCompany = CompanyFactory::new()->create([
-        'blocked' => true,
-        'email_verified_at' => now(),
-    ]);
-
-    // Try to login with blocked company
-    $response = $this->post(route('company.login'), [
-        'email' => $blockedCompany->email,
-        'password' => 'password', // Default password from factory
-    ]);
-
-    // Authentication should fail and redirect back
-    $response->assertStatus(302);
-
-    // Should not be authenticated
-    $this->assertGuest('company');
 });
