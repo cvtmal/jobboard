@@ -69,7 +69,7 @@ final class CreateJobListingCustomRequest extends FormRequest
     /**
      * Prepare the data for validation.
      */
-    protected function prepareForValidation(): void
+    public function prepareForValidation(): void
     {
         // Map custom employment type to standard EmploymentType enum
         if ($this->has('employment_type')) {

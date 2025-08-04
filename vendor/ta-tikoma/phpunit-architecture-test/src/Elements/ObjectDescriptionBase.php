@@ -109,7 +109,7 @@ abstract class ObjectDescriptionBase
 
         try {
             $description->reflectionClass = new ReflectionClass($description->name);
-        } catch (Error|ReflectionException) { when class by className not loaded
+        } catch (Error|ReflectionException) { // when class by className not loaded
             return null;
         }
 
