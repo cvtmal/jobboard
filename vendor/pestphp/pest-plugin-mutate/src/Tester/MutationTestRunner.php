@@ -93,12 +93,12 @@ class MutationTestRunner implements MutationTestRunnerContract
 
     public function run(): int
     {
-        Container::getInstance()->get(TelemetryRepository::class)->initialTestSuiteDuration( // @phpstan-ignore-line
+        Container::getInstance()->get(TelemetryRepository::class)->initialTestSuiteDuration(
             microtime(true) - $this->startTime
         );
 
         if (! Coverage::isAvailable() || ! file_exists($reportPath = Coverage::getPath())) {
-            Container::getInstance()->get(Printer::class)->reportError('No coverage report found, aborting mutation testing.'); // @phpstan-ignore-line
+            Container::getInstance()->get(Printer::class)->reportError('No coverage report found, aborting mutation testing.');
 
             return 1;
         }
@@ -177,13 +177,13 @@ class MutationTestRunner implements MutationTestRunnerContract
 
     private function getConfiguration(): Configuration
     {
-        return Container::getInstance()->get(ConfigurationRepository::class)->mergedConfiguration(); // @phpstan-ignore-line
+        return Container::getInstance()->get(ConfigurationRepository::class)->mergedConfiguration();
     }
 
     private function isMinScoreIsReached(MutationSuite $mutationSuite): bool
     {
         /** @var Configuration $configuration */
-        $configuration = Container::getInstance()->get(ConfigurationRepository::class) // @phpstan-ignore-line
+        $configuration = Container::getInstance()->get(ConfigurationRepository::class)
             ->mergedConfiguration();
 
         $minScore = $configuration->minScore;
@@ -201,7 +201,7 @@ class MutationTestRunner implements MutationTestRunnerContract
             return true;
         }
 
-        Container::getInstance()->get(Printer::class) // @phpstan-ignore-line
+        Container::getInstance()->get(Printer::class)
             ->reportScoreNotReached($score, $minScore);
 
         return false;
@@ -291,13 +291,13 @@ class MutationTestRunner implements MutationTestRunnerContract
         $pluginVersion = InstalledVersions::getVersion('pestphp/pest-plugin-mutate');
 
         /** @var ?string $previousVersion */
-        $previousVersion = $cache->get('mutation-plugin-version'); // @phpstan-ignore-line
+        $previousVersion = $cache->get('mutation-plugin-version');
 
         if ($previousVersion === null || $previousVersion !== $pluginVersion) {
-            $cache->clear(); // @phpstan-ignore-line
+            $cache->clear();
         }
 
-        $cache->set('mutation-plugin-version', $pluginVersion); // @phpstan-ignore-line
+        $cache->set('mutation-plugin-version', $pluginVersion);
     }
 
     public function setStartTime(float $startTime): void

@@ -68,6 +68,6 @@ final class Layer implements IteratorAggregate
      */
     public function __call(string $name, array $arguments): self
     {
-        return new self($this->layer->{$name}(...$arguments)); // @phpstan-ignore-line
+        return new self($this->layer->{$name}(...$arguments));
     }
 }

@@ -200,7 +200,7 @@ final class Reflection
             }
 
             $arguments[$parameter->getName()] = implode('|', array_map(
-                static fn (ReflectionNamedType $type): string => $type->getName(), // @phpstan-ignore-line
+                static fn (ReflectionNamedType $type): string => $type->getName(),
                 ($types instanceof ReflectionNamedType)
                     ? [$types] // NOTE: normalize as list of to handle unions
                     : $types->getTypes(),

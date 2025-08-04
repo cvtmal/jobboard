@@ -113,7 +113,7 @@ final class TestCaseMethodFactory
         public ?Closure $closure,
     ) {
         $this->closure ??= function (): void {
-            (Assert::getCount() > 0 || $this->doesNotPerformAssertions()) ?: self::markTestIncomplete(); // @phpstan-ignore-line
+            (Assert::getCount() > 0 || $this->doesNotPerformAssertions()) ?: self::markTestIncomplete();
         };
 
         $this->bootHigherOrderable();
@@ -124,7 +124,7 @@ final class TestCaseMethodFactory
      */
     public function setUp(TestCase $concrete): void
     {
-        $concrete::flush(); // @phpstan-ignore-line
+        $concrete::flush();
 
         if ($this->description === null) {
             throw ShouldNotHappen::fromMessage('Description can not be empty.');
@@ -142,7 +142,7 @@ final class TestCaseMethodFactory
      */
     public function tearDown(TestCase $concrete): void
     {
-        $concrete::flush(); // @phpstan-ignore-line
+        $concrete::flush();
     }
 
     /**
@@ -155,7 +155,7 @@ final class TestCaseMethodFactory
         assert($testCase instanceof TestCaseFactory);
         $method = $this;
 
-        return function (...$arguments) use ($testCase, $method, $closure): mixed { // @phpstan-ignore-line
+        return function (...$arguments) use ($testCase, $method, $closure): mixed {
             /* @var TestCase $this */
             $testCase->proxies->proxy($this);
             $method->proxies->proxy($this);

@@ -7,13 +7,15 @@ namespace App\Models;
 use App\Enums\SwissCanton;
 use App\Enums\SwissRegion;
 use App\Enums\SwissSubRegion;
+use Database\Factories\JobListingAdditionalLocationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 final class JobListingAdditionalLocation extends Model
 {
-    use HasFactory; // @phpstan-ignore-line
+    /** @use HasFactory<JobListingAdditionalLocationFactory> */
+    use HasFactory;
 
     /**
      * The attributes that should be cast.

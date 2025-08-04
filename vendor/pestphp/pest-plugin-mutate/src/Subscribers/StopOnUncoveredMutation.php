@@ -17,13 +17,13 @@ final class StopOnUncoveredMutation implements UncoveredSubscriber
 {
     public function notify(Uncovered $event): void
     {
-        if (! Container::getInstance()->get(ConfigurationRepository::class) // @phpstan-ignore-line
+        if (! Container::getInstance()->get(ConfigurationRepository::class)
             ->mergedConfiguration()
             ->stopOnUncovered) {
             return;
         }
 
-        Container::getInstance()->get(MutationTestRunner::class) // @phpstan-ignore-line
+        Container::getInstance()->get(MutationTestRunner::class)
             ->stopExecution();
     }
 }

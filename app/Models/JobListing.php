@@ -128,7 +128,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 final class JobListing extends Model
 {
-    use HasFactory; // @phpstan-ignore-line
+    /** @use HasFactory<JobListingFactory> */
+    use HasFactory;
 
     /**
      * The attributes that aren't mass assignable.
@@ -294,10 +295,10 @@ final class JobListing extends Model
     /**
      * Get the skills for this job listing.
      *
-     * @return BelongsToMany<Skill>
+     * @return BelongsToMany<Skill, static>
      */
     public function skills(): BelongsToMany
     {
-        return $this->belongsToMany(Skill::class);
+        return $this->belongsToMany(Skill::class); // @phpstan-ignore-line
     }
 }

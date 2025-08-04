@@ -101,7 +101,7 @@ final class SingleArchExpectation implements Contracts\ArchExpectation
     {
         $this->ensureLazyExpectationIsVerified();
 
-        return $this->expectation->$name(...$arguments); // @phpstan-ignore-line
+        return $this->expectation->$name(...$arguments);
     }
 
     /**
@@ -113,7 +113,7 @@ final class SingleArchExpectation implements Contracts\ArchExpectation
     {
         $this->ensureLazyExpectationIsVerified();
 
-        return $this->expectation->$name; // @phpstan-ignore-line
+        return $this->expectation->$name;
     }
 
     /**
@@ -167,7 +167,7 @@ final class SingleArchExpectation implements Contracts\ArchExpectation
                 return;
             }
 
-            ($this->opposite)(); // @phpstan-ignore-line
+            ($this->opposite)();
         }
     }
 }

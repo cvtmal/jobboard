@@ -111,7 +111,7 @@ final class TestSuite
     {
         assert($this->test instanceof TestCase);
 
-        return (fn () => self::$__filename)->call($this->test, $this->test::class); // @phpstan-ignore-line
+        return (fn () => self::$__filename)->call($this->test, $this->test::class);
     }
 
     public function getDescription(): string
@@ -128,6 +128,6 @@ final class TestSuite
     {
         assert($this->test instanceof TestCase);
 
-        (fn (): string => $this->__snapshotChanges[] = $message)->call($this->test, $this->test::class); // @phpstan-ignore-line
+        (fn (): string => $this->__snapshotChanges[] = $message)->call($this->test, $this->test::class);
     }
 }

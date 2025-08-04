@@ -47,12 +47,12 @@ final class NewPasswordController
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user) use ($request): void {
-                $user->forceFill([ // @phpstan-ignore-line
-                    'password' => Hash::make($request->password), // @phpstan-ignore-line
+                $user->forceFill([
+                    'password' => Hash::make($request->password),
                     'remember_token' => Str::random(60),
                 ])->save();
 
-                event(new PasswordReset($user)); // @phpstan-ignore-line
+                event(new PasswordReset($user));
             }
         );
 
@@ -64,7 +64,7 @@ final class NewPasswordController
         }
 
         throw ValidationException::withMessages([
-            'email' => [__($status)], // @phpstan-ignore-line
+            'email' => [__($status)],
         ]);
     }
 }

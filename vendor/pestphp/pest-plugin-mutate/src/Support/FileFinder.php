@@ -66,7 +66,7 @@ class FileFinder
                 }
             }
 
-            $allPathsToIgnore[] = (str_starts_with($pathToIgnore, getcwd()) ? '' : getcwd()).DIRECTORY_SEPARATOR.ltrim($pathToIgnore, DIRECTORY_SEPARATOR); // @phpstan-ignore-line
+            $allPathsToIgnore[] = (str_starts_with($pathToIgnore, getcwd()) ? '' : getcwd()).DIRECTORY_SEPARATOR.ltrim($pathToIgnore, DIRECTORY_SEPARATOR);
         }
 
         return array_map(function (string $pathToIgnore): string {

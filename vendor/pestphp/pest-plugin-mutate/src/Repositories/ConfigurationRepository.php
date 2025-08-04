@@ -90,7 +90,7 @@ class ConfigurationRepository
         $parallel = $config['parallel'] ?? false;
 
         if ($parallel) {
-            Container::getInstance()->get(Printer::class)->compact(); // @phpstan-ignore-line
+            Container::getInstance()->get(Printer::class)->compact();
         }
 
         return $this->mergedConfiguration = new Configuration(
@@ -118,7 +118,7 @@ class ConfigurationRepository
     private function pathsFromPhpunitConfiguration(): array
     {
         /** @var Source $source */
-        $source = Container::getInstance()->get(PhpUnitConfiguration::class)->source(); // @phpstan-ignore-line
+        $source = Container::getInstance()->get(PhpUnitConfiguration::class)->source();
 
         return array_map(fn (FilterDirectory|File $path): string => $path->path(), [
             ...$source->includeDirectories(),

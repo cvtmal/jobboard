@@ -274,7 +274,7 @@ if (! function_exists('mutates')) {
         $paths = $configurationRepository->cliConfiguration->toArray()['paths'] ?? false;
 
         if (! is_array($paths)) {
-            $configurationRepository->globalConfiguration('default')->class(...$targets); // @phpstan-ignore-line
+            $configurationRepository->globalConfiguration('default')->class(...$targets);
         }
     }
 }

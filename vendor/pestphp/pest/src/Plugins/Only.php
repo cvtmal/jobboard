@@ -86,6 +86,6 @@ final class Only implements Terminable
             return '__pest_only';
         }
 
-        return file_get_contents($lockFile) ?: '__pest_only'; // @phpstan-ignore-line
+        return file_get_contents($lockFile) ?: '__pest_only';
     }
 }

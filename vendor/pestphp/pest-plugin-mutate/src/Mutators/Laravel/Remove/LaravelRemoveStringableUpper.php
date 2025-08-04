@@ -34,7 +34,7 @@ class LaravelRemoveStringableUpper extends AbstractMutator
             return false;
         }
 
-        if ($node->name->name !== 'upper') { // @phpstan-ignore-line
+        if ($node->name->name !== 'upper') {
             return false;
         }
 
@@ -49,7 +49,7 @@ class LaravelRemoveStringableUpper extends AbstractMutator
 
     private static function parentIsStrCall(Node $node): bool
     {
-        if ($node->var instanceof MethodCall) { // @phpstan-ignore-line
+        if ($node->var instanceof MethodCall) {
             return self::parentIsStrCall($node->var);
         }
 
@@ -64,7 +64,7 @@ class LaravelRemoveStringableUpper extends AbstractMutator
         }
 
         if ($node->var instanceof StaticCall) {
-            if ($node->var->name->name !== 'of') { // @phpstan-ignore-line
+            if ($node->var->name->name !== 'of') {
                 return false;
             }
             $fullyQualified = $node->var->class->getAttribute('resolvedName');

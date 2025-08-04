@@ -27,7 +27,7 @@ final class CreateCompanyAction
             'last_name' => $data['last_name'],
             'phone_number' => $data['phone_number'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']), // @phpstan-ignore-line
+            'password' => Hash::make($data['password']),
             'address' => $data['address'] ?? null,
             'postcode' => $data['postcode'] ?? null,
             'city' => $data['city'] ?? null,

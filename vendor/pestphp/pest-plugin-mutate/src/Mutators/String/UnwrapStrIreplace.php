@@ -27,6 +27,6 @@ class UnwrapStrIreplace extends AbstractFunctionCallUnwrapMutator
     public static function mutate(Node $node): Node
     {
         /** @var FuncCall $node */
-        return $node->args[2]->value; // @phpstan-ignore-line
+        return $node->args[2]->value;
     }
 }

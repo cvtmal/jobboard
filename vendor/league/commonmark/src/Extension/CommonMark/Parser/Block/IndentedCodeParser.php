@@ -66,7 +66,7 @@ final class IndentedCodeParser extends AbstractBlockContinueParser
         $lines = $this->strings->toArray();
 
         // Note that indented code block cannot be empty, so $lines will always have at least one non-empty element
-        while (\preg_match('/^[ \t]*$/', \end($lines))) { // @phpstan-ignore-line
+        while (\preg_match('/^[ \t]*$/', \end($lines))) {
             \array_pop($lines);
         }
 

@@ -18,7 +18,7 @@ final class ChainableClosure
     public static function boundWhen(Closure $condition, Closure $next): Closure
     {
         return function (...$arguments) use ($condition, $next): void {
-            if (! is_object($this)) { // @phpstan-ignore-line
+            if (! is_object($this)) {
                 throw ShouldNotHappen::fromMessage('$this not bound to chainable closure.');
             }
 
@@ -34,7 +34,7 @@ final class ChainableClosure
     public static function bound(Closure $closure, Closure $next): Closure
     {
         return function (...$arguments) use ($closure, $next): void {
-            if (! is_object($this)) { // @phpstan-ignore-line
+            if (! is_object($this)) {
                 throw ShouldNotHappen::fromMessage('$this not bound to chainable closure.');
             }
 

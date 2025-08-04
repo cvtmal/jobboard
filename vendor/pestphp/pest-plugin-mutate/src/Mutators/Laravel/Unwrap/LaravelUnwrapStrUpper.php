@@ -33,7 +33,7 @@ class LaravelUnwrapStrUpper extends AbstractMutator
             return false;
         }
 
-        if ($node->name->name !== 'upper') { // @phpstan-ignore-line
+        if ($node->name->name !== 'upper') {
             return false;
         }
 
@@ -50,6 +50,6 @@ class LaravelUnwrapStrUpper extends AbstractMutator
     public static function mutate(Node $node): Node
     {
         /** @var StaticCall $node */
-        return $node->args[0]->value; // @phpstan-ignore-line
+        return $node->args[0]->value;
     }
 }

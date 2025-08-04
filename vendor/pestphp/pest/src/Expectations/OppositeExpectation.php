@@ -111,7 +111,7 @@ final readonly class OppositeExpectation
                 || array_filter(
                     Reflection::getMethodsFromReflectionClass($object->reflectionClass),
                     fn (ReflectionMethod $method): bool => (enum_exists($object->name) === false || in_array($method->name, ['from', 'tryFrom', 'cases'], true) === false)
-                        && realpath($method->getFileName() ?: '/') === realpath($object->path) // @phpstan-ignore-line
+                        && realpath($method->getFileName() ?: '/') === realpath($object->path)
                         && $method->getDocComment() !== false,
                 ) === [],
             'to have methods without documentation / annotations',
@@ -130,7 +130,7 @@ final readonly class OppositeExpectation
                 || array_filter(
                     Reflection::getPropertiesFromReflectionClass($object->reflectionClass),
                     fn (ReflectionProperty $property): bool => (enum_exists($object->name) === false || in_array($property->name, ['value', 'name'], true) === false)
-                        && realpath($property->getDeclaringClass()->getFileName() ?: '/') === realpath($object->path) // @phpstan-ignore-line
+                        && realpath($property->getDeclaringClass()->getFileName() ?: '/') === realpath($object->path)
                         && $property->isPromoted() === false
                         && $property->getDocComment() !== false,
                 ) === [],
@@ -185,7 +185,7 @@ final readonly class OppositeExpectation
     {
         return Targeted::make(
             $this->original,
-            fn (ObjectDescription $object): bool => ! enum_exists($object->name) && ! $object->reflectionClass->isReadOnly() && assert(true), // @phpstan-ignore-line
+            fn (ObjectDescription $object): bool => ! enum_exists($object->name) && ! $object->reflectionClass->isReadOnly() && assert(true),
             'not to be readonly',
             FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
         );
@@ -687,7 +687,7 @@ final readonly class OppositeExpectation
                 throw InvalidExpectation::fromMethods(['not', $name]);
             }
 
-            $this->original->{$name}; // @phpstan-ignore-line
+            $this->original->{$name};
         } catch (ExpectationFailedException) {
             return $this->original;
         }
@@ -740,8 +740,8 @@ final readonly class OppositeExpectation
         return Targeted::make(
             $this->original,
             fn (ObjectDescription $object): bool => ! $object->reflectionClass->isEnum()
-                || ! (new \ReflectionEnum($object->name))->isBacked() // @phpstan-ignore-line
-                || (string) (new \ReflectionEnum($object->name))->getBackingType() !== $backingType, // @phpstan-ignore-line
+                || ! (new \ReflectionEnum($object->name))->isBacked()
+                || (string) (new \ReflectionEnum($object->name))->getBackingType() !== $backingType,
             'not to be '.$backingType.' backed enum',
             FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
         );

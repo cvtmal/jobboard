@@ -42,7 +42,7 @@ class Facade
     {
         $reflection = new ReflectionClass($subscriber);
 
-        $this->subscribers[$reflection->getInterfaceNames()[0]][] = $subscriber; // @phpstan-ignore-line
+        $this->subscribers[$reflection->getInterfaceNames()[0]][] = $subscriber;
     }
 
     public function registerSubscribers(Subscriber ...$subscribers): void

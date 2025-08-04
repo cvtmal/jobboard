@@ -474,6 +474,6 @@ final class WrapperRunner implements RunnerInterface
             ...TestSuite::getInstance()->tests->getFilenames(),
         ];
 
-        return $files; // @phpstan-ignore-line
+        return $files;
     }
 }

@@ -232,7 +232,7 @@ abstract class AbstractConfiguration implements ConfigurationContract
             function (string $mutator): string {
                 $constant = strtoupper((string) preg_replace('/(?<!^)[A-Z]/', '_$0', $mutator));
 
-                return (string) (defined('Pest\\Mutate\\Mutators::'.$constant) ? constant('Pest\\Mutate\\Mutators::'.$constant) : $mutator); // @phpstan-ignore-line
+                return (string) (defined('Pest\\Mutate\\Mutators::'.$constant) ? constant('Pest\\Mutate\\Mutators::'.$constant) : $mutator);
             },
             $mutators
         );
@@ -248,7 +248,7 @@ abstract class AbstractConfiguration implements ConfigurationContract
             }
         }
 
-        return $mutators; // @phpstan-ignore-line
+        return $mutators;
     }
 
     public function retry(bool $retry = true): self

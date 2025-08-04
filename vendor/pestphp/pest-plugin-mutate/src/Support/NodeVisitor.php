@@ -30,8 +30,8 @@ class NodeVisitor extends NodeVisitorAbstract
     public function enterNode(Node $node): Node|int|null
     {
         if ($node->getAttribute('comments') !== null) {
-            foreach ($node->getAttribute('comments') as $comment) { // @phpstan-ignore-line
-                preg_match('/@pest-mutate-ignore(.*)/', (string) $comment->getText(), $matches); // @phpstan-ignore-line
+            foreach ($node->getAttribute('comments') as $comment) {
+                preg_match('/@pest-mutate-ignore(.*)/', (string) $comment->getText(), $matches);
                 if ($matches !== []) {
                     if ($matches[1] === '') {
                         return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;

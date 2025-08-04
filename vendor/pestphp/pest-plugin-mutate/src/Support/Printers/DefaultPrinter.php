@@ -123,7 +123,7 @@ class DefaultPrinter implements Printer
     public function reportMutationSuiteFinished(MutationSuite $mutationSuite): void
     {
         /** @var Configuration $configuration */
-        $configuration = Container::getInstance()->get(ConfigurationRepository::class)->mergedConfiguration(); // @phpstan-ignore-line
+        $configuration = Container::getInstance()->get(ConfigurationRepository::class)->mergedConfiguration();
 
         if ($this->compact) {
             $this->output->writeln(''); // add new line after compact test output
@@ -211,7 +211,7 @@ class DefaultPrinter implements Printer
     private function writeMutationTestProfile(MutationSuite $mutationSuite): void
     {
         /** @var Configuration $configuration */
-        $configuration = Container::getInstance()->get(ConfigurationRepository::class)->mergedConfiguration(); // @phpstan-ignore-line
+        $configuration = Container::getInstance()->get(ConfigurationRepository::class)->mergedConfiguration();
 
         $this->output->writeln('  <fg=gray>Top 10 slowest mutation tests:</>');
 

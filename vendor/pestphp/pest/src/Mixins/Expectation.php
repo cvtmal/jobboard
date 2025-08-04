@@ -338,7 +338,7 @@ final class Expectation
     public function toHaveProperties(iterable $names, string $message = ''): self
     {
         foreach ($names as $name => $value) {
-            is_int($name) ? $this->toHaveProperty($value, message: $message) : $this->toHaveProperty($name, $value, $message); // @phpstan-ignore-line
+            is_int($name) ? $this->toHaveProperty($value, message: $message) : $this->toHaveProperty($name, $value, $message);
         }
 
         return $this;
@@ -847,7 +847,7 @@ final class Expectation
             is_object($this->value) && method_exists($this->value, 'toSnapshot') => $this->value->toSnapshot(),
             is_object($this->value) && method_exists($this->value, '__toString') => $this->value->__toString(),
             is_object($this->value) && method_exists($this->value, 'toString') => $this->value->toString(),
-            $this->value instanceof \Illuminate\Testing\TestResponse => $this->value->getContent(), // @phpstan-ignore-line
+            $this->value instanceof \Illuminate\Testing\TestResponse => $this->value->getContent(),
             is_array($this->value) => json_encode($this->value, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT),
             $this->value instanceof Traversable => json_encode(iterator_to_array($this->value), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT),
             $this->value instanceof JsonSerializable => json_encode($this->value->jsonSerialize(), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT),

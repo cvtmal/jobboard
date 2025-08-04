@@ -29,7 +29,7 @@ final class LayerOptions
     public static function fromExpectation(SingleArchExpectation $expectation): self
     {
         $exclude = array_merge(
-            test()->arch()->ignore, // @phpstan-ignore-line
+            test()->arch()->ignore,
             $expectation->ignoring,
         );
 

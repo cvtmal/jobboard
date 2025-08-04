@@ -39,7 +39,7 @@ final class ConsoleApplicationResolver
             $commands[$name] = $command;
         }
 
-        return $commands; // @phpstan-ignore-line
+        return $commands;
     }
 
     private function getApplication(): Application

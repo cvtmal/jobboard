@@ -109,6 +109,6 @@ final readonly class Configuration
      */
     public function __call(string $name, array $arguments): mixed
     {
-        return $this->uses()->$name(...$arguments); // @phpstan-ignore-line
+        return $this->uses()->$name(...$arguments);
     }
 }

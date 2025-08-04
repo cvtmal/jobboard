@@ -26,7 +26,7 @@ class ResultCache
 
     public function __construct()
     {
-        $this->cache = Container::getInstance()->get(CacheInterface::class); // @phpstan-ignore-line
+        $this->cache = Container::getInstance()->get(CacheInterface::class);
     }
 
     /**
@@ -34,8 +34,8 @@ class ResultCache
      */
     public function get(MutationTestCollection $testCollection): array
     {
-        return $this->results[$this->key($testCollection)] ?? // @phpstan-ignore-line
-            $this->results[$this->key($testCollection)] = $this->cache->get($this->key($testCollection), []); // @phpstan-ignore-line
+        return $this->results[$this->key($testCollection)] ??
+            $this->results[$this->key($testCollection)] = $this->cache->get($this->key($testCollection), []);
     }
 
     public function put(MutationTestCollection $testCollection): void

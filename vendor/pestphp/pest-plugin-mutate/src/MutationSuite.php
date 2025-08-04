@@ -56,7 +56,7 @@ class MutationSuite
     public function minScoreReached(): bool
     {
         /** @var Configuration $configuration */
-        $configuration = Container::getInstance()->get(ConfigurationRepository::class)->mergedConfiguration(); // @phpstan-ignore-line
+        $configuration = Container::getInstance()->get(ConfigurationRepository::class)->mergedConfiguration();
 
         if ($configuration->minScore === null) {
             return true;

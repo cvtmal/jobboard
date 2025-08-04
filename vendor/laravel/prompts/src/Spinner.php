@@ -62,7 +62,7 @@ class Spinner extends Prompt
             $this->pid = pcntl_fork();
 
             if ($this->pid === 0) {
-                while (true) { // @phpstan-ignore-line
+                while (true) {
                     $this->render();
 
                     $this->count++;

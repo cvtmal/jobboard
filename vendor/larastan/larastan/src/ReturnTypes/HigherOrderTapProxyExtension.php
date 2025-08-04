@@ -35,7 +35,7 @@ final class HigherOrderTapProxyExtension implements DynamicMethodReturnTypeExten
     ): Type {
         $type = $scope->getType($methodCall->var);
 
-        if ($type instanceof GenericObjectType) { // @phpstan-ignore-line
+        if ($type instanceof GenericObjectType) {
             $types = $type->getTypes();
 
             if (count($types) === 1 && $types[0]->getObjectClassNames() !== []) {

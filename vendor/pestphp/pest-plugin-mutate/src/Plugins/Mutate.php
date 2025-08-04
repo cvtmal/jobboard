@@ -131,7 +131,7 @@ class Mutate implements AddsOutput, Bootable, HandlesArguments
             $arguments[] = '--coverage-php='.Coverage::getPath();
         }
 
-        $arguments = Container::getInstance()->get(ConfigurationRepository::class) // @phpstan-ignore-line
+        $arguments = Container::getInstance()->get(ConfigurationRepository::class)
             ->cliConfiguration->fromArguments($arguments);
 
         $mutationTestRunner->setOriginalArguments($arguments);

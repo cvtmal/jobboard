@@ -27,7 +27,7 @@ final class ProfileUpdateRequest extends FormRequest
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id), // @phpstan-ignore-line
+                Rule::unique(User::class)->ignore($this->user()->id),
             ],
         ];
     }

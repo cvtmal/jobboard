@@ -86,7 +86,7 @@ final class GroupArchExpectation implements Contracts\ArchExpectation
     {
         $this->ensureLazyExpectationIsVerified();
 
-        return $this->original->$name(...$arguments); // @phpstan-ignore-line
+        return $this->original->$name(...$arguments);
     }
 
     /**
@@ -98,7 +98,7 @@ final class GroupArchExpectation implements Contracts\ArchExpectation
     {
         $this->ensureLazyExpectationIsVerified();
 
-        return $this->original->$name; // @phpstan-ignore-line
+        return $this->original->$name;
     }
 
     /**

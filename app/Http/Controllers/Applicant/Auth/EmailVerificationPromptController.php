@@ -16,7 +16,7 @@ final class EmailVerificationPromptController
      */
     public function __invoke(Request $request): RedirectResponse|Response
     {
-        return $request->user('applicant')->hasVerifiedEmail() // @phpstan-ignore-line
+        return $request->user('applicant')->hasVerifiedEmail()
             ? redirect()->intended(route('applicant.dashboard'))
             : Inertia::render('applicant/auth/verify-email');
     }

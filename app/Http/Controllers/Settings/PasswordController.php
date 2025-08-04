@@ -35,8 +35,8 @@ final class PasswordController
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $request->user()->update([ // @phpstan-ignore-line
-            'password' => Hash::make($validated['password']), // @phpstan-ignore-line
+        $request->user()->update([
+            'password' => Hash::make($validated['password']),
         ]);
 
         return back();

@@ -35,7 +35,7 @@ abstract class ObjectDescriptionBase
      */
     public array $stmts;
 
-    public ReflectionClass $reflectionClass; // @phpstan-ignore-line
+    public ReflectionClass $reflectionClass;
 
     public static function make(string $path): ?self
     {
@@ -82,7 +82,7 @@ abstract class ObjectDescriptionBase
             return null;
         }
 
-        $description = new static(); // @phpstan-ignore-line
+        $description = new static();
 
         if ($object instanceof Node\Stmt\Class_) {
             $description->type = ObjectType::_CLASS;
@@ -109,7 +109,7 @@ abstract class ObjectDescriptionBase
 
         try {
             $description->reflectionClass = new ReflectionClass($description->name);
-        } catch (Error|ReflectionException) { // @phpstan-ignore-line when class by className not loaded
+        } catch (Error|ReflectionException) { when class by className not loaded
             return null;
         }
 

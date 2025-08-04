@@ -92,7 +92,7 @@ final class PendingArchExpectation
         $expectation = $this->opposite ? $this->expectation->not() : $this->expectation;
 
         /** @var $archExpectation SingleArchExpectation */
-        $archExpectation = $expectation->{$name}(...$arguments); // @phpstan-ignore-line
+        $archExpectation = $expectation->{$name}(...$arguments);
 
         if ($archExpectation instanceof HigherOrderExpectation) {
             $originalExpectation = (fn (): \Pest\Expectation => $this->original)->call($archExpectation);
@@ -110,6 +110,6 @@ final class PendingArchExpectation
      */
     public function __get(string $name): mixed
     {
-        return $this->{$name}(); // @phpstan-ignore-line
+        return $this->{$name}();
     }
 }

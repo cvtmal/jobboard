@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace App\Notifications\Company;
 
-use App\Models\Company;
 use Illuminate\Auth\Notifications\VerifyEmail as BaseVerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 
 final class VerifyEmail extends BaseVerifyEmail
 {
-
     /**
      * Get the verify email notification mail message for the given URL.
      *

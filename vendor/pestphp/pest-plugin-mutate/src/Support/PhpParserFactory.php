@@ -12,7 +12,7 @@ class PhpParserFactory
     public static function make(): Parser
     {
         if (self::version() === 4) {
-            return (new ParserFactory)->create(ParserFactory::PREFER_PHP7); // @phpstan-ignore-line
+            return (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
         }
 
         return (new ParserFactory)->createForNewestSupportedVersion();

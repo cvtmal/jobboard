@@ -59,7 +59,7 @@ final class Laravel implements HandlesArguments
      */
     private function ensureRunnerIsResolvable(): void
     {
-        ParallelRunner::resolveRunnerUsing( // @phpstan-ignore-line
+        ParallelRunner::resolveRunnerUsing(
             fn (Options $options, OutputInterface $output): RunnerInterface => new WrapperRunner($options, $output)
         );
     }

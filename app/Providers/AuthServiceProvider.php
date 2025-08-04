@@ -31,7 +31,7 @@ final class AuthServiceProvider extends ServiceProvider
 
         // Set up dynamic email verification URL generation
         VerifyEmail::createUrlUsing(function ($notifiable): string {
-            $routePrefix = match (get_class($notifiable)) {
+            $routePrefix = match ($notifiable::class) {
                 Applicant::class => 'applicant',
                 Company::class => 'company',
                 default => '',
@@ -42,7 +42,7 @@ final class AuthServiceProvider extends ServiceProvider
                 Carbon::now()->addMinutes(60),
                 [
                     'id' => $notifiable->getKey(),
-                    'hash' => sha1($notifiable->getEmailForVerification()),
+                    'hash' => sha1((string) $notifiable->getEmailForVerification()),
                 ]
             );
         });

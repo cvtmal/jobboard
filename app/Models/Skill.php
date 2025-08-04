@@ -40,6 +40,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 final class Skill extends Model
 {
+    /** @use HasFactory<SkillFactory> */
     use HasFactory;
 
     /**
@@ -61,10 +62,10 @@ final class Skill extends Model
     /**
      * Get the job listings that have this skill.
      *
-     * @return BelongsToMany<JobListing>
+     * @return BelongsToMany<JobListing, static>
      */
     public function jobListings(): BelongsToMany
     {
-        return $this->belongsToMany(JobListing::class);
+        return $this->belongsToMany(JobListing::class); // @phpstan-ignore-line
     }
 }

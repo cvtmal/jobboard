@@ -27,6 +27,6 @@ class UnwrapArrayMap extends AbstractFunctionCallUnwrapMutator
     public static function mutate(Node $node): Node
     {
         /** @var FuncCall $node */
-        return $node->args[1]->value; // @phpstan-ignore-line
+        return $node->args[1]->value;
     }
 }

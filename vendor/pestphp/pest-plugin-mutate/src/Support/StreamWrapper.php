@@ -187,19 +187,19 @@ class StreamWrapper
         return $this->withOriginalWrapper(function () use ($value, $path, $option): bool {
             switch ($option) {
                 case STREAM_META_TOUCH:
-                    if (empty($value)) { // @phpstan-ignore-line
+                    if (empty($value)) {
                         return touch($path);
                     }
 
-                    return touch($path, $value[0], $value[1]); // @phpstan-ignore-line
+                    return touch($path, $value[0], $value[1]);
                 case STREAM_META_OWNER_NAME:
                 case STREAM_META_OWNER:
-                    return chown($path, $value); // @phpstan-ignore-line
+                    return chown($path, $value);
                 case STREAM_META_GROUP_NAME:
                 case STREAM_META_GROUP:
-                    return chgrp($path, $value); // @phpstan-ignore-line
+                    return chgrp($path, $value);
                 case STREAM_META_ACCESS:
-                    return chmod($path, $value); // @phpstan-ignore-line
+                    return chmod($path, $value);
                 default:
                     throw new RuntimeException('Unknown stream_metadata option');
             }

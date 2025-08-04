@@ -36,12 +36,12 @@ it('generates a proper verification url', function () {
     ]);
 
     $notification = new VerifyEmail();
-    
+
     // Use reflection to access the protected method
     $reflection = new ReflectionClass($notification);
     $method = $reflection->getMethod('verificationUrl');
     $method->setAccessible(true);
-    
+
     $verificationUrl = $method->invoke($notification, $company);
 
     expect($verificationUrl)->toBeString()

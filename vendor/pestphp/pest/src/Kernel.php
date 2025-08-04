@@ -158,7 +158,7 @@ final readonly class Kernel
                 $inspector = new Inspector($throwable);
 
                 $writer->write($inspector);
-            } catch (Throwable) { // @phpstan-ignore-line
+            } catch (Throwable) {
                 View::render('components.badge', [
                     'type' => 'ERROR',
                     'content' => sprintf('%s in %s:%d', $message, $file, $line),

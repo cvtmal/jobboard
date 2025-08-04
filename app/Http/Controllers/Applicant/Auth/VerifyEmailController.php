@@ -15,12 +15,12 @@ final class VerifyEmailController
      */
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
-        if ($request->user('applicant')->hasVerifiedEmail()) { // @phpstan-ignore-line
+        if ($request->user('applicant')->hasVerifiedEmail()) {
             return redirect()->intended(route('applicant.dashboard', absolute: false).'?verified=1');
         }
 
-        if ($request->user('applicant')->markEmailAsVerified()) { // @phpstan-ignore-line
-            event(new Verified($request->user('applicant'))); // @phpstan-ignore-line
+        if ($request->user('applicant')->markEmailAsVerified()) {
+            event(new Verified($request->user('applicant')));
         }
 
         return redirect()->intended(route('applicant.dashboard', absolute: false).'?verified=1');

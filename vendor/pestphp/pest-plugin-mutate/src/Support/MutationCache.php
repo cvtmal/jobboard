@@ -22,7 +22,7 @@ class MutationCache
 
     public function __construct()
     {
-        $this->cache = Container::getInstance()->get(CacheInterface::class); // @phpstan-ignore-line
+        $this->cache = Container::getInstance()->get(CacheInterface::class);
     }
 
     /**
@@ -39,7 +39,7 @@ class MutationCache
      */
     public function get(SplFileInfo $file, string $content, array $linesToMutate, string $mutator): array
     {
-        return $this->cache->get($this->getKey($file, $content, $linesToMutate, $mutator)); // @phpstan-ignore-line
+        return $this->cache->get($this->getKey($file, $content, $linesToMutate, $mutator));
     }
 
     /**

@@ -48,9 +48,9 @@ final class DelimiterStack
 
         if (\PHP_VERSION_ID >= 80000) {
             /** @psalm-suppress PropertyTypeCoercion */
-            $this->missingIndexCache = new \WeakMap(); // @phpstan-ignore-line
+            $this->missingIndexCache = new \WeakMap();
         } else {
-            $this->missingIndexCache = new \SplObjectStorage(); // @phpstan-ignore-line
+            $this->missingIndexCache = new \SplObjectStorage();
         }
     }
 

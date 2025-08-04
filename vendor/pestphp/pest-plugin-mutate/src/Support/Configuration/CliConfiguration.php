@@ -81,19 +81,19 @@ class CliConfiguration extends AbstractConfiguration
         $input = new ArgvInput($filteredArguments, new InputDefinition($inputOptions));
 
         if ($input->hasOption(PathOption::ARGUMENT)) {
-            $this->path(explode(',', (string) $input->getOption(PathOption::ARGUMENT))); // @phpstan-ignore-line
+            $this->path(explode(',', (string) $input->getOption(PathOption::ARGUMENT)));
         }
 
         if ($input->hasOption(IgnoreOption::ARGUMENT)) {
-            $this->ignore(explode(',', (string) $input->getOption(IgnoreOption::ARGUMENT))); // @phpstan-ignore-line
+            $this->ignore(explode(',', (string) $input->getOption(IgnoreOption::ARGUMENT)));
         }
 
         if ($input->hasOption(MutatorsOption::ARGUMENT)) {
-            $this->mutator(explode(',', (string) $input->getOption(MutatorsOption::ARGUMENT))); // @phpstan-ignore-line
+            $this->mutator(explode(',', (string) $input->getOption(MutatorsOption::ARGUMENT)));
         }
 
         if ($input->hasOption(ExceptOption::ARGUMENT)) {
-            $this->except(explode(',', (string) $input->getOption(ExceptOption::ARGUMENT))); // @phpstan-ignore-line
+            $this->except(explode(',', (string) $input->getOption(ExceptOption::ARGUMENT)));
         }
 
         if ($input->hasOption(CoveredOnlyOption::ARGUMENT)) {
@@ -101,7 +101,7 @@ class CliConfiguration extends AbstractConfiguration
         }
 
         if ($input->hasOption(MinScoreOption::ARGUMENT)) {
-            $this->min((float) $input->getOption(MinScoreOption::ARGUMENT)); // @phpstan-ignore-line
+            $this->min((float) $input->getOption(MinScoreOption::ARGUMENT));
         }
 
         if ($input->hasOption(IgnoreMinScoreOnZeroMutationsOption::ARGUMENT)) {
@@ -111,7 +111,7 @@ class CliConfiguration extends AbstractConfiguration
         $this->parallel($input->hasOption(ParallelOption::ARGUMENT));
 
         if ($input->hasOption(ProcessesOption::ARGUMENT)) {
-            $this->processes($input->getOption(ProcessesOption::ARGUMENT) !== null ? (int) $input->getOption(ProcessesOption::ARGUMENT) : null); // @phpstan-ignore-line
+            $this->processes($input->getOption(ProcessesOption::ARGUMENT) !== null ? (int) $input->getOption(ProcessesOption::ARGUMENT) : null);
         }
 
         if ($input->hasOption(ProfileOption::ARGUMENT)) {
@@ -124,7 +124,7 @@ class CliConfiguration extends AbstractConfiguration
         }
 
         if ($input->hasOption(ClassOption::ARGUMENT)) {
-            $this->class(explode(',', (string) $input->getOption(ClassOption::ARGUMENT))); // @phpstan-ignore-line
+            $this->class(explode(',', (string) $input->getOption(ClassOption::ARGUMENT)));
         }
 
         if ($input->hasOption(StopOnUntestedOption::ARGUMENT)) {
@@ -145,7 +145,7 @@ class CliConfiguration extends AbstractConfiguration
         }
 
         if ($input->hasOption(MutationIdOption::ARGUMENT)) {
-            $this->mutationId((string) $input->getOption(MutationIdOption::ARGUMENT)); // @phpstan-ignore-line
+            $this->mutationId((string) $input->getOption(MutationIdOption::ARGUMENT));
         }
 
         if ($input->hasOption(NoCacheOption::ARGUMENT)) {
@@ -153,7 +153,7 @@ class CliConfiguration extends AbstractConfiguration
         }
 
         if ($input->hasOption(ClearCacheOption::ARGUMENT)) {
-            Container::getInstance()->get(CacheInterface::class)->clear(); // @phpstan-ignore-line
+            Container::getInstance()->get(CacheInterface::class)->clear();
         }
 
         if ($input->hasOption(EverythingOption::ARGUMENT)) {

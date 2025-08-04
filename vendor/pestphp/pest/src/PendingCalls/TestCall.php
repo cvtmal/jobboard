@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @mixin HigherOrderCallables|TestCase|Testable
  */
-final class TestCall // @phpstan-ignore-line
+final class TestCall
 {
     use Describable;
 
@@ -83,15 +83,15 @@ final class TestCall // @phpstan-ignore-line
         $filename = $this->filename;
 
         $when = function () use ($closure, $filename, $description): void {
-            if ($this::$__filename !== $filename) { // @phpstan-ignore-line
+            if ($this::$__filename !== $filename) {
                 return;
             }
 
-            if ($this->__description !== $description) { // @phpstan-ignore-line
+            if ($this->__description !== $description) {
                 return;
             }
 
-            if ($this->__ran !== true) { // @phpstan-ignore-line
+            if ($this->__ran !== true) {
                 return;
             }
 
@@ -224,7 +224,7 @@ final class TestCall // @phpstan-ignore-line
      */
     public function only(): self
     {
-        Only::enable($this, ...func_get_args()); // @phpstan-ignore-line
+        Only::enable($this, ...func_get_args());
 
         return $this;
     }
@@ -559,7 +559,7 @@ final class TestCall // @phpstan-ignore-line
         $paths = $configurationRepository->cliConfiguration->toArray()['paths'] ?? false;
 
         if (! is_array($paths)) {
-            $configurationRepository->globalConfiguration('default')->class(...$classes); // @phpstan-ignore-line
+            $configurationRepository->globalConfiguration('default')->class(...$classes);
         }
 
         return $this;
@@ -582,7 +582,7 @@ final class TestCall // @phpstan-ignore-line
         $paths = $configurationRepository->cliConfiguration->toArray()['paths'] ?? false;
 
         if (! is_array($paths)) {
-            $configurationRepository->globalConfiguration('default')->class(...$traits); // @phpstan-ignore-line
+            $configurationRepository->globalConfiguration('default')->class(...$traits);
         }
 
         return $this;

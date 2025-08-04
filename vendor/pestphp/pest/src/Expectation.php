@@ -336,7 +336,7 @@ final class Expectation
             if (! is_object($this->value) && method_exists(PendingArchExpectation::class, $method)) {
                 $pendingArchExpectation = new PendingArchExpectation($this, []);
 
-                return $pendingArchExpectation->$method(...$parameters); // @phpstan-ignore-line
+                return $pendingArchExpectation->$method(...$parameters);
             }
 
             if (! is_object($this->value)) {
@@ -457,7 +457,7 @@ final class Expectation
     {
         return Targeted::make(
             $this,
-            fn (ObjectDescription $object): bool => count(file($object->path)) < $lines, // @phpstan-ignore-line
+            fn (ObjectDescription $object): bool => count(file($object->path)) < $lines,
             sprintf('to have less than %d lines of code', $lines),
             FileLineFinder::where(fn (string $line): bool => str_contains($line, '<?php')),
         );
@@ -474,7 +474,7 @@ final class Expectation
                 || array_filter(
                     Reflection::getMethodsFromReflectionClass($object->reflectionClass),
                     fn (ReflectionMethod $method): bool => (enum_exists($object->name) === false || in_array($method->name, ['from', 'tryFrom', 'cases'], true) === false)
-                        && realpath($method->getFileName() ?: '/') === realpath($object->path) // @phpstan-ignore-line
+                        && realpath($method->getFileName() ?: '/') === realpath($object->path)
                         && $method->getDocComment() === false,
                 ) === [],
             'to have methods with documentation / annotations',
@@ -493,7 +493,7 @@ final class Expectation
                 || array_filter(
                     Reflection::getPropertiesFromReflectionClass($object->reflectionClass),
                     fn (ReflectionProperty $property): bool => (enum_exists($object->name) === false || in_array($property->name, ['value', 'name'], true) === false)
-                        && realpath($property->getDeclaringClass()->getFileName() ?: '/') === realpath($object->path) // @phpstan-ignore-line
+                        && realpath($property->getDeclaringClass()->getFileName() ?: '/') === realpath($object->path)
                         && $property->isPromoted() === false
                         && $property->getDocComment() === false,
                 ) === [],
@@ -548,7 +548,7 @@ final class Expectation
     {
         return Targeted::make(
             $this,
-            fn (ObjectDescription $object): bool => ! enum_exists($object->name) && $object->reflectionClass->isReadOnly() && assert(true), // @phpstan-ignore-line
+            fn (ObjectDescription $object): bool => ! enum_exists($object->name) && $object->reflectionClass->isReadOnly() && assert(true),
             'to be readonly',
             FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
         );
@@ -1067,8 +1067,8 @@ final class Expectation
         return Targeted::make(
             $this,
             fn (ObjectDescription $object): bool => $object->reflectionClass->isEnum()
-                && (new ReflectionEnum($object->name))->isBacked() // @phpstan-ignore-line
-                && (string) (new ReflectionEnum($object->name))->getBackingType() === $backingType, // @phpstan-ignore-line
+                && (new ReflectionEnum($object->name))->isBacked()
+                && (string) (new ReflectionEnum($object->name))->getBackingType() === $backingType,
             'to be '.$backingType.' backed enum',
             FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
         );

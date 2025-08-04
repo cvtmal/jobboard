@@ -51,7 +51,7 @@ class TrueToFalse extends AbstractMutator
 
     private static function isNotOnFunctionToIgnore(ConstFetch $node): bool
     {
-        $possibleFuncCall = $node->getAttribute('parent')->getAttribute('parent'); // @phpstan-ignore-line
+        $possibleFuncCall = $node->getAttribute('parent')->getAttribute('parent');
 
         if (! $possibleFuncCall instanceof FuncCall) { // @pest-mutate-ignore: InstanceOfToTrue
             return true;

@@ -151,11 +151,11 @@ final class StateGenerator
         for ($i = 0; $i < $passedTests; $i++) {
             $state->add(TestResult::fromPestParallelTestCase(
                 new TestMethod(
-                    "$i", // @phpstan-ignore-line
-                    '', // @phpstan-ignore-line
-                    '', // @phpstan-ignore-line
+                    "$i",
+                    '',
+                    '',
                     1,
-                    TestDoxBuilder::fromClassNameAndMethodName('', ''), // @phpstan-ignore-line
+                    TestDoxBuilder::fromClassNameAndMethodName('', ''),
                     MetadataCollection::fromArray([]),
                     TestDataCollection::fromArray([])
                 ),

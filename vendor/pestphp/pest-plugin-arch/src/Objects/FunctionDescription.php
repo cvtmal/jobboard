@@ -11,7 +11,7 @@ use ReflectionFunction;
 /**
  * @internal
  */
-final class FunctionDescription extends ObjectDescription // @phpstan-ignore-line
+final class FunctionDescription extends ObjectDescription
 {
     /**
      * {@inheritDoc}
@@ -22,7 +22,7 @@ final class FunctionDescription extends ObjectDescription // @phpstan-ignore-lin
 
         try {
             $description->path = (string) (new ReflectionFunction($path))->getFileName();
-        } catch (\Throwable) { // @phpstan-ignore-line
+        } catch (\Throwable) {
             $description->path = $path;
         }
 
