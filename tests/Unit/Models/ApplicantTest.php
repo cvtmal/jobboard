@@ -89,16 +89,16 @@ test('applicant workplace preference is cast to enum', function (): void {
 
 test('applicant employment type preference is cast to enum', function (): void {
     $applicant = Applicant::factory()->create([
-        'employment_type_preference' => EmploymentType::FULL_TIME->value,
+        'employment_type_preference' => EmploymentType::PERMANENT->value,
     ]);
 
     expect($applicant->employment_type_preference)
         ->toBeInstanceOf(EmploymentType::class)
-        ->toBe(EmploymentType::FULL_TIME);
+        ->toBe(EmploymentType::PERMANENT);
 
-    $applicant = Applicant::factory()->preferEmploymentType(EmploymentType::PART_TIME)->create();
+    $applicant = Applicant::factory()->preferEmploymentType(EmploymentType::TEMPORARY)->create();
 
-    expect($applicant->employment_type_preference)->toBe(EmploymentType::PART_TIME);
+    expect($applicant->employment_type_preference)->toBe(EmploymentType::TEMPORARY);
 });
 
 test('dates are cast correctly', function (): void {
@@ -150,7 +150,7 @@ test('all applicant fields can be persisted and retrieved', function (): void {
         'headline' => 'Senior Developer',
         'bio' => 'Experienced developer with 10 years of experience',
         'work_permit' => true,
-        'employment_type_preference' => EmploymentType::FULL_TIME,
+        'employment_type_preference' => EmploymentType::PERMANENT,
         'workplace_preference' => Workplace::REMOTE,
         'available_from' => now()->addWeek(),
         'salary_expectation' => 85000,
@@ -181,7 +181,7 @@ test('all applicant fields can be persisted and retrieved', function (): void {
         ->headline->toBe('Senior Developer')
         ->bio->toBe('Experienced developer with 10 years of experience')
         ->work_permit->toBeTrue()
-        ->employment_type_preference->toBe(EmploymentType::FULL_TIME)
+        ->employment_type_preference->toBe(EmploymentType::PERMANENT)
         ->workplace_preference->toBe(Workplace::REMOTE)
         ->resume_path->toBe('uploads/resumes/jane-smith-resume.pdf')
         ->profile_photo_path->toBe('uploads/profile_photos/jane-smith.jpg')

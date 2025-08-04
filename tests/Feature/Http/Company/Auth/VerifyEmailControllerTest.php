@@ -26,8 +26,8 @@ test('it redirects if email is already verified', function () {
     // Make the request as the authenticated company
     $response = $this->actingAs($company, 'company')->get($verificationUrl);
 
-    // Verify we are redirected to the company dashboard with the verified parameter
-    $response->assertRedirect(route('company.dashboard').'?verified=1');
+    // Verify we are redirected to the company onboarding with the verified parameter
+    $response->assertRedirect(route('company.onboarding').'?verified=1');
 
     // Verify the Verified event is not dispatched
     Event::fake();
@@ -54,8 +54,8 @@ test('it verifies company email for unverified company', function () {
     // Make the request as the authenticated company
     $response = $this->actingAs($company, 'company')->get($verificationUrl);
 
-    // Verify we are redirected to the company dashboard with the verified parameter
-    $response->assertRedirect(route('company.dashboard').'?verified=1');
+    // Verify we are redirected to the company onboarding with the verified parameter
+    $response->assertRedirect(route('company.onboarding').'?verified=1');
 
     // Verify the email has been marked as verified
     expect($company->fresh()->hasVerifiedEmail())->toBeTrue();

@@ -27,7 +27,7 @@ it('validates correctly with valid data', function () {
     $withEmploymentType = [
         'title' => 'Senior Developer',
         'description' => 'Senior developer position',
-        'employment_type' => EmploymentType::FULL_TIME,
+        'employment_type' => EmploymentType::PERMANENT,
         'application_process' => ApplicationProcess::EMAIL,
         'status' => JobStatus::PUBLISHED,
     ];

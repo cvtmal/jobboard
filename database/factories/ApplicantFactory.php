@@ -45,7 +45,7 @@ final class ApplicantFactory extends Factory
             'date_of_birth' => $this->faker->boolean(70) ? $this->faker->dateTimeBetween('-60 years', '-18 years') : null,
             'address' => $this->faker->boolean(50) ? $this->faker->streetAddress() : null,
             'city' => $this->faker->boolean(60) ? $this->faker->city() : null,
-            'state' => $this->faker->boolean(60) ? $this->faker->state() : null,
+            'state' => $this->faker->boolean(60) ? $this->faker->randomElement(['Zurich', 'Geneva', 'Basel', 'Bern', 'Lausanne']) : null,
             'postal_code' => $this->faker->boolean(60) ? $this->faker->postcode() : null,
             'country' => $this->faker->boolean(70) ? $this->faker->country() : null,
             'email_verified_at' => now(),

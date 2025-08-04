@@ -36,8 +36,13 @@ it('generates a proper verification url', function () {
     ]);
 
     $notification = new VerifyEmail();
-
-    $verificationUrl = $notification->verificationUrl($company);
+    
+    // Use reflection to access the protected method
+    $reflection = new ReflectionClass($notification);
+    $method = $reflection->getMethod('verificationUrl');
+    $method->setAccessible(true);
+    
+    $verificationUrl = $method->invoke($notification, $company);
 
     expect($verificationUrl)->toBeString()
         ->and($verificationUrl)->toContain('company/verify-email/'.$company->id)

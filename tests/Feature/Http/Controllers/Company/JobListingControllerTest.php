@@ -8,7 +8,6 @@ use App\Enums\JobStatus;
 use App\Enums\Workplace;
 use App\Models\Company;
 use App\Models\JobListing;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,11 +17,10 @@ final class JobListingControllerTest extends TestCase
 
     public function test_company_user_can_view_job_listings_index(): void
     {
-        $user = User::factory()->create();
-        $company = Company::factory()->create(['user_id' => $user->id]);
+        $company = Company::factory()->create();
         $jobListing = JobListing::factory()->create(['company_id' => $company->id]);
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAs($company, 'company')
             ->get(route('company.job-listings.index'));
 
         $response->assertStatus(200)
@@ -39,10 +37,9 @@ final class JobListingControllerTest extends TestCase
 
     public function test_company_user_can_view_job_listing_create_form(): void
     {
-        $user = User::factory()->create();
-        $company = Company::factory()->create(['user_id' => $user->id]);
+        $company = Company::factory()->create();
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAs($company, 'company')
             ->get(route('company.job-listings.create'));
 
         $response->assertStatus(200)
@@ -53,10 +50,9 @@ final class JobListingControllerTest extends TestCase
 
     public function test_company_user_can_create_job_listing(): void
     {
-        $user = User::factory()->create();
-        $company = Company::factory()->create(['user_id' => $user->id]);
+        $company = Company::factory()->create();
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAs($company, 'company')
             ->post(route('company.job-listings.store'), [
                 'title' => 'Test Job Listing',
                 'description' => 'This is a test job description',
@@ -77,14 +73,13 @@ final class JobListingControllerTest extends TestCase
 
     public function test_company_user_can_view_their_job_listing(): void
     {
-        $user = User::factory()->create();
-        $company = Company::factory()->create(['user_id' => $user->id]);
+        $company = Company::factory()->create();
         $jobListing = JobListing::factory()->create([
             'company_id' => $company->id,
             'title' => 'Test Job Listing',
         ]);
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAs($company, 'company')
             ->get(route('company.job-listings.show', $jobListing));
 
         $response->assertStatus(200)
@@ -100,20 +95,19 @@ final class JobListingControllerTest extends TestCase
 
     public function test_company_user_can_update_their_job_listing(): void
     {
-        $user = User::factory()->create();
-        $company = Company::factory()->create(['user_id' => $user->id]);
+        $company = Company::factory()->create();
         $jobListing = JobListing::factory()->create([
             'company_id' => $company->id,
             'title' => 'Original Title',
         ]);
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAs($company, 'company')
             ->put(route('company.job-listings.update', $jobListing), [
                 'title' => 'Updated Title',
                 'description' => $jobListing->description,
-                'workplace' => $jobListing->workplace,
-                'status' => $jobListing->status,
-                'application_process' => $jobListing->application_process,
+                'workplace' => $jobListing->workplace?->value,
+                'status' => $jobListing->status->value,
+                'application_process' => $jobListing->application_process->value,
             ]);
 
         $response->assertRedirect();
@@ -125,31 +119,32 @@ final class JobListingControllerTest extends TestCase
 
     public function test_company_user_cannot_manage_other_companies_job_listing(): void
     {
-        $user1 = User::factory()->create();
-        $user2 = User::factory()->create();
-        $company1 = Company::factory()->create(['user_id' => $user1->id]);
-        $company2 = Company::factory()->create(['user_id' => $user2->id]);
+        $company1 = Company::factory()->create();
+        $company2 = Company::factory()->create();
         $jobListing = JobListing::factory()->create(['company_id' => $company2->id]);
 
         // Try to view
-        $response = $this->actingAs($user1)
+        $response = $this->actingAs($company1, 'company')
             ->get(route('company.job-listings.show', $jobListing));
         $response->assertForbidden();
 
         // Try to edit
-        $response = $this->actingAs($user1)
+        $response = $this->actingAs($company1, 'company')
             ->get(route('company.job-listings.edit', $jobListing));
         $response->assertForbidden();
 
         // Try to update
-        $response = $this->actingAs($user1)
+        $response = $this->actingAs($company1, 'company')
             ->put(route('company.job-listings.update', $jobListing), [
                 'title' => 'Unauthorized Update',
+                'description' => 'Some description',
+                'application_process' => 'email',
+                'status' => 'published',
             ]);
         $response->assertForbidden();
 
         // Try to delete
-        $response = $this->actingAs($user1)
+        $response = $this->actingAs($company1, 'company')
             ->delete(route('company.job-listings.destroy', $jobListing));
         $response->assertForbidden();
     }

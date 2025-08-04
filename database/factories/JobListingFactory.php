@@ -52,7 +52,10 @@ final class JobListingFactory extends Factory
             'experience_years_min' => fake()->optional()->numberBetween(0, 5),
             'experience_years_max' => fake()->optional()->numberBetween(5, 15),
             'education_level' => fake()->optional()->randomElement(['High School', 'Bachelor\'s degree', 'Master\'s degree', 'PhD']),
-            'languages' => fake()->optional()->randomElements(['English', 'German', 'French', 'Spanish', 'Italian'], random_int(1, 3)),
+            'languages' => fake()->optional()->passthrough([
+                ['language' => 'English', 'level' => 'Fluent'], 
+                ['language' => 'German', 'level' => 'Native']
+            ]),
             'address' => fake()->optional()->streetAddress(),
             'postcode' => fake()->optional()->postcode(),
             'city' => fake()->optional()->city(),

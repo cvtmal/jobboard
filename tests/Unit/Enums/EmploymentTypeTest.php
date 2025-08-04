@@ -6,32 +6,35 @@ use App\Enums\EmploymentType;
 
 it('has valid values', function () {
     expect(EmploymentType::values())->toBe([
-        'full-time',
-        'part-time',
-        'full-part-time',
-        'contract',
+        'permanent',
         'temporary',
+        'freelance',
         'internship',
-        'volunteer',
+        'side-job',
+        'apprenticeship',
+        'working-student',
+        'interim',
     ]);
 });
 
 it('returns correct labels', function () {
-    expect(EmploymentType::FULL_TIME->label())->toBe('Full time');
-    expect(EmploymentType::PART_TIME->label())->toBe('Part time');
-    expect(EmploymentType::FULL_PART_TIME->label())->toBe('Full/Part time');
-    expect(EmploymentType::CONTRACT->label())->toBe('Contract');
-    expect(EmploymentType::TEMPORARY->label())->toBe('Temporary');
+    expect(EmploymentType::PERMANENT->label())->toBe('Permanent position');
+    expect(EmploymentType::TEMPORARY->label())->toBe('Temporary employment');
+    expect(EmploymentType::FREELANCE->label())->toBe('Freelance');
     expect(EmploymentType::INTERNSHIP->label())->toBe('Internship');
-    expect(EmploymentType::VOLUNTEER->label())->toBe('Volunteer');
+    expect(EmploymentType::SIDE_JOB->label())->toBe('Side job');
+    expect(EmploymentType::APPRENTICESHIP->label())->toBe('Apprenticeship');
+    expect(EmploymentType::WORKING_STUDENT->label())->toBe('Working student');
+    expect(EmploymentType::INTERIM->label())->toBe('Interim');
 });
 
 it('can be cast to string', function () {
-    expect((string) EmploymentType::FULL_TIME->value)->toBe('full-time');
-    expect((string) EmploymentType::PART_TIME->value)->toBe('part-time');
-    expect((string) EmploymentType::FULL_PART_TIME->value)->toBe('full-part-time');
-    expect((string) EmploymentType::CONTRACT->value)->toBe('contract');
+    expect((string) EmploymentType::PERMANENT->value)->toBe('permanent');
     expect((string) EmploymentType::TEMPORARY->value)->toBe('temporary');
+    expect((string) EmploymentType::FREELANCE->value)->toBe('freelance');
     expect((string) EmploymentType::INTERNSHIP->value)->toBe('internship');
-    expect((string) EmploymentType::VOLUNTEER->value)->toBe('volunteer');
+    expect((string) EmploymentType::SIDE_JOB->value)->toBe('side-job');
+    expect((string) EmploymentType::APPRENTICESHIP->value)->toBe('apprenticeship');
+    expect((string) EmploymentType::WORKING_STUDENT->value)->toBe('working-student');
+    expect((string) EmploymentType::INTERIM->value)->toBe('interim');
 });

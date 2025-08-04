@@ -190,7 +190,7 @@ test('job listing casts languages as array', function (): void {
 
 test('job listing casts enum fields properly', function (): void {
     $jobListing = JobListing::factory()->create([
-        'employment_type' => EmploymentType::FULL_TIME,
+        'employment_type' => EmploymentType::PERMANENT,
         'workplace' => Workplace::HYBRID,
         'experience_level' => ExperienceLevel::MID_LEVEL,
         'salary_type' => SalaryType::YEARLY,
@@ -200,7 +200,7 @@ test('job listing casts enum fields properly', function (): void {
     ]);
 
     expect($jobListing->employment_type)->toBeInstanceOf(EmploymentType::class)
-        ->and($jobListing->employment_type)->toBe(EmploymentType::FULL_TIME)
+        ->and($jobListing->employment_type)->toBe(EmploymentType::PERMANENT)
 
         ->and($jobListing->workplace)->toBeInstanceOf(Workplace::class)
         ->and($jobListing->workplace)->toBe(Workplace::HYBRID)
