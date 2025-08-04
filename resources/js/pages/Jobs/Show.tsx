@@ -13,6 +13,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { SwissCanton, swissCantonData } from '@/types/enums/SwissCanton';
 import { useEffect, useState } from 'react';
 import { useAppearance } from '@/hooks/use-appearance';
+import { SafeHtml } from '@/components/ui/safe-html';
 
 interface Company {
     id: number;
@@ -346,7 +347,7 @@ export default function Show({ jobListing, auth, locale }: ShowProps) {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-gray-900 dark:text-white prose prose-sm max-w-none dark:prose-invert">
-                                        <div dangerouslySetInnerHTML={{ __html: jobListing.description }} />
+                                        <SafeHtml content={jobListing.description} />
                                     </div>
                                 </CardContent>
                             </Card>
@@ -535,12 +536,14 @@ export default function Show({ jobListing, auth, locale }: ShowProps) {
                                             <div>
                                                 <h4 className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">About</h4>
                                                 <div className="prose prose-sm max-w-none dark:prose-invert">
-                                                    <div dangerouslySetInnerHTML={{ 
-                                                        __html: jobListing.company.description_english || 
-                                                               jobListing.company.description_german || 
-                                                               jobListing.company.description_french || 
-                                                               jobListing.company.description_italian || ''
-                                                    }} />
+                                                    <SafeHtml 
+                                                        content={
+                                                            jobListing.company.description_english || 
+                                                            jobListing.company.description_german || 
+                                                            jobListing.company.description_french || 
+                                                            jobListing.company.description_italian || ''
+                                                        }
+                                                    />
                                                 </div>
                                             </div>
                                         </>

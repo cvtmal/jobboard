@@ -8,6 +8,7 @@ import { ArrowLeft, Edit, Share, Download, MessageSquare, CalendarDays, MapPin, 
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
+import { SafeHtml } from '@/components/ui/safe-html';
 
 interface JobListing {
   id: number;
@@ -135,8 +136,7 @@ export default function JobListingShow({ auth, jobListing, categoryLabel }: Prop
                 </CardHeader>
                 <CardContent>
                   <div className="prose dark:prose-invert max-w-none">
-                    {/* Note: This should be properly rendered markdown */}
-                    <div dangerouslySetInnerHTML={{ __html: jobListing.description.replace(/\n/g, '<br />') }} />
+                    <SafeHtml content={jobListing.description} preserveLineBreaks />
                   </div>
                 </CardContent>
               </Card>

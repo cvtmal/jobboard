@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import CompanyLayout from '@/layouts/company/CompanyLayout';
 import { Head, Link, router } from '@inertiajs/react';
+import { SafeHtml } from '@/components/ui/safe-html';
 
 interface Company {
     id: number;
@@ -154,7 +155,7 @@ export default function Show({ jobListing }: ShowProps) {
                                 <div>
                                     <h3 className="text-lg font-medium">Description</h3>
                                     <div className="prose prose-sm mt-2 max-w-none">
-                                        <div dangerouslySetInnerHTML={{ __html: jobListing.description }} />
+                                        <SafeHtml content={jobListing.description} />
                                     </div>
                                 </div>
 
