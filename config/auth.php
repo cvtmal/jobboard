@@ -43,11 +43,11 @@ return [
             'provider' => 'users',
         ],
         'applicant' => [
-            'driver' => 'applicant',
+            'driver' => 'session',
             'provider' => 'applicants',
         ],
         'company' => [
-            'driver' => 'company',
+            'driver' => 'session',
             'provider' => 'companies',
         ],
         'admin' => [
@@ -79,11 +79,11 @@ return [
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
         'applicants' => [
-            'driver' => 'applicant',
+            'driver' => 'eloquent',
             'model' => App\Models\Applicant::class,
         ],
         'companies' => [
-            'driver' => 'company',
+            'driver' => 'eloquent',
             'model' => App\Models\Company::class,
         ],
         'admins' => [
