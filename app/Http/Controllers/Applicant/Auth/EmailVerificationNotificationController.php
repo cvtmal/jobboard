@@ -14,7 +14,7 @@ final class EmailVerificationNotificationController
      */
     public function store(Request $request): RedirectResponse
     {
-        if ($request->user('applicant')->hasVerifiedEmail()) { 
+        if ($request->user('applicant')->hasVerifiedEmail()) {
             return redirect()->intended(route('applicant.dashboard'));
         }
 
