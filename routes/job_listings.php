@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Company\JobListingController as CompanyJobListingController;
+use App\Http\Controllers\Company\JobListingImageController;
 use App\Http\Controllers\JobListingController;
 use App\Http\Controllers\PublicJobListingController;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,19 @@ Route::middleware(['auth:company', 'verified.company'])->group(function () {
         ->name('company.job-listings.update');
     Route::delete('company/job-listings/{jobListing}', [CompanyJobListingController::class, 'destroy'])
         ->name('company.job-listings.destroy');
+
+    // Job listing image management routes
+    Route::prefix('company/job-listings/{jobListing}/images')->name('company.job-listings.images.')->group(function () {
+        Route::get('/', [JobListingImageController::class, 'show'])->name('show');
+
+        Route::post('logo', [JobListingImageController::class, 'uploadLogo'])->name('logo.upload');
+        Route::delete('logo', [JobListingImageController::class, 'deleteLogo'])->name('logo.delete');
+
+        Route::post('banner', [JobListingImageController::class, 'uploadBanner'])->name('banner.upload');
+        Route::delete('banner', [JobListingImageController::class, 'deleteBanner'])->name('banner.delete');
+
+        Route::patch('toggle', [JobListingImageController::class, 'toggleCompanyImages'])->name('toggle');
+    });
 });
 
 // Public job viewing route

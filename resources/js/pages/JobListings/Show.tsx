@@ -12,10 +12,10 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SafeHtml } from '@/components/ui/safe-html';
 import { Separator } from '@/components/ui/separator';
 import CompanyLayout from '@/layouts/company/CompanyLayout';
 import { Head, Link, router } from '@inertiajs/react';
-import { SafeHtml } from '@/components/ui/safe-html';
 
 interface Company {
     id: number;

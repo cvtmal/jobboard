@@ -1,11 +1,11 @@
 import { LocationFilter } from '@/components/job-listings';
+import { useAppearance } from '@/hooks/use-appearance';
 import { SwissCanton, swissCantonData } from '@/types/enums/SwissCanton';
 import { SwissRegion } from '@/types/enums/SwissRegion';
 import { SwissSubRegion } from '@/types/enums/SwissSubRegion';
 import { filterJobsByCanton, filterJobsByRegion, filterJobsBySubRegion } from '@/utils/simpleFilters';
 import { Link } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
-import { useAppearance } from '@/hooks/use-appearance';
+import { useState } from 'react';
 
 interface WelcomeProps {
     auth: any;
@@ -78,7 +78,9 @@ export default function Welcome({ auth, jobListings = [] }: WelcomeProps) {
 
     return (
         <div className={isDarkMode ? 'dark' : ''}>
-            <div className={`relative min-h-screen antialiased overflow-hidden ${isDarkMode ? 'bg-gray-950 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
+            <div
+                className={`relative min-h-screen overflow-hidden antialiased ${isDarkMode ? 'bg-gray-950 text-gray-100' : 'bg-gray-50 text-gray-900'}`}
+            >
                 {/* Highly visible grid pattern across the entire screen in dark mode */}
                 <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px] dark:bg-[linear-gradient(to_right,#ffffff12_1px,transparent_1px),linear-gradient(to_bottom,#ffffff12_1px,transparent_1px)]" />
 
@@ -87,10 +89,10 @@ export default function Welcome({ auth, jobListings = [] }: WelcomeProps) {
 
                 {/* Bright center spotlight */}
                 <div className="pointer-events-none fixed inset-0">
-                    <div className="absolute left-1/2 top-1/2 h-[900px] w-[1400px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(circle_at_center,rgba(130,100,255,0.25)_0%,rgba(120,80,255,0.15)_20%,transparent_60%)] opacity-0 dark:opacity-100 dark:mix-blend-lighten"></div>
+                    <div className="absolute top-1/2 left-1/2 h-[900px] w-[1400px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(circle_at_center,rgba(130,100,255,0.25)_0%,rgba(120,80,255,0.15)_20%,transparent_60%)] opacity-0 dark:opacity-100 dark:mix-blend-lighten"></div>
 
                     {/* Extra brighter spotlight in the center for more contrast */}
-                    <div className="absolute left-1/2 top-1/2 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(circle_at_center,rgba(170,140,255,0.3)_0%,transparent_70%)] opacity-0 dark:opacity-100 dark:mix-blend-lighten"></div>
+                    <div className="absolute top-1/2 left-1/2 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(circle_at_center,rgba(170,140,255,0.3)_0%,transparent_70%)] opacity-0 dark:opacity-100 dark:mix-blend-lighten"></div>
                 </div>
 
                 <div className="relative mx-auto max-w-7xl">
@@ -188,12 +190,13 @@ export default function Welcome({ auth, jobListings = [] }: WelcomeProps) {
 
                     <main className="px-4 pb-12 sm:px-6 lg:px-8">
                         {/* Main hero section */}
-                        <main className="mx-auto max-w-6xl pb-16 relative">
+                        <main className="relative mx-auto max-w-6xl pb-16">
                             <div className="mb-16 flex flex-col items-center justify-center text-center">
                                 {/* Focal point for vignette effect */}
                                 <div
-                                    className={`relative z-10 mb-8 inline-flex items-center rounded-full ${isDarkMode ? 'bg-gray-800/50 text-indigo-400' : 'bg-indigo-50 text-indigo-600'
-                                        } px-3 py-1 text-sm backdrop-blur-sm`}
+                                    className={`relative z-10 mb-8 inline-flex items-center rounded-full ${
+                                        isDarkMode ? 'bg-gray-800/50 text-indigo-400' : 'bg-indigo-50 text-indigo-600'
+                                    } px-3 py-1 text-sm backdrop-blur-sm`}
                                 >
                                     <span
                                         className={`mr-2 inline-block h-2 w-2 rounded-full ${isDarkMode ? 'bg-indigo-400' : 'bg-indigo-600'}`}
@@ -220,10 +223,11 @@ export default function Welcome({ auth, jobListings = [] }: WelcomeProps) {
                                     </Link>
                                     <Link
                                         href={route('register')}
-                                        className={`flex items-center justify-center rounded-md ${isDarkMode
+                                        className={`flex items-center justify-center rounded-md ${
+                                            isDarkMode
                                                 ? 'border border-gray-700 bg-gray-800/40 text-white hover:bg-gray-800/60'
                                                 : 'border border-gray-300 bg-white text-gray-800 hover:bg-gray-50'
-                                            } px-8 py-3 text-base font-medium shadow-lg backdrop-blur-sm transition-all`}
+                                        } px-8 py-3 text-base font-medium shadow-lg backdrop-blur-sm transition-all`}
                                     >
                                         Post a Job
                                     </Link>
@@ -248,17 +252,19 @@ export default function Welcome({ auth, jobListings = [] }: WelcomeProps) {
                                     ].map((category) => (
                                         <div
                                             key={category.name}
-                                            className={`group cursor-pointer rounded-xl ${isDarkMode
+                                            className={`group cursor-pointer rounded-xl ${
+                                                isDarkMode
                                                     ? 'border border-gray-800 bg-gray-900/30 hover:border-indigo-500/30 hover:bg-gray-800/50'
                                                     : 'border border-gray-200 bg-white hover:border-indigo-300 hover:bg-indigo-50/50'
-                                                } p-4 text-center shadow-lg transition-all`}
+                                            } p-4 text-center shadow-lg transition-all`}
                                         >
                                             <div className="mb-2 text-2xl">{category.icon}</div>
                                             <span
-                                                className={`text-sm font-medium ${isDarkMode
+                                                className={`text-sm font-medium ${
+                                                    isDarkMode
                                                         ? 'text-gray-300 group-hover:text-indigo-400'
                                                         : 'text-gray-700 group-hover:text-indigo-600'
-                                                    } transition-all`}
+                                                } transition-all`}
                                             >
                                                 {category.name}
                                             </span>
@@ -269,8 +275,9 @@ export default function Welcome({ auth, jobListings = [] }: WelcomeProps) {
 
                             {/* Job stats section */}
                             <div
-                                className={`rounded-2xl ${isDarkMode ? 'border border-gray-800 bg-gray-900/30' : 'border border-gray-200 bg-white'
-                                    } p-8 shadow-lg`}
+                                className={`rounded-2xl ${
+                                    isDarkMode ? 'border border-gray-800 bg-gray-900/30' : 'border border-gray-200 bg-white'
+                                } p-8 shadow-lg`}
                             >
                                 <div className="mb-8 text-center">
                                     <h2 className={`mb-3 text-2xl font-semibold tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -282,29 +289,33 @@ export default function Welcome({ auth, jobListings = [] }: WelcomeProps) {
                                 </div>
                                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                                     <div
-                                        className={`rounded-xl ${isDarkMode ? 'border border-gray-800 bg-gray-800/20' : 'border border-gray-200 bg-gray-50'
-                                            } p-6 shadow-lg`}
+                                        className={`rounded-xl ${
+                                            isDarkMode ? 'border border-gray-800 bg-gray-800/20' : 'border border-gray-200 bg-gray-50'
+                                        } p-6 shadow-lg`}
                                     >
                                         <div className="mb-3 text-3xl font-bold text-indigo-600">1,200+</div>
                                         <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Active Job Listings</div>
                                     </div>
                                     <div
-                                        className={`rounded-xl ${isDarkMode ? 'border border-gray-800 bg-gray-800/20' : 'border border-gray-200 bg-gray-50'
-                                            } p-6 shadow-lg`}
+                                        className={`rounded-xl ${
+                                            isDarkMode ? 'border border-gray-800 bg-gray-800/20' : 'border border-gray-200 bg-gray-50'
+                                        } p-6 shadow-lg`}
                                     >
                                         <div className="mb-3 text-3xl font-bold text-purple-600">650+</div>
                                         <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Tech Companies</div>
                                     </div>
                                     <div
-                                        className={`rounded-xl ${isDarkMode ? 'border border-gray-800 bg-gray-800/20' : 'border border-gray-200 bg-gray-50'
-                                            } p-6 shadow-lg`}
+                                        className={`rounded-xl ${
+                                            isDarkMode ? 'border border-gray-800 bg-gray-800/20' : 'border border-gray-200 bg-gray-50'
+                                        } p-6 shadow-lg`}
                                     >
                                         <div className="mb-3 text-3xl font-bold text-blue-600">25k+</div>
                                         <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Registered Developers</div>
                                     </div>
                                     <div
-                                        className={`rounded-xl ${isDarkMode ? 'border border-gray-800 bg-gray-800/20' : 'border border-gray-200 bg-gray-50'
-                                            } p-6 shadow-lg`}
+                                        className={`rounded-xl ${
+                                            isDarkMode ? 'border border-gray-800 bg-gray-800/20' : 'border border-gray-200 bg-gray-50'
+                                        } p-6 shadow-lg`}
                                     >
                                         <div className="mb-3 text-3xl font-bold text-indigo-600">98%</div>
                                         <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Hiring Success Rate</div>

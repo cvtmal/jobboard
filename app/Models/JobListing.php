@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
@@ -66,6 +67,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $contact_person
  * @property string|null $contact_email
  * @property string|null $internal_notes
+ * @property bool $use_company_logo
+ * @property bool $use_company_banner
+ * @property string|null $logo_path
+ * @property string|null $logo_original_name
+ * @property int|null $logo_file_size
+ * @property string|null $logo_mime_type
+ * @property array<string, int>|null $logo_dimensions
+ * @property CarbonImmutable|null $logo_uploaded_at
+ * @property string|null $banner_path
+ * @property string|null $banner_original_name
+ * @property int|null $banner_file_size
+ * @property string|null $banner_mime_type
+ * @property array<string, int>|null $banner_dimensions
+ * @property CarbonImmutable|null $banner_uploaded_at
  * @property JobStatus $status
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
@@ -170,6 +185,12 @@ final class JobListing extends Model
         'languages' => 'array',
         'application_documents' => 'array',
         'screening_questions' => 'array',
+        'use_company_logo' => 'boolean',
+        'use_company_banner' => 'boolean',
+        'logo_dimensions' => 'array',
+        'logo_uploaded_at' => 'datetime',
+        'banner_dimensions' => 'array',
+        'banner_uploaded_at' => 'datetime',
     ];
 
     /**
@@ -300,5 +321,164 @@ final class JobListing extends Model
     public function skills(): BelongsToMany
     {
         return $this->belongsToMany(Skill::class); // @phpstan-ignore-line
+    }
+
+    /**
+     * Get the effective logo URL (custom or company fallback).
+     */
+    public function getEffectiveLogoUrlAttribute(): ?string
+    {
+        // If using custom logo and it exists, return custom logo URL
+        if (! $this->use_company_logo && $this->logo_path && Storage::disk('public')->exists($this->logo_path)) {
+            return Storage::disk('public')->url($this->logo_path);
+        }
+
+        // Fallback to company logo
+        return $this->company->logo_url;
+    }
+
+    /**
+     * Get the effective banner URL (custom or company fallback).
+     */
+    public function getEffectiveBannerUrlAttribute(): ?string
+    {
+        // If using custom banner and it exists, return custom banner URL
+        if (! $this->use_company_banner && $this->banner_path && Storage::disk('public')->exists($this->banner_path)) {
+            return Storage::disk('public')->url($this->banner_path);
+        }
+
+        // Fallback to company banner
+        return $this->company->banner_url;
+    }
+
+    /**
+     * Get the job listing logo URL (custom only).
+     */
+    public function getLogoUrlAttribute(): ?string
+    {
+        if (! $this->logo_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->logo_path);
+    }
+
+    /**
+     * Get the job listing banner URL (custom only).
+     */
+    public function getBannerUrlAttribute(): ?string
+    {
+        if (! $this->banner_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->banner_path);
+    }
+
+    /**
+     * Check if the job listing has a custom logo uploaded.
+     */
+    public function hasCustomLogo(): bool
+    {
+        return ! is_null($this->logo_path) && Storage::disk('public')->exists($this->logo_path);
+    }
+
+    /**
+     * Check if the job listing has a custom banner uploaded.
+     */
+    public function hasCustomBanner(): bool
+    {
+        return ! is_null($this->banner_path) && Storage::disk('public')->exists($this->banner_path);
+    }
+
+    /**
+     * Delete the job listing custom logo file from storage.
+     */
+    public function deleteCustomLogo(): bool
+    {
+        if (! $this->logo_path) {
+            return true;
+        }
+
+        $deleted = Storage::disk('public')->delete($this->logo_path);
+
+        if ($deleted) {
+            $this->update([
+                'logo_path' => null,
+                'logo_original_name' => null,
+                'logo_file_size' => null,
+                'logo_mime_type' => null,
+                'logo_dimensions' => null,
+                'logo_uploaded_at' => null,
+                'use_company_logo' => true, // Reset to use company logo
+            ]);
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * Delete the job listing custom banner file from storage.
+     */
+    public function deleteCustomBanner(): bool
+    {
+        if (! $this->banner_path) {
+            return true;
+        }
+
+        $deleted = Storage::disk('public')->delete($this->banner_path);
+
+        if ($deleted) {
+            $this->update([
+                'banner_path' => null,
+                'banner_original_name' => null,
+                'banner_file_size' => null,
+                'banner_mime_type' => null,
+                'banner_dimensions' => null,
+                'banner_uploaded_at' => null,
+                'use_company_banner' => true, // Reset to use company banner
+            ]);
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * Get the logo file size in human readable format.
+     */
+    public function getLogoFileSizeFormattedAttribute(): ?string
+    {
+        if (! $this->logo_file_size) {
+            return null;
+        }
+
+        return $this->formatFileSize($this->logo_file_size);
+    }
+
+    /**
+     * Get the banner file size in human readable format.
+     */
+    public function getBannerFileSizeFormattedAttribute(): ?string
+    {
+        if (! $this->banner_file_size) {
+            return null;
+        }
+
+        return $this->formatFileSize($this->banner_file_size);
+    }
+
+    /**
+     * Format file size in human readable format.
+     */
+    private function formatFileSize(int $bytes): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+
+        $bytes /= 1024 ** $pow;
+
+        return round($bytes, 2).' '.$units[$pow];
     }
 }

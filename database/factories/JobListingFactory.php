@@ -88,6 +88,9 @@ final class JobListingFactory extends Factory
             'contact_person' => fake()->optional()->name(),
             'contact_email' => fake()->optional()->safeEmail(),
             'internal_notes' => fake()->optional()->paragraph(),
+            // Image settings - default to using company images
+            'use_company_logo' => true,
+            'use_company_banner' => true,
             'status' => fake()->randomElement(JobStatus::cases()),
         ];
     }

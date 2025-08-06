@@ -53,7 +53,7 @@ export default function CompanyRegister() {
                     {/* Company Details Section */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-medium">Company Details</h3>
-                        
+
                         <div className="grid gap-2">
                             <Label htmlFor="name">Company Name</Label>
                             <Input
@@ -137,7 +137,7 @@ export default function CompanyRegister() {
                     {/* Contact Person Details Section */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-medium">Contact Person</h3>
-                        
+
                         <div className="grid grid-cols-2 gap-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="first_name">First Name</Label>
@@ -208,7 +208,7 @@ export default function CompanyRegister() {
                     {/* Password Section */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-medium">Set Password</h3>
-                        
+
                         <div className="grid gap-2">
                             <Label htmlFor="password">Password</Label>
                             <Input
@@ -249,10 +249,7 @@ export default function CompanyRegister() {
                 </div>
 
                 <div className="text-muted-foreground text-center text-sm">
-                    Already have a company account?{' '}
-                    <TextLink href={route('company.login')}>
-                        Log in
-                    </TextLink>
+                    Already have a company account? <TextLink href={route('company.login')}>Log in</TextLink>
                 </div>
             </form>
         </AuthLayout>

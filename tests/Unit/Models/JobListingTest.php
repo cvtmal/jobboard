@@ -16,6 +16,7 @@ use App\Models\JobTier;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 test('job listing model exists', function (): void {
     $jobListing = new JobListing();
@@ -228,4 +229,257 @@ test('job listing has no fillable restrictions (uses guarded empty array)', func
     $guarded = $guardedProperty->getValue(new JobListing());
 
     expect($guarded)->toBeArray()->toBeEmpty();
+});
+
+// Image functionality tests
+test('job listing defaults to using company images', function (): void {
+    $jobListing = JobListing::factory()->create();
+
+    expect($jobListing->use_company_logo)->toBeTrue()
+        ->and($jobListing->use_company_banner)->toBeTrue();
+});
+
+test('job listing can use custom images', function (): void {
+    $jobListing = JobListing::factory()->create([
+        'use_company_logo' => false,
+        'use_company_banner' => false,
+        'logo_path' => 'job-listing-images/logos/test-logo.jpg',
+        'banner_path' => 'job-listing-images/banners/test-banner.jpg',
+    ]);
+
+    expect($jobListing->use_company_logo)->toBeFalse()
+        ->and($jobListing->use_company_banner)->toBeFalse()
+        ->and($jobListing->logo_path)->toBe('job-listing-images/logos/test-logo.jpg')
+        ->and($jobListing->banner_path)->toBe('job-listing-images/banners/test-banner.jpg');
+});
+
+test('job listing hasCustomLogo method works correctly', function (): void {
+    Storage::fake('public');
+
+    // Job listing without custom logo
+    $jobListing = JobListing::factory()->create();
+    expect($jobListing->hasCustomLogo())->toBeFalse();
+
+    // Job listing with custom logo path but file doesn't exist
+    $jobListing = JobListing::factory()->create([
+        'logo_path' => 'job-listing-images/logos/nonexistent.jpg',
+    ]);
+    expect($jobListing->hasCustomLogo())->toBeFalse();
+
+    // Job listing with custom logo and file exists
+    $logoPath = 'job-listing-images/logos/test-logo.jpg';
+    Storage::disk('public')->put($logoPath, 'fake logo content');
+
+    $jobListing = JobListing::factory()->create([
+        'logo_path' => $logoPath,
+    ]);
+    expect($jobListing->hasCustomLogo())->toBeTrue();
+});
+
+test('job listing hasCustomBanner method works correctly', function (): void {
+    Storage::fake('public');
+
+    // Job listing without custom banner
+    $jobListing = JobListing::factory()->create();
+    expect($jobListing->hasCustomBanner())->toBeFalse();
+
+    // Job listing with custom banner path but file doesn't exist
+    $jobListing = JobListing::factory()->create([
+        'banner_path' => 'job-listing-images/banners/nonexistent.jpg',
+    ]);
+    expect($jobListing->hasCustomBanner())->toBeFalse();
+
+    // Job listing with custom banner and file exists
+    $bannerPath = 'job-listing-images/banners/test-banner.jpg';
+    Storage::disk('public')->put($bannerPath, 'fake banner content');
+
+    $jobListing = JobListing::factory()->create([
+        'banner_path' => $bannerPath,
+    ]);
+    expect($jobListing->hasCustomBanner())->toBeTrue();
+});
+
+test('job listing effective logo URL falls back to company logo', function (): void {
+    Storage::fake('public');
+
+    // Create company with logo
+    $companyLogoPath = 'company-images/logos/company-logo.jpg';
+    Storage::disk('public')->put($companyLogoPath, 'fake company logo');
+
+    $company = Company::factory()->create([
+        'logo_path' => $companyLogoPath,
+    ]);
+
+    // Job listing using company logo
+    $jobListing = JobListing::factory()->create([
+        'company_id' => $company->id,
+        'use_company_logo' => true,
+    ]);
+
+    expect($jobListing->effective_logo_url)->toBe($company->logo_url);
+});
+
+test('job listing effective logo URL uses custom logo when available', function (): void {
+    Storage::fake('public');
+
+    // Create company with logo
+    $companyLogoPath = 'company-images/logos/company-logo.jpg';
+    Storage::disk('public')->put($companyLogoPath, 'fake company logo');
+
+    $company = Company::factory()->create([
+        'logo_path' => $companyLogoPath,
+    ]);
+
+    // Create custom logo for job listing
+    $jobLogoPath = 'job-listing-images/logos/job-logo.jpg';
+    Storage::disk('public')->put($jobLogoPath, 'fake job logo');
+
+    $jobListing = JobListing::factory()->create([
+        'company_id' => $company->id,
+        'use_company_logo' => false,
+        'logo_path' => $jobLogoPath,
+    ]);
+
+    expect($jobListing->effective_logo_url)->toBe(Storage::disk('public')->url($jobLogoPath))
+        ->and($jobListing->effective_logo_url)->not->toBe($company->logo_url);
+});
+
+test('job listing effective banner URL falls back to company banner', function (): void {
+    Storage::fake('public');
+
+    // Create company with banner
+    $companyBannerPath = 'company-images/banners/company-banner.jpg';
+    Storage::disk('public')->put($companyBannerPath, 'fake company banner');
+
+    $company = Company::factory()->create([
+        'banner_path' => $companyBannerPath,
+    ]);
+
+    // Job listing using company banner
+    $jobListing = JobListing::factory()->create([
+        'company_id' => $company->id,
+        'use_company_banner' => true,
+    ]);
+
+    expect($jobListing->effective_banner_url)->toBe($company->banner_url);
+});
+
+test('job listing effective banner URL uses custom banner when available', function (): void {
+    Storage::fake('public');
+
+    // Create company with banner
+    $companyBannerPath = 'company-images/banners/company-banner.jpg';
+    Storage::disk('public')->put($companyBannerPath, 'fake company banner');
+
+    $company = Company::factory()->create([
+        'banner_path' => $companyBannerPath,
+    ]);
+
+    // Create custom banner for job listing
+    $jobBannerPath = 'job-listing-images/banners/job-banner.jpg';
+    Storage::disk('public')->put($jobBannerPath, 'fake job banner');
+
+    $jobListing = JobListing::factory()->create([
+        'company_id' => $company->id,
+        'use_company_banner' => false,
+        'banner_path' => $jobBannerPath,
+    ]);
+
+    expect($jobListing->effective_banner_url)->toBe(Storage::disk('public')->url($jobBannerPath))
+        ->and($jobListing->effective_banner_url)->not->toBe($company->banner_url);
+});
+
+test('job listing deleteCustomLogo method works correctly', function (): void {
+    Storage::fake('public');
+
+    // Create custom logo for job listing
+    $jobLogoPath = 'job-listing-images/logos/job-logo.jpg';
+    Storage::disk('public')->put($jobLogoPath, 'fake job logo');
+
+    $jobListing = JobListing::factory()->create([
+        'use_company_logo' => false,
+        'logo_path' => $jobLogoPath,
+        'logo_original_name' => 'original-logo.jpg',
+        'logo_file_size' => 12345,
+        'logo_mime_type' => 'image/jpeg',
+        'logo_dimensions' => ['width' => 400, 'height' => 400],
+        'logo_uploaded_at' => now(),
+    ]);
+
+    expect($jobListing->hasCustomLogo())->toBeTrue();
+
+    $result = $jobListing->deleteCustomLogo();
+
+    expect($result)->toBeTrue();
+
+    $jobListing->refresh();
+
+    expect($jobListing->logo_path)->toBeNull()
+        ->and($jobListing->logo_original_name)->toBeNull()
+        ->and($jobListing->logo_file_size)->toBeNull()
+        ->and($jobListing->logo_mime_type)->toBeNull()
+        ->and($jobListing->logo_dimensions)->toBeNull()
+        ->and($jobListing->logo_uploaded_at)->toBeNull()
+        ->and($jobListing->use_company_logo)->toBeTrue()
+        ->and($jobListing->hasCustomLogo())->toBeFalse();
+
+    Storage::disk('public')->assertMissing($jobLogoPath);
+});
+
+test('job listing deleteCustomBanner method works correctly', function (): void {
+    Storage::fake('public');
+
+    // Create custom banner for job listing
+    $jobBannerPath = 'job-listing-images/banners/job-banner.jpg';
+    Storage::disk('public')->put($jobBannerPath, 'fake job banner');
+
+    $jobListing = JobListing::factory()->create([
+        'use_company_banner' => false,
+        'banner_path' => $jobBannerPath,
+        'banner_original_name' => 'original-banner.jpg',
+        'banner_file_size' => 54321,
+        'banner_mime_type' => 'image/jpeg',
+        'banner_dimensions' => ['width' => 1200, 'height' => 400],
+        'banner_uploaded_at' => now(),
+    ]);
+
+    expect($jobListing->hasCustomBanner())->toBeTrue();
+
+    $result = $jobListing->deleteCustomBanner();
+
+    expect($result)->toBeTrue();
+
+    $jobListing->refresh();
+
+    expect($jobListing->banner_path)->toBeNull()
+        ->and($jobListing->banner_original_name)->toBeNull()
+        ->and($jobListing->banner_file_size)->toBeNull()
+        ->and($jobListing->banner_mime_type)->toBeNull()
+        ->and($jobListing->banner_dimensions)->toBeNull()
+        ->and($jobListing->banner_uploaded_at)->toBeNull()
+        ->and($jobListing->use_company_banner)->toBeTrue()
+        ->and($jobListing->hasCustomBanner())->toBeFalse();
+
+    Storage::disk('public')->assertMissing($jobBannerPath);
+});
+
+test('job listing image casts work correctly', function (): void {
+    $now = now();
+    $dimensions = ['width' => 400, 'height' => 400];
+
+    $jobListing = JobListing::factory()->create([
+        'use_company_logo' => false,
+        'use_company_banner' => false,
+        'logo_dimensions' => $dimensions,
+        'logo_uploaded_at' => $now,
+        'banner_dimensions' => $dimensions,
+        'banner_uploaded_at' => $now,
+    ]);
+
+    expect($jobListing->use_company_logo)->toBeFalse()
+        ->and($jobListing->use_company_banner)->toBeFalse()
+        ->and($jobListing->logo_dimensions)->toBeArray()->toBe($dimensions)
+        ->and($jobListing->logo_uploaded_at)->toBeInstanceOf(Carbon\CarbonInterface::class)
+        ->and($jobListing->banner_dimensions)->toBeArray()->toBe($dimensions)
+        ->and($jobListing->banner_uploaded_at)->toBeInstanceOf(Carbon\CarbonInterface::class);
 });

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Company\CompanyImageController;
 use App\Http\Controllers\Company\Settings\CompanyPasswordController;
 use App\Http\Controllers\Company\Settings\CompanyProfileController;
 use Illuminate\Support\Facades\Route;
@@ -11,8 +12,8 @@ Route::middleware(['auth:company', 'verified.company'])->group(function () {
     Route::redirect('company/settings', 'company/settings/profile');
 
     Route::get('company/settings/profile', [CompanyProfileController::class, 'edit'])->name('company.settings.profile');
-    Route::patch('company/settings/profile', [CompanyProfileController::class, 'update'])->name('company.profile.update');
-    Route::delete('company/settings/profile', [CompanyProfileController::class, 'destroy'])->name('company.profile.destroy');
+    Route::patch('company/settings/profile', [CompanyProfileController::class, 'update'])->name('company.settings.profile.update');
+    Route::delete('company/settings/profile', [CompanyProfileController::class, 'destroy'])->name('company.settings.profile.destroy');
 
     Route::get('company/settings/password', [CompanyPasswordController::class, 'edit'])->name('company.settings.password');
     Route::put('company/settings/password', [CompanyPasswordController::class, 'update'])->name('company.password.update');
@@ -20,4 +21,15 @@ Route::middleware(['auth:company', 'verified.company'])->group(function () {
     Route::get('company/settings/appearance', function () {
         return Inertia::render('company/settings/appearance');
     })->name('company.settings.appearance');
+
+    // Image management routes
+    Route::prefix('company/images')->name('company.images.')->group(function () {
+        Route::get('/', [CompanyImageController::class, 'show'])->name('show');
+
+        Route::post('logo', [CompanyImageController::class, 'uploadLogo'])->name('logo.upload');
+        Route::delete('logo', [CompanyImageController::class, 'deleteLogo'])->name('logo.delete');
+
+        Route::post('banner', [CompanyImageController::class, 'uploadBanner'])->name('banner.upload');
+        Route::delete('banner', [CompanyImageController::class, 'deleteBanner'])->name('banner.delete');
+    });
 });

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Company\CompanyOnboardingController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,13 +17,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Company routes
 Route::middleware(['auth:company', 'verified.company'])->group(function () {
-    Route::get('company/dashboard', function () {
-        return Inertia::render('company/dashboard');
-    })->name('company.dashboard');
+    Route::get('company/dashboard', [CompanyOnboardingController::class, 'showDashboard'])->name('company.dashboard');
 
     Route::get('company/onboarding', function () {
         return Inertia::render('company/onboarding');
     })->name('company.onboarding');
+
+    // Company profile onboarding
+    Route::get('company/profile', [CompanyOnboardingController::class, 'showProfile'])->name('company.profile');
+    Route::patch('company/profile', [CompanyOnboardingController::class, 'updateProfile'])->name('company.profile.update');
 });
 
 // Applicant routes

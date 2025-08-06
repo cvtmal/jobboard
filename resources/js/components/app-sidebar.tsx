@@ -1,23 +1,10 @@
-import { CompanyNavUser } from '@/components/company-nav-user';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import {
-    BookOpen,
-    Castle,
-    CreditCard,
-    Folder,
-    Gem,
-    LayoutGrid,
-    Pickaxe,
-    Rocket,
-    Shapes,
-    Tags,
-    Users
-} from 'lucide-react';
+import { BookOpen, Castle, CreditCard, Folder, Gem, LayoutGrid, Pickaxe, Rocket, Shapes, Tags, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -65,7 +52,7 @@ const mainNavItems: NavItem[] = [
         title: 'Skills',
         href: '/skills',
         icon: Tags,
-    }
+    },
 ];
 
 const footerNavItems: NavItem[] = [

@@ -1,11 +1,13 @@
 We're building a job board application.
 
 # Styling & UI
+
 - Use Tailwind CSS for styling.
 - Use Shadcn UI for components.
 - If you need to use something else than Shadcn UI, you can do that, but ask me first.
 
 # Theme for dark mode, light mode and system
+
 - Always use the useAppearance hook
 - Never implement component-level dark mode state
 - Toggle themes with updateAppearance()
@@ -13,9 +15,11 @@ We're building a job board application.
 - Apply Tailwind's dark mode styling consistently
 
 # Inertia.js
+
 - Stick to the Inertia.js documentation for best practices.
 - Use Inertia.js for Data Fetching, Forms, File uploads, Links, Validation, Scroll Management etc.
 
 # Project Structure
+
 - Jobs from the Job Board are stored in the `job_listings` table.
 - Laravel jobs are stored in the `jobs` table.

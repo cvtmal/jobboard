@@ -17,6 +17,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
@@ -36,13 +37,31 @@ use Illuminate\Notifications\Notifiable;
  * @property string|null $description_english
  * @property string|null $description_french
  * @property string|null $description_italian
- * @property string|null $logo
- * @property string|null $cover
+ * @property string|null $logo_path
+ * @property string|null $logo_original_name
+ * @property int|null $logo_file_size
+ * @property string|null $logo_mime_type
+ * @property array<string, int>|null $logo_dimensions
+ * @property CarbonImmutable|null $logo_uploaded_at
+ * @property string|null $banner_path
+ * @property string|null $banner_original_name
+ * @property int|null $banner_file_size
+ * @property string|null $banner_mime_type
+ * @property array<string, int>|null $banner_dimensions
+ * @property CarbonImmutable|null $banner_uploaded_at
  * @property string|null $video
  * @property bool|null $newsletter
  * @property string|null $internal_notes
  * @property bool $active
  * @property bool $blocked
+ * @property bool $profile_completed
+ * @property CarbonImmutable|null $profile_completed_at
+ * @property array<string, bool>|null $profile_completion_steps
+ * @property string|null $industry
+ * @property int|null $founded_year
+ * @property string|null $mission_statement
+ * @property array<string>|null $benefits
+ * @property array<string>|null $company_culture
  * @property string $email
  * @property CarbonImmutable|null $email_verified_at
  * @property string $password
@@ -62,7 +81,12 @@ use Illuminate\Notifications\Notifiable;
  * @method static Builder<static>|Company whereAddress($value)
  * @method static Builder<static>|Company whereBlocked($value)
  * @method static Builder<static>|Company whereCity($value)
- * @method static Builder<static>|Company whereCover($value)
+ * @method static Builder<static>|Company whereBannerPath($value)
+ * @method static Builder<static>|Company whereBannerOriginalName($value)
+ * @method static Builder<static>|Company whereBannerFileSize($value)
+ * @method static Builder<static>|Company whereBannerMimeType($value)
+ * @method static Builder<static>|Company whereBannerDimensions($value)
+ * @method static Builder<static>|Company whereBannerUploadedAt($value)
  * @method static Builder<static>|Company whereCreatedAt($value)
  * @method static Builder<static>|Company whereDescriptionEnglish($value)
  * @method static Builder<static>|Company whereDescriptionFrench($value)
@@ -75,7 +99,12 @@ use Illuminate\Notifications\Notifiable;
  * @method static Builder<static>|Company whereInternalNotes($value)
  * @method static Builder<static>|Company whereLastName($value)
  * @method static Builder<static>|Company whereLatitude($value)
- * @method static Builder<static>|Company whereLogo($value)
+ * @method static Builder<static>|Company whereLogoPath($value)
+ * @method static Builder<static>|Company whereLogoOriginalName($value)
+ * @method static Builder<static>|Company whereLogoFileSize($value)
+ * @method static Builder<static>|Company whereLogoMimeType($value)
+ * @method static Builder<static>|Company whereLogoDimensions($value)
+ * @method static Builder<static>|Company whereLogoUploadedAt($value)
  * @method static Builder<static>|Company whereLongitude($value)
  * @method static Builder<static>|Company whereName($value)
  * @method static Builder<static>|Company whereNewsletter($value)
@@ -95,6 +124,68 @@ final class Company extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<CompanyFactory> */
     use HasFactory, Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'name',
+        'first_name',
+        'last_name',
+        'phone_number',
+        'address',
+        'postcode',
+        'city',
+        'latitude',
+        'longitude',
+        'url',
+        'size',
+        'type',
+        'industry',
+        'founded_year',
+        'description_german',
+        'description_english',
+        'description_french',
+        'description_italian',
+        'mission_statement',
+        'benefits',
+        'company_culture',
+        'logo_path',
+        'logo_original_name',
+        'logo_file_size',
+        'logo_mime_type',
+        'logo_dimensions',
+        'logo_uploaded_at',
+        'banner_path',
+        'banner_original_name',
+        'banner_file_size',
+        'banner_mime_type',
+        'banner_dimensions',
+        'banner_uploaded_at',
+        'video',
+        'newsletter',
+        'internal_notes',
+        'active',
+        'blocked',
+        'profile_completed',
+        'profile_completed_at',
+        'profile_completion_steps',
+        'email',
+        'email_verified_at',
+        'password',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var list<string>
+     */
+    protected $appends = [
+        'logo_url',
+        'banner_url',
+    ];
 
     /**
      * Get the jobs listed by this company.
@@ -155,6 +246,161 @@ final class Company extends Authenticatable implements MustVerifyEmail
             'newsletter' => 'boolean',
             'active' => 'boolean',
             'blocked' => 'boolean',
+            'profile_completed' => 'boolean',
+            'profile_completed_at' => 'datetime',
+            'profile_completion_steps' => 'array',
+            'founded_year' => 'integer',
+            'benefits' => 'array',
+            'company_culture' => 'array',
+            'logo_dimensions' => 'array',
+            'logo_uploaded_at' => 'datetime',
+            'banner_dimensions' => 'array',
+            'banner_uploaded_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Get the full URL for the company logo.
+     */
+    public function getLogoUrlAttribute(): ?string
+    {
+        if (! $this->logo_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->logo_path);
+    }
+
+    /**
+     * Get the full URL for the company banner.
+     */
+    public function getBannerUrlAttribute(): ?string
+    {
+        if (! $this->banner_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->banner_path);
+    }
+
+    /**
+     * Check if the company has a logo uploaded.
+     */
+    public function hasLogo(): bool
+    {
+        return ! is_null($this->logo_path) && Storage::disk('public')->exists($this->logo_path);
+    }
+
+    /**
+     * Check if the company has a banner uploaded.
+     */
+    public function hasBanner(): bool
+    {
+        return ! is_null($this->banner_path) && Storage::disk('public')->exists($this->banner_path);
+    }
+
+    /**
+     * Get the logo file size in human readable format.
+     */
+    public function getLogoFileSizeFormattedAttribute(): ?string
+    {
+        if (! $this->logo_file_size) {
+            return null;
+        }
+
+        return $this->formatFileSize($this->logo_file_size);
+    }
+
+    /**
+     * Get the banner file size in human readable format.
+     */
+    public function getBannerFileSizeFormattedAttribute(): ?string
+    {
+        if (! $this->banner_file_size) {
+            return null;
+        }
+
+        return $this->formatFileSize($this->banner_file_size);
+    }
+
+    /**
+     * Delete the company logo file from storage.
+     */
+    public function deleteLogo(): bool
+    {
+        if (! $this->logo_path) {
+            return true;
+        }
+
+        $deleted = Storage::disk('public')->delete($this->logo_path);
+
+        if ($deleted) {
+            $this->update([
+                'logo_path' => null,
+                'logo_original_name' => null,
+                'logo_file_size' => null,
+                'logo_mime_type' => null,
+                'logo_dimensions' => null,
+                'logo_uploaded_at' => null,
+            ]);
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * Delete the company banner file from storage.
+     */
+    public function deleteBanner(): bool
+    {
+        if (! $this->banner_path) {
+            return true;
+        }
+
+        $deleted = Storage::disk('public')->delete($this->banner_path);
+
+        if ($deleted) {
+            $this->update([
+                'banner_path' => null,
+                'banner_original_name' => null,
+                'banner_file_size' => null,
+                'banner_mime_type' => null,
+                'banner_dimensions' => null,
+                'banner_uploaded_at' => null,
+            ]);
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * Check if company has completed mandatory fields.
+     */
+    public function hasMandatoryFields(): bool
+    {
+        return ! empty($this->name) && ! empty($this->email);
+    }
+
+    /**
+     * Check if onboarding should be shown (for recently registered companies).
+     */
+    public function shouldShowOnboarding(): bool
+    {
+        return $this->created_at && $this->created_at->isAfter(now()->subDays(30));
+    }
+
+    /**
+     * Format file size in human readable format.
+     */
+    private function formatFileSize(int $bytes): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+
+        $bytes /= 1024 ** $pow;
+
+        return round($bytes, 2).' '.$units[$pow];
     }
 }
