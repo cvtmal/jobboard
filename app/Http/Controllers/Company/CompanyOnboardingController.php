@@ -75,14 +75,9 @@ final class CompanyOnboardingController
             return back()->withErrors(['general' => 'Invalid company account']);
         }
 
-        $validated = $request->validated();
+        $validated = $request->safe()->except('email');
 
-        // Update the company profile
         $company->fill($validated);
-
-        if ($company->isDirty('email')) {
-            $company->email_verified_at = null;
-        }
 
         $company->save();
 

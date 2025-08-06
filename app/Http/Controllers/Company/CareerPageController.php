@@ -166,10 +166,10 @@ final class CareerPageController
         }
 
         $videos = $company->career_page_videos ?? [];
-        
+
         // Defensive check: ensure we have an array (Laravel casting can sometimes be unpredictable)
         // @phpstan-ignore-next-line function.alreadyNarrowedType
-        if (!is_array($videos)) {
+        if (! is_array($videos)) {
             $videos = [];
         }
 

@@ -22,9 +22,11 @@ interface Props {
     auth: Auth;
     errors: Record<string, string>;
     categoryOptions: Record<string, string>;
+    companyLogo?: string | null;
+    companyBanner?: string | null;
 }
 
-export default function CreateJobListing({ auth, errors, categoryOptions }: Props) {
+export default function CreateJobListing({ auth, errors, categoryOptions, companyLogo, companyBanner }: Props) {
     const { data, setData, post, processing } = useForm({
         title: '',
         company_description: '',
@@ -100,6 +102,8 @@ export default function CreateJobListing({ auth, errors, categoryOptions }: Prop
                             </CardHeader>
                             <CardContent>
                                 <CompanyImageUploader
+                                    currentBannerUrl={companyBanner || undefined}
+                                    currentLogoUrl={companyLogo || undefined}
                                     onBannerChange={(file) => setData('banner_image', file || undefined)}
                                     onLogoChange={(file) => setData('logo_image', file || undefined)}
                                     disabled={processing}

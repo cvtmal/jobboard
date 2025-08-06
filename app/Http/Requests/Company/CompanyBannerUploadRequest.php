@@ -35,7 +35,7 @@ final class CompanyBannerUploadRequest extends FormRequest
                 new Dimensions([
                     'min_width' => 1200,
                     'min_height' => 400,
-                    'ratio' => 3, // 3:1 aspect ratio
+                    // Removed strict ratio to allow more flexibility
                 ]),
             ],
         ];

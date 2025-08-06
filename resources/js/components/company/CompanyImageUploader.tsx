@@ -1,8 +1,9 @@
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import { PencilIcon, UploadIcon } from 'lucide-react';
 import { useImageUpload } from '@/hooks/use-image-upload';
-import { BannerPreviewCard } from './BannerPreviewCard';
 import { ImageCropModal } from './ImageCropModal';
-import { LogoUploadTile } from './LogoUploadTile';
 
 interface CompanyImageUploaderProps {
     /**
@@ -55,24 +56,121 @@ export function CompanyImageUploader({
         mode,
     });
 
+    const bannerUrl = currentBannerUrl || imageUpload.banner.previewUrl;
+    const logoUrl = currentLogoUrl || imageUpload.logo.previewUrl;
+
     return (
         <Card className="overflow-hidden">
-            <div className="space-y-6 p-6">
-                {/* Banner Upload Section */}
-                <BannerPreviewCard
-                    imageUrl={currentBannerUrl || imageUpload.banner.previewUrl}
-                    onEditClick={() => imageUpload.openModal('banner')}
-                    disabled={disabled}
-                    error={errors.banner}
-                />
+            <div className="p-6">
+                {/* Combined Banner and Logo Section with Overlap */}
+                <div className="space-y-4">
+                    {/* Banner with Overlapping Logo */}
+                    <div className="relative">
+                        {/* Banner Image Container with 3:1 aspect ratio */}
+                        <Card className="group relative overflow-hidden rounded-lg">
+                            <div className="relative aspect-[3/1] w-full">
+                                {bannerUrl ? (
+                                    <img
+                                        src={bannerUrl}
+                                        alt="Company banner preview"
+                                        className="h-full w-full object-cover transition-opacity group-hover:opacity-90"
+                                    />
+                                ) : (
+                                    <div className="bg-muted text-muted-foreground flex h-full w-full items-center justify-center">
+                                        Banner Preview
+                                    </div>
+                                )}
 
-                {/* Logo Upload Section */}
-                <LogoUploadTile
-                    imageUrl={currentLogoUrl || imageUpload.logo.previewUrl}
-                    onClick={() => imageUpload.openModal('logo')}
-                    disabled={disabled}
-                    error={errors.logo}
-                />
+                                {/* Semi-transparent overlay on hover */}
+                                <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20" />
+
+                                {/* Edit Banner Button */}
+                                {!disabled && (
+                                    <Button
+                                        size="sm"
+                                        variant="secondary"
+                                        className="absolute top-3 right-3 shadow-md transition-all opacity-0 group-hover:opacity-100"
+                                        onClick={() => imageUpload.openModal('banner')}
+                                        disabled={disabled}
+                                    >
+                                        <PencilIcon className="h-3 w-3" />
+                                        <span className="sr-only">Edit banner</span>
+                                        Edit Banner
+                                    </Button>
+                                )}
+                            </div>
+                        </Card>
+
+                        {/* Overlapping Logo positioned at bottom-left */}
+                        <div className="absolute -bottom-8 left-6 z-10">
+                            <Card
+                                className={cn(
+                                    'group relative flex-shrink-0 overflow-hidden transition-all hover:shadow-xl',
+                                    'ring-4 ring-white shadow-lg', // White border for visibility
+                                    !disabled && 'hover:ring-primary/20 cursor-pointer hover:ring-4',
+                                    disabled && 'cursor-not-allowed opacity-50',
+                                )}
+                            >
+                                <Button 
+                                    variant="ghost" 
+                                    className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 p-0 hover:bg-transparent rounded-lg" 
+                                    onClick={() => imageUpload.openModal('logo')} 
+                                    disabled={disabled}
+                                >
+                                    {logoUrl ? (
+                                        // Display uploaded logo
+                                        <div className="relative h-full w-full">
+                                            <img
+                                                src={logoUrl}
+                                                alt="Company logo"
+                                                className="h-full w-full object-contain transition-opacity group-hover:opacity-90"
+                                            />
+
+                                            {/* Overlay with edit hint */}
+                                            {!disabled && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/40">
+                                                    <div className="rounded-md bg-white/95 px-2 py-1 text-xs font-medium opacity-0 transition-opacity group-hover:opacity-100 shadow-sm">
+                                                        Edit Logo
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        // Upload placeholder
+                                        <div className="text-muted-foreground group-hover:text-foreground flex h-full w-full flex-col items-center justify-center gap-1 transition-colors">
+                                            <div className="bg-muted group-hover:bg-muted-foreground/10 rounded-full p-2 transition-colors">
+                                                <UploadIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                                            </div>
+                                            <span className="text-xs font-medium hidden sm:block">Logo</span>
+                                        </div>
+                                    )}
+                                </Button>
+                            </Card>
+                        </div>
+                    </div>
+
+                    {/* Instructions and Error Messages */}
+                    <div className="pt-8 space-y-3">
+                        {/* Banner Instructions */}
+                        <div className="space-y-1">
+                            <h3 className="font-medium">Company Images</h3>
+                            <p className="text-muted-foreground text-sm">
+                                Upload a banner image and company logo. The logo will appear overlapping the banner, similar to a social media profile.
+                            </p>
+                            <p className="text-muted-foreground text-xs">
+                                Banner: Min 1200×400px, max 16MB • Logo: Min 320×320px, max 8MB (PNG, JPG)
+                            </p>
+                        </div>
+
+                        {/* Error Messages */}
+                        {(errors.banner || errors.logo) && (
+                            <div className="space-y-1">
+                                {errors.banner && <p className="text-destructive text-sm">Banner: {errors.banner}</p>}
+                                {errors.logo && <p className="text-destructive text-sm">Logo: {errors.logo}</p>}
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
 
             {/* Crop Modals */}

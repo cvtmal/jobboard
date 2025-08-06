@@ -1,9 +1,8 @@
 import { Transition } from '@headlessui/react';
-import { Head, useForm } from '@inertiajs/react';
-import { Building, CheckCircle, MapPin, Plus, Target, Upload, Users, X } from 'lucide-react';
-import { FormEventHandler, useState } from 'react';
+import { Head, useForm, router } from '@inertiajs/react';
+import { Building, CheckCircle, MapPin, Target, Upload, Users, X, Image } from 'lucide-react';
+import { FormEventHandler, useState, useRef, ChangeEvent } from 'react';
 
-import { CompanyImageUploader } from '@/components/company';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +21,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 type ProfileForm = {
     name: string;
-    email: string;
     first_name: string;
     last_name: string;
     phone_number: string;
@@ -33,11 +31,7 @@ type ProfileForm = {
     size: string;
     type: string;
     industry: string;
-    founded_year: string;
     description_english: string;
-    mission_statement: string;
-    benefits: string[];
-    company_culture: string[];
 };
 
 export default function CompanyDetails({
@@ -51,14 +45,15 @@ export default function CompanyDetails({
     shouldShowOnboarding: boolean;
     status?: string;
 }) {
-    const [benefits, setBenefits] = useState<string[]>(company.benefits || []);
-    const [companyCulture, setCompanyCulture] = useState<string[]>(company.company_culture || []);
-    const [newBenefit, setNewBenefit] = useState('');
-    const [newCultureItem, setNewCultureItem] = useState('');
+    const [uploadingLogo, setUploadingLogo] = useState(false);
+    const [uploadingBanner, setUploadingBanner] = useState(false);
+    const [logoPreview, setLogoPreview] = useState<string | null>(company.logo_url || null);
+    const [bannerPreview, setBannerPreview] = useState<string | null>(company.banner_url || null);
+    const logoInputRef = useRef<HTMLInputElement>(null);
+    const bannerInputRef = useRef<HTMLInputElement>(null);
 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Partial<ProfileForm>>({
         name: company.name || '',
-        email: company.email || '',
         first_name: company.first_name || '',
         last_name: company.last_name || '',
         phone_number: company.phone_number || '',
@@ -69,11 +64,7 @@ export default function CompanyDetails({
         size: company.size || '',
         type: company.type || '',
         industry: company.industry || '',
-        founded_year: company.founded_year?.toString() || '',
         description_english: company.description_english || '',
-        mission_statement: company.mission_statement || '',
-        benefits,
-        company_culture: companyCulture,
     });
 
     const submit: FormEventHandler = (e) => {
@@ -84,35 +75,100 @@ export default function CompanyDetails({
         });
     };
 
-    const addBenefit = () => {
-        if (newBenefit.trim() && !benefits.includes(newBenefit.trim())) {
-            const updatedBenefits = [...benefits, newBenefit.trim()];
-            setBenefits(updatedBenefits);
-            setData('benefits', updatedBenefits);
-            setNewBenefit('');
+    const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setLogoPreview(e.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+
+        // Upload using Inertia with file
+        setUploadingLogo(true);
+        
+        router.post(route('company.images.logo.upload'), {
+            logo: file,
+        }, {
+            forceFormData: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                setUploadingLogo(false);
+                // Reload to get updated logo_url from server
+                router.reload({ only: ['company'] });
+            },
+            onError: () => {
+                setUploadingLogo(false);
+                setLogoPreview(company.logo_url || null);
+            },
+            onFinish: () => {
+                setUploadingLogo(false);
+            },
+        });
+    };
+
+    const handleBannerUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setBannerPreview(e.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+
+        // Upload using Inertia with file
+        setUploadingBanner(true);
+        
+        router.post(route('company.images.banner.upload'), {
+            banner: file,
+        }, {
+            forceFormData: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                setUploadingBanner(false);
+                // Reload to get updated banner_url from server
+                router.reload({ only: ['company'] });
+            },
+            onError: () => {
+                setUploadingBanner(false);
+                setBannerPreview(company.banner_url || null);
+            },
+            onFinish: () => {
+                setUploadingBanner(false);
+            },
+        });
+    };
+
+    const handleLogoDelete = () => {
+        if (confirm('Are you sure you want to delete the logo?')) {
+            router.delete(route('company.images.logo.delete'), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setLogoPreview(null);
+                    // Reload to get updated data from server
+                    router.reload({ only: ['company'] });
+                },
+            });
         }
     };
 
-    const removeBenefit = (index: number) => {
-        const updatedBenefits = benefits.filter((_, i) => i !== index);
-        setBenefits(updatedBenefits);
-        setData('benefits', updatedBenefits);
-    };
-
-    const addCultureItem = () => {
-        if (newCultureItem.trim() && !companyCulture.includes(newCultureItem.trim())) {
-            const updatedCulture = [...companyCulture, newCultureItem.trim()];
-            setCompanyCulture(updatedCulture);
-            setData('company_culture', updatedCulture);
-            setNewCultureItem('');
+    const handleBannerDelete = () => {
+        if (confirm('Are you sure you want to delete the banner?')) {
+            router.delete(route('company.images.banner.delete'), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setBannerPreview(null);
+                    // Reload to get updated data from server
+                    router.reload({ only: ['company'] });
+                },
+            });
         }
     };
 
-    const removeCultureItem = (index: number) => {
-        const updatedCulture = companyCulture.filter((_, i) => i !== index);
-        setCompanyCulture(updatedCulture);
-        setData('company_culture', updatedCulture);
-    };
 
     return (
         <CompanyLayout breadcrumbs={breadcrumbs}>
@@ -135,7 +191,7 @@ export default function CompanyDetails({
 
                 <div className="grid gap-8 lg:grid-cols-3">
                     <div className="lg:col-span-2">
-                        {/* Company Images - Outside of form */}
+                        {/* Company Images - Simple Upload */}
                         <Card className="mb-8">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
@@ -146,8 +202,102 @@ export default function CompanyDetails({
                                     Upload your company logo and banner. These will be used as defaults for your job listings.
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent>
-                                <CompanyImageUploader mode="direct" currentBannerUrl={company.banner_url} currentLogoUrl={company.logo_url} />
+                            <CardContent className="space-y-6">
+                                {/* Logo Upload */}
+                                <div>
+                                    <Label className="mb-2 block">Company Logo</Label>
+                                    <div className="flex items-center gap-4">
+                                        {logoPreview ? (
+                                            <div className="relative">
+                                                <img 
+                                                    src={logoPreview} 
+                                                    alt="Company logo" 
+                                                    className="h-24 w-24 rounded-lg object-cover border"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={handleLogoDelete}
+                                                    className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                                                >
+                                                    <X className="h-4 w-4" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="flex h-24 w-24 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50">
+                                                <Image className="h-8 w-8 text-gray-400" />
+                                            </div>
+                                        )}
+                                        <div className="flex-1">
+                                            <input
+                                                ref={logoInputRef}
+                                                type="file"
+                                                accept="image/png,image/jpeg,image/jpg"
+                                                onChange={handleLogoUpload}
+                                                className="hidden"
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => logoInputRef.current?.click()}
+                                                disabled={uploadingLogo}
+                                            >
+                                                {uploadingLogo ? 'Uploading...' : logoPreview ? 'Change Logo' : 'Upload Logo'}
+                                            </Button>
+                                            <p className="mt-1 text-xs text-gray-500">
+                                                Min: 320x320px, Max: 8MB (PNG, JPG)
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Banner Upload */}
+                                <div>
+                                    <Label className="mb-2 block">Company Banner</Label>
+                                    <div className="space-y-4">
+                                        {bannerPreview ? (
+                                            <div className="relative w-full" style={{ aspectRatio: '3/1' }}>
+                                                <img 
+                                                    src={bannerPreview} 
+                                                    alt="Company banner" 
+                                                    className="absolute inset-0 h-full w-full rounded-lg object-cover border"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={handleBannerDelete}
+                                                    className="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                                                >
+                                                    <X className="h-4 w-4" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="flex w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50" style={{ aspectRatio: '3/1' }}>
+                                                <Image className="h-8 w-8 text-gray-400" />
+                                            </div>
+                                        )}
+                                        <div>
+                                            <input
+                                                ref={bannerInputRef}
+                                                type="file"
+                                                accept="image/png,image/jpeg,image/jpg"
+                                                onChange={handleBannerUpload}
+                                                className="hidden"
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => bannerInputRef.current?.click()}
+                                                disabled={uploadingBanner}
+                                            >
+                                                {uploadingBanner ? 'Uploading...' : bannerPreview ? 'Change Banner' : 'Upload Banner'}
+                                            </Button>
+                                            <p className="mt-1 text-xs text-gray-500">
+                                                Min: 1200x400px, Max: 16MB (PNG, JPG)
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
 
@@ -180,11 +330,11 @@ export default function CompanyDetails({
                                         <Input
                                             id="email"
                                             type="email"
-                                            value={data.email}
-                                            onChange={(e) => setData('email', e.target.value)}
-                                            required
+                                            value={company.email || ''}
                                             autoComplete="email"
                                             placeholder="company@example.com"
+                                            disabled
+                                            readOnly
                                         />
                                         <InputError message={errors.email} />
                                     </div>
@@ -323,31 +473,15 @@ export default function CompanyDetails({
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="industry">Industry</Label>
-                                            <Input
-                                                id="industry"
-                                                value={data.industry}
-                                                onChange={(e) => setData('industry', e.target.value)}
-                                                placeholder="e.g. Technology, Finance, Healthcare"
-                                            />
-                                            <InputError message={errors.industry} />
-                                        </div>
-
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="founded_year">Founded Year</Label>
-                                            <Input
-                                                id="founded_year"
-                                                type="number"
-                                                value={data.founded_year}
-                                                onChange={(e) => setData('founded_year', e.target.value)}
-                                                min="1800"
-                                                max={new Date().getFullYear()}
-                                                placeholder="2020"
-                                            />
-                                            <InputError message={errors.founded_year} />
-                                        </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="industry">Industry</Label>
+                                        <Input
+                                            id="industry"
+                                            value={data.industry}
+                                            onChange={(e) => setData('industry', e.target.value)}
+                                            placeholder="e.g. Technology, Finance, Healthcare"
+                                        />
+                                        <InputError message={errors.industry} />
                                     </div>
                                 </CardContent>
                             </Card>
@@ -374,81 +508,6 @@ export default function CompanyDetails({
                                         <InputError message={errors.description_english} />
                                     </div>
 
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="mission_statement">Mission Statement</Label>
-                                        <Textarea
-                                            id="mission_statement"
-                                            value={data.mission_statement}
-                                            onChange={(e) => setData('mission_statement', e.target.value)}
-                                            rows={3}
-                                            placeholder="What is your company's mission and vision?"
-                                        />
-                                        <InputError message={errors.mission_statement} />
-                                    </div>
-
-                                    {/* Benefits */}
-                                    <div className="grid gap-2">
-                                        <Label>Employee Benefits</Label>
-                                        <div className="space-y-2">
-                                            <div className="flex gap-2">
-                                                <Input
-                                                    value={newBenefit}
-                                                    onChange={(e) => setNewBenefit(e.target.value)}
-                                                    placeholder="Add a benefit (e.g. Health insurance, Remote work)"
-                                                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addBenefit())}
-                                                />
-                                                <Button type="button" onClick={addBenefit} size="sm">
-                                                    <Plus className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                            <div className="flex flex-wrap gap-2">
-                                                {benefits.map((benefit, index) => (
-                                                    <div key={index} className="bg-secondary flex items-center gap-1 rounded-md px-2 py-1 text-sm">
-                                                        {benefit}
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removeBenefit(index)}
-                                                            className="text-muted-foreground hover:text-foreground"
-                                                        >
-                                                            <X className="h-3 w-3" />
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Company Culture */}
-                                    <div className="grid gap-2">
-                                        <Label>Company Culture</Label>
-                                        <div className="space-y-2">
-                                            <div className="flex gap-2">
-                                                <Input
-                                                    value={newCultureItem}
-                                                    onChange={(e) => setNewCultureItem(e.target.value)}
-                                                    placeholder="Add a culture value (e.g. Innovation, Collaboration)"
-                                                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCultureItem())}
-                                                />
-                                                <Button type="button" onClick={addCultureItem} size="sm">
-                                                    <Plus className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                            <div className="flex flex-wrap gap-2">
-                                                {companyCulture.map((culture, index) => (
-                                                    <div key={index} className="bg-secondary flex items-center gap-1 rounded-md px-2 py-1 text-sm">
-                                                        {culture}
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removeCultureItem(index)}
-                                                            className="text-muted-foreground hover:text-foreground"
-                                                        >
-                                                            <X className="h-3 w-3" />
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
                                 </CardContent>
                             </Card>
 
@@ -486,7 +545,7 @@ export default function CompanyDetails({
                                 </div>
                                 <div className="flex items-start gap-2">
                                     <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
-                                    <p>List employee benefits and company culture values to attract the right candidates.</p>
+                                    <p>Include accurate company details to help candidates understand your organization.</p>
                                 </div>
                                 <div className="flex items-start gap-2">
                                     <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />

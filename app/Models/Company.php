@@ -58,10 +58,6 @@ use Illuminate\Support\Facades\Storage;
  * @property CarbonImmutable|null $profile_completed_at
  * @property array<string, bool>|null $profile_completion_steps
  * @property string|null $industry
- * @property int|null $founded_year
- * @property string|null $mission_statement
- * @property array<string>|null $benefits
- * @property array<string>|null $company_culture
  * @property bool $career_page_enabled
  * @property string|null $career_page_slug
  * @property string|null $career_page_image
@@ -151,14 +147,10 @@ final class Company extends Authenticatable implements MustVerifyEmail
         'size',
         'type',
         'industry',
-        'founded_year',
         'description_german',
         'description_english',
         'description_french',
         'description_italian',
-        'mission_statement',
-        'benefits',
-        'company_culture',
         'logo_path',
         'logo_original_name',
         'logo_file_size',
@@ -274,9 +266,6 @@ final class Company extends Authenticatable implements MustVerifyEmail
             'profile_completed' => 'boolean',
             'profile_completed_at' => 'datetime',
             'profile_completion_steps' => 'array',
-            'founded_year' => 'integer',
-            'benefits' => 'array',
-            'company_culture' => 'array',
             'logo_dimensions' => 'array',
             'logo_uploaded_at' => 'datetime',
             'banner_dimensions' => 'array',

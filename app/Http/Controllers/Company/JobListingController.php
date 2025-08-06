@@ -43,8 +43,12 @@ final class JobListingController
     {
         $this->authorize('create', JobListing::class);
 
+        $company = auth('company')->user();
+
         return Inertia::render('company/job-listings/create', [
             'categoryOptions' => JobCategory::options(),
+            'companyLogo' => $company?->logo_url,
+            'companyBanner' => $company?->banner_url,
         ]);
     }
 

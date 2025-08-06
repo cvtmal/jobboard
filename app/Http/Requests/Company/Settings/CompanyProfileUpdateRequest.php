@@ -7,7 +7,6 @@ namespace App\Http\Requests\Company\Settings;
 use App\Models\Company;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 final class CompanyProfileUpdateRequest extends FormRequest
 {
@@ -28,14 +27,6 @@ final class CompanyProfileUpdateRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                Rule::unique(Company::class)->ignore($userId),
-            ],
             'first_name' => ['nullable', 'string', 'max:100'],
             'last_name' => ['nullable', 'string', 'max:100'],
             'phone_number' => ['nullable', 'string', 'max:20'],
@@ -48,16 +39,10 @@ final class CompanyProfileUpdateRequest extends FormRequest
             'size' => ['nullable', 'string', 'max:50'],
             'type' => ['nullable', 'string', 'max:50'],
             'industry' => ['nullable', 'string', 'max:100'],
-            'founded_year' => ['nullable', 'integer', 'min:1800', 'max:'.date('Y')],
             'description_english' => ['nullable', 'string', 'max:10000'],
             'description_german' => ['nullable', 'string', 'max:10000'],
             'description_french' => ['nullable', 'string', 'max:10000'],
             'description_italian' => ['nullable', 'string', 'max:10000'],
-            'mission_statement' => ['nullable', 'string', 'max:1000'],
-            'benefits' => ['nullable', 'array'],
-            'benefits.*' => ['string', 'max:200'],
-            'company_culture' => ['nullable', 'array'],
-            'company_culture.*' => ['string', 'max:200'],
             'logo' => ['nullable', 'string', 'max:255'],
             'cover' => ['nullable', 'string', 'max:255'],
             'video' => ['nullable', 'string', 'max:255'],
