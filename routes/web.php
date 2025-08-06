@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Company\CareerPageController;
 use App\Http\Controllers\Company\CompanyOnboardingController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,14 @@ Route::middleware(['auth:company', 'verified.company'])->group(function () {
     Route::get('company/profile', [CompanyOnboardingController::class, 'showProfileOverview'])->name('company.profile');
     Route::get('company/details', [CompanyOnboardingController::class, 'showProfile'])->name('company.details');
     Route::patch('company/details', [CompanyOnboardingController::class, 'updateProfile'])->name('company.details.update');
+
+    // Career page routes
+    Route::get('company/career-page', [CareerPageController::class, 'edit'])->name('company.career-page.edit');
+    Route::post('company/career-page', [CareerPageController::class, 'update'])->name('company.career-page.update');
+    Route::delete('company/career-page/image', [CareerPageController::class, 'destroyImage'])->name('company.career-page.image.destroy');
+    Route::post('company/career-page/videos', [CareerPageController::class, 'addVideo'])->name('company.career-page.videos.store');
+    Route::delete('company/career-page/videos/{videoId}', [CareerPageController::class, 'removeVideo'])->name('company.career-page.videos.destroy');
+    Route::get('company/career-page/preview', [CareerPageController::class, 'preview'])->name('company.career-page.preview');
 });
 
 // Applicant routes

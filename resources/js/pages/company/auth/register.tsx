@@ -193,7 +193,6 @@ export default function CompanyRegister() {
                             <Input
                                 id="phone_number"
                                 type="tel"
-                                required
                                 tabIndex={9}
                                 autoComplete="tel"
                                 value={data.phone_number}

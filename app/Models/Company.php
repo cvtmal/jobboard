@@ -62,6 +62,13 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $mission_statement
  * @property array<string>|null $benefits
  * @property array<string>|null $company_culture
+ * @property bool $career_page_enabled
+ * @property string|null $career_page_slug
+ * @property string|null $career_page_image
+ * @property array<array{id: string, url: string, title: string}>|null $career_page_videos
+ * @property string|null $career_page_domain
+ * @property bool $spontaneous_application_enabled
+ * @property bool $career_page_visibility
  * @property string $email
  * @property CarbonImmutable|null $email_verified_at
  * @property string $password
@@ -172,6 +179,13 @@ final class Company extends Authenticatable implements MustVerifyEmail
         'profile_completed',
         'profile_completed_at',
         'profile_completion_steps',
+        'career_page_enabled',
+        'career_page_slug',
+        'career_page_image',
+        'career_page_videos',
+        'career_page_domain',
+        'spontaneous_application_enabled',
+        'career_page_visibility',
         'email',
         'email_verified_at',
         'password',
@@ -185,6 +199,7 @@ final class Company extends Authenticatable implements MustVerifyEmail
     protected $appends = [
         'logo_url',
         'banner_url',
+        'career_page_image_url',
     ];
 
     /**
@@ -195,6 +210,16 @@ final class Company extends Authenticatable implements MustVerifyEmail
     public function jobs(): HasMany
     {
         return $this->hasMany(JobListing::class);
+    }
+
+    /**
+     * Get the job listings by this company (alias for jobs).
+     *
+     * @return HasMany<JobListing, $this>
+     */
+    public function jobListings(): HasMany
+    {
+        return $this->jobs();
     }
 
     /**
@@ -256,6 +281,10 @@ final class Company extends Authenticatable implements MustVerifyEmail
             'logo_uploaded_at' => 'datetime',
             'banner_dimensions' => 'array',
             'banner_uploaded_at' => 'datetime',
+            'career_page_enabled' => 'boolean',
+            'career_page_videos' => 'array',
+            'spontaneous_application_enabled' => 'boolean',
+            'career_page_visibility' => 'boolean',
         ];
     }
 
@@ -284,6 +313,23 @@ final class Company extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the full URL for the career page image.
+     */
+    public function getCareerPageImageUrlAttribute(): ?string
+    {
+        if (! $this->career_page_image) {
+            return null;
+        }
+
+        // If it's already a full URL, return as is
+        if (str_starts_with($this->career_page_image, 'http')) {
+            return $this->career_page_image;
+        }
+
+        return Storage::disk('public')->url($this->career_page_image);
+    }
+
+    /**
      * Check if the company has a logo uploaded.
      */
     public function hasLogo(): bool
@@ -297,6 +343,23 @@ final class Company extends Authenticatable implements MustVerifyEmail
     public function hasBanner(): bool
     {
         return ! is_null($this->banner_path) && Storage::disk('public')->exists($this->banner_path);
+    }
+
+    /**
+     * Check if the company has a career page image uploaded.
+     */
+    public function hasCareerPageImage(): bool
+    {
+        if (! $this->career_page_image) {
+            return false;
+        }
+
+        // If it's a full URL, we can't check if it exists locally
+        if (str_starts_with($this->career_page_image, 'http')) {
+            return true;
+        }
+
+        return Storage::disk('public')->exists($this->career_page_image);
     }
 
     /**
@@ -368,6 +431,31 @@ final class Company extends Authenticatable implements MustVerifyEmail
                 'banner_dimensions' => null,
                 'banner_uploaded_at' => null,
             ]);
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * Delete the company career page image file from storage.
+     */
+    public function deleteCareerPageImage(): bool
+    {
+        if (! $this->career_page_image) {
+            return true;
+        }
+
+        // Only delete if it's a local file (not a full URL)
+        if (str_starts_with($this->career_page_image, 'http')) {
+            $this->update(['career_page_image' => null]);
+
+            return true;
+        }
+
+        $deleted = Storage::disk('public')->delete($this->career_page_image);
+
+        if ($deleted) {
+            $this->update(['career_page_image' => null]);
         }
 
         return $deleted;
