@@ -31,7 +31,24 @@ final class CompanyOnboardingController
     }
 
     /**
-     * Show the company profile onboarding page.
+     * Show the company profile overview page.
+     */
+    public function showProfileOverview(Request $request): Response
+    {
+        $company = $request->user();
+
+        if (! $company instanceof Company) {
+            abort(403, 'Invalid company account');
+        }
+
+        return Inertia::render('company/profile-overview', [
+            'company' => $company->load([]),
+            'shouldShowOnboarding' => $company->shouldShowOnboarding(),
+        ]);
+    }
+
+    /**
+     * Show the company details page.
      */
     public function showProfile(Request $request): Response
     {
@@ -41,7 +58,7 @@ final class CompanyOnboardingController
             abort(403, 'Invalid company account');
         }
 
-        return Inertia::render('company/profile', [
+        return Inertia::render('company/details', [
             'company' => $company->load([]),
             'shouldShowOnboarding' => $company->shouldShowOnboarding(),
         ]);
@@ -69,6 +86,6 @@ final class CompanyOnboardingController
 
         $company->save();
 
-        return back()->with('status', 'profile-updated');
+        return to_route('company.details')->with('status', 'profile-updated');
     }
 }

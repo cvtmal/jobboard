@@ -1,11 +1,50 @@
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function CompanyNavMain({ items = [] }: { items: NavItem[] }) {
-    const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+    const { url } = usePage();
+    
+    // Helper functions
+    const isCurrentPath = (href: string) => url === href;
+    const isParentActive = (item: NavItem) => {
+        if (isCurrentPath(item.href)) return true;
+        return item.subItems?.some(subItem => isCurrentPath(subItem.href)) || false;
+    };
+
+    // Initialize expanded state based on current active routes
+    const getInitialExpandedItems = () => {
+        const initialExpanded = new Set<string>();
+        items.forEach(item => {
+            if (item.subItems && item.subItems.length > 0 && isParentActive(item)) {
+                initialExpanded.add(item.title);
+            }
+        });
+        return initialExpanded;
+    };
+
+    const [expandedItems, setExpandedItems] = useState<Set<string>>(getInitialExpandedItems);
+
+    // Update expanded state when route changes (for parent items with active children)
+    useEffect(() => {
+        const newExpanded = new Set(expandedItems);
+        items.forEach(item => {
+            if (item.subItems && item.subItems.length > 0) {
+                const shouldBeExpanded = isParentActive(item);
+                if (shouldBeExpanded && !newExpanded.has(item.title)) {
+                    newExpanded.add(item.title);
+                }
+            }
+        });
+        
+        // Only update state if there are changes to prevent unnecessary re-renders
+        if (newExpanded.size !== expandedItems.size || 
+            Array.from(newExpanded).some(item => !expandedItems.has(item))) {
+            setExpandedItems(newExpanded);
+        }
+    }, [url]);
 
     const toggleExpanded = (title: string) => {
         const newExpanded = new Set(expandedItems);
@@ -15,12 +54,6 @@ export function CompanyNavMain({ items = [] }: { items: NavItem[] }) {
             newExpanded.add(title);
         }
         setExpandedItems(newExpanded);
-    };
-
-    const isCurrentPath = (href: string) => window.location.pathname === href;
-    const isParentActive = (item: NavItem) => {
-        if (isCurrentPath(item.href)) return true;
-        return item.subItems?.some(subItem => isCurrentPath(subItem.href)) || false;
     };
 
     return (

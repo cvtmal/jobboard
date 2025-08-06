@@ -26,7 +26,7 @@ const mainNavItems: NavItem[] = [
         subItems: [
             {
                 title: 'Company Details',
-                href: '/company/profile',
+                href: '/company/details',
             },
             {
                 title: 'Career Page',

@@ -23,9 +23,10 @@ Route::middleware(['auth:company', 'verified.company'])->group(function () {
         return Inertia::render('company/onboarding');
     })->name('company.onboarding');
 
-    // Company profile onboarding
-    Route::get('company/profile', [CompanyOnboardingController::class, 'showProfile'])->name('company.profile');
-    Route::patch('company/profile', [CompanyOnboardingController::class, 'updateProfile'])->name('company.profile.update');
+    // Company profile routes
+    Route::get('company/profile', [CompanyOnboardingController::class, 'showProfileOverview'])->name('company.profile');
+    Route::get('company/details', [CompanyOnboardingController::class, 'showProfile'])->name('company.details');
+    Route::patch('company/details', [CompanyOnboardingController::class, 'updateProfile'])->name('company.details.update');
 });
 
 // Applicant routes
