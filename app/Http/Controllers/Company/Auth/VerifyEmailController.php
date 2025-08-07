@@ -23,6 +23,6 @@ final class VerifyEmailController
             event(new Verified($request->user('company')));
         }
 
-        return redirect()->intended(route('company.onboarding', absolute: false).'?verified=1');
+        return redirect()->intended(route('company.dashboard'));
     }
 }

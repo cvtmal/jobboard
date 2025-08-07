@@ -28,10 +28,7 @@ final class CreateCompanyAction
             'phone_number' => $data['phone_number'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'address' => $data['address'] ?? null,
-            'postcode' => $data['postcode'] ?? null,
-            'city' => $data['city'] ?? null,
-            'url' => $data['url'] ?? null,
+            // TODO: set 'active' => true later when email gets verified
             'active' => true,
             'blocked' => false,
         ]));

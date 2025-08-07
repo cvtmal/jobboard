@@ -37,7 +37,7 @@ it('has the expected validation rules', function () {
         ->and($rules['last_name'])->toContain('max:255')
 
         ->and($rules)->toHaveKey('phone_number')
-        ->and($rules['phone_number'])->toContain('required')
+        ->and($rules['phone_number'])->toContain('nullable')
         ->and($rules['phone_number'])->toContain('string')
         ->and($rules['phone_number'])->toContain('max:50')
 
@@ -52,26 +52,11 @@ it('has the expected validation rules', function () {
         ->and($rules['password'])->toContain('required')
         ->and($rules['password'])->toContain('confirmed');
 
-    // Optional fields
-    expect($rules)->toHaveKey('address')
-        ->and($rules['address'])->toContain('nullable')
-        ->and($rules['address'])->toContain('string')
-        ->and($rules['address'])->toContain('max:255')
-
-        ->and($rules)->toHaveKey('postcode')
-        ->and($rules['postcode'])->toContain('nullable')
-        ->and($rules['postcode'])->toContain('string')
-        ->and($rules['postcode'])->toContain('max:20')
-
-        ->and($rules)->toHaveKey('city')
-        ->and($rules['city'])->toContain('nullable')
-        ->and($rules['city'])->toContain('string')
-        ->and($rules['city'])->toContain('max:100')
-
-        ->and($rules)->toHaveKey('url')
-        ->and($rules['url'])->toContain('nullable')
-        ->and($rules['url'])->toContain('url')
-        ->and($rules['url'])->toContain('max:255');
+    // No optional fields remain in validation
+    expect($rules)->not->toHaveKey('address')
+        ->and($rules)->not->toHaveKey('postcode')
+        ->and($rules)->not->toHaveKey('city')
+        ->and($rules)->not->toHaveKey('url');
 
     // Password rule is an object, so check it differently
     $passwordRules = collect($rules['password'])->filter(fn ($rule) => $rule instanceof Password);
@@ -117,23 +102,6 @@ it('validates mismatched passwords for company registration', function () {
         ->and($validator->errors()->has('password'))->toBeTrue();
 });
 
-it('validates optional company fields', function () {
-    // Invalid URL
-    $validator = validator([
-        'name' => 'Test Company',
-        'first_name' => 'John',
-        'last_name' => 'Doe',
-        'phone_number' => '+1234567890',
-        'email' => 'valid@example.com',
-        'password' => 'password123',
-        'password_confirmation' => 'password123',
-        'url' => 'not-a-valid-url',
-    ], $this->request->rules());
-
-    // Should fail due to invalid URL
-    expect($validator->fails())->toBeTrue()
-        ->and($validator->errors()->has('url'))->toBeTrue();
-});
 
 it('passes validation with valid company data', function () {
     // Set up validator with valid test data
@@ -145,10 +113,21 @@ it('passes validation with valid company data', function () {
         'email' => 'new-company@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',
-        'address' => '123 Company Street',
-        'postcode' => '12345',
-        'city' => 'Business City',
-        'url' => 'https://example.com',
+    ], $this->request->rules());
+
+    // Validation should pass
+    expect($validator->fails())->toBeFalse();
+});
+
+it('passes validation with minimal company data', function () {
+    // Set up validator with minimal required data (phone number is nullable)
+    $validator = validator([
+        'name' => 'Test Company',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'email' => 'minimal@example.com',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
     ], $this->request->rules());
 
     // Validation should pass
