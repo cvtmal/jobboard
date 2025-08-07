@@ -103,7 +103,7 @@ export function CompanyImageUploader({
                         </Card>
 
                         {/* Overlapping Logo positioned at bottom-left */}
-                        <div className="absolute -bottom-16 left-6 z-10">
+                        <div className="absolute -bottom-18 left-6 z-10">
                             <Card
                                 className={cn(
                                     'group relative flex-shrink-0 overflow-hidden transition-all hover:shadow-xl',
@@ -112,10 +112,10 @@ export function CompanyImageUploader({
                                     disabled && 'cursor-not-allowed opacity-50',
                                 )}
                             >
-                                <Button 
-                                    variant="ghost" 
-                                    className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 p-0 hover:bg-transparent rounded-lg" 
-                                    onClick={() => imageUpload.openModal('logo')} 
+                                <Button
+                                    variant="ghost"
+                                    className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 p-0 hover:bg-transparent rounded-lg"
+                                    onClick={() => imageUpload.openModal('logo')}
                                     disabled={disabled}
                                 >
                                     {logoUrl ? (
