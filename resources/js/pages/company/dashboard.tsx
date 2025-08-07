@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import CompanyLayout from '@/layouts/company-layout';
 import { type Auth } from '@/types';
 import { Head, Link } from '@inertiajs/react';
@@ -23,11 +24,13 @@ export default function CompanyDashboard({
     company,
     profileCompletion,
     shouldShowOnboarding,
+    hasJobListings,
 }: {
     auth: Auth;
     company?: any;
     profileCompletion?: ProfileCompletion;
     shouldShowOnboarding?: boolean;
+    hasJobListings?: boolean;
 }) {
     return (
         <CompanyLayout>
@@ -99,7 +102,18 @@ export default function CompanyDashboard({
                         {/* Onboarding Steps */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Onboarding</CardTitle>
+                                <div className="flex items-start gap-4">
+                                    <Avatar className="h-10 w-10">
+                                        <AvatarImage src={avatar1} alt="Lukas - Onboarding Assistant" />
+                                        <AvatarFallback>LM</AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex-1">
+                                        <CardTitle>Welcome</CardTitle>
+                                        <CardDescription>
+                                            I'm Lukas, your onboarding assistant, and I'm here to help you set up your account.
+                                        </CardDescription>
+                                    </div>
+                                </div>
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 {/* Step 1 - Account Created */}
@@ -136,9 +150,15 @@ export default function CompanyDashboard({
                                         </div>
                                         <HeadingSmall title="Create your first Job" description="Post a job to start attracting candidates." />
                                     </div>
-                                    <Button asChild size="default">
-                                        <Link href={route('company.job-listings.create')}>Create Job</Link>
-                                    </Button>
+                                    {hasJobListings ? (
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+                                            <CheckCircle className="text-blue-600 dark:text-blue-400" />
+                                        </div>
+                                    ) : (
+                                        <Button asChild size="default">
+                                            <Link href={route('company.job-listings.create')}>Create Job</Link>
+                                        </Button>
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>

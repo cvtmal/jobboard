@@ -27,6 +27,7 @@ final class CompanyOnboardingController
         return Inertia::render('company/dashboard', [
             'company' => $company->load([]),
             'shouldShowOnboarding' => $company->shouldShowOnboarding(),
+            'hasJobListings' => $company->jobListings()->exists(),
         ]);
     }
 

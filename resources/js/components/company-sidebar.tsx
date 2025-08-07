@@ -15,11 +15,6 @@ const mainNavItems: NavItem[] = [
         icon: LayoutDashboard,
     },
     {
-        title: 'Setup',
-        href: '/company/onboarding',
-        icon: PlayCircle,
-    },
-    {
         title: 'Profile',
         href: '/company/profile',
         icon: Building2,

@@ -20,10 +20,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth:company', 'verified.company'])->group(function () {
     Route::get('company/dashboard', [CompanyOnboardingController::class, 'showDashboard'])->name('company.dashboard');
 
-    Route::get('company/onboarding', function () {
-        return Inertia::render('company/onboarding');
-    })->name('company.onboarding');
-
     // Company profile routes
     Route::get('company/profile', [CompanyOnboardingController::class, 'showProfileOverview'])->name('company.profile');
     Route::get('company/details', [CompanyOnboardingController::class, 'showProfile'])->name('company.details');
