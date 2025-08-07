@@ -102,7 +102,6 @@ it('validates mismatched passwords for company registration', function () {
         ->and($validator->errors()->has('password'))->toBeTrue();
 });
 
-
 it('passes validation with valid company data', function () {
     // Set up validator with valid test data
     $validator = validator([

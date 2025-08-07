@@ -1,10 +1,16 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import CompanyLayout from '@/layouts/company-layout';
 import { type Auth } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { AlertCircle, CheckCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle, Mail, Phone, HelpCircle, ChevronRight } from 'lucide-react';
+import { AvatarGroup } from '@/components/ui/avatar-group';
+import HeadingSmall from '@/components/heading-small';
+import avatar1 from '@images/avatar1.png';
+import avatar2 from '@images/avatar2.png';
+import avatar3 from '@images/avatar3.png';
+import avatar4 from '@images/avatar4.png';
 
 type ProfileCompletion = {
     percentage: number;
@@ -31,7 +37,7 @@ export default function CompanyDashboard({
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="flex flex-col space-y-6">
                         <div className="flex items-center justify-between">
-                            <h1 className="text-2xl font-bold">Company Dashboard</h1>
+                            <h1 className="text-2xl font-bold">Dashboard</h1>
                             {shouldShowOnboarding && profileCompletion && (
                                 <Button asChild variant="outline" size="sm">
                                     <Link href={route('company.profile')}>Complete Profile ({profileCompletion.percentage}%)</Link>
@@ -89,79 +95,132 @@ export default function CompanyDashboard({
                             </Card>
                         )}
 
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>{auth.company?.name}</CardTitle>
-                                    <CardDescription>Manage your company information</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <p>Update your company details, logo, and other information.</p>
-                                </CardContent>
-                                <CardFooter>
-                                    <Button asChild>
-                                        <Link href={route('company.profile')}>Edit Profile</Link>
+                        {/* Main Dashboard Content */}
+                        {/* Onboarding Steps */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Onboarding</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                {/* Step 1 - Account Created */}
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-sm font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                                            1
+                                        </div>
+                                        <HeadingSmall title="Account Created" description="Your account has been successfully created." />
+                                    </div>
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+                                        <CheckCircle className="text-blue-600 dark:text-blue-400" />
+                                    </div>
+                                </div>
+
+                                {/* Step 2 - Fill out company details */}
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-sm font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                                            2
+                                        </div>
+                                        <HeadingSmall title="Fill out company details" description="Complete your company profile to attract better candidates." />
+                                    </div>
+                                    <Button asChild size="default">
+                                        <Link href={route('company.details')}>Complete Profile</Link>
                                     </Button>
-                                </CardFooter>
-                            </Card>
+                                </div>
 
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Job Listings</CardTitle>
-                                    <CardDescription>Manage your job listings</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <p>Create, edit, and manage all your job listings in one place.</p>
-                                </CardContent>
-                                <CardFooter>
-                                    <Button>View Job Listings</Button>
-                                </CardFooter>
-                            </Card>
-
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Applications</CardTitle>
-                                    <CardDescription>Review candidate applications</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <p>View and manage all applications to your job listings.</p>
-                                </CardContent>
-                                <CardFooter>
-                                    <Button>View Applications</Button>
-                                </CardFooter>
-                            </Card>
-
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Analytics</CardTitle>
-                                    <CardDescription>View performance metrics</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <p>See how your job listings are performing and track applicant engagement.</p>
-                                </CardContent>
-                                <CardFooter>
-                                    <Button>View Analytics</Button>
-                                </CardFooter>
-                            </Card>
-
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Account Settings</CardTitle>
-                                    <CardDescription>Manage account security</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <p>Update your password and appearance preferences.</p>
-                                </CardContent>
-                                <CardFooter className="flex gap-2">
-                                    <Button asChild variant="outline">
-                                        <Link href={route('company.settings.password')}>Password</Link>
+                                {/* Step 3 - Create your first Job */}
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-sm font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                                            3
+                                        </div>
+                                        <HeadingSmall title="Create your first Job" description="Post a job to start attracting candidates." />
+                                    </div>
+                                    <Button asChild size="default">
+                                        <Link href={route('company.job-listings.create')}>Create Job</Link>
                                     </Button>
-                                    <Button asChild variant="outline">
-                                        <Link href={route('company.settings.appearance')}>Appearance</Link>
-                                    </Button>
-                                </CardFooter>
-                            </Card>
-                        </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Contact Us Card */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Contact Us</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                {/* Avatar Stack - Professional Overlapping Design */}
+                                <div className="flex justify-center">
+                                    <AvatarGroup
+                                        avatars={[
+                                            { name: "Lukas Meier", src: avatar1 },
+                                            { name: "Lara Schmid", src: avatar2 },
+                                            { name: "Céline Rochat", src: avatar3 },
+                                            { name: "Matteo Bernasconi", src: avatar4 },
+                                        ]}
+                                        max={4}
+                                        size="xl"
+                                        overlap="sm"
+                                        showTooltip={true}
+                                    />
+                                </div>
+
+                                {/* Customer Service Team Info */}
+                                <div className="text-center space-y-3">
+                                    <h3 className="text-lg font-semibold">Customer Service Team</h3>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                                            <Mail className="h-4 w-4" />
+                                            <a href="mailto:info@superjobs.ch" className="hover:text-primary transition-colors">
+                                                info@superjobs.ch
+                                            </a>
+                                        </div>
+                                        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                                            <Phone className="h-4 w-4" />
+                                            <a href="tel:+41441234567" className="hover:text-primary transition-colors">
+                                                +41 44 123 45 67
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Support Card */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Support</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-0">
+                                {/* Help center item */}
+                                <Link
+                                    href={route('company.dashboard')}
+                                    className="flex items-center justify-between p-4 -m-4 mb-2 rounded-lg transition-all duration-200 hover:bg-muted/50 group"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 transition-transform group-hover:scale-105 dark:bg-blue-900/30">
+                                            <HelpCircle className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                                        </div>
+                                        <HeadingSmall title="Help center" description="See guides and tutorials" />
+                                    </div>
+                                    <ChevronRight className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-foreground" />
+                                </Link>
+
+                                {/* Email us item */}
+                                <Link
+                                    href={route('company.dashboard')}
+                                    className="flex items-center justify-between p-4 -m-4 rounded-lg transition-all duration-200 hover:bg-muted/50 group"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 transition-transform group-hover:scale-105 dark:bg-green-900/30">
+                                            <Mail className="h-5 w-5 text-green-600 dark:text-green-400" />
+                                        </div>
+                                        <HeadingSmall title="Email us" description="Get support from our experts" />
+                                    </div>
+                                    <ChevronRight className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-foreground" />
+                                </Link>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
             </div>
