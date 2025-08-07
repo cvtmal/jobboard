@@ -10,6 +10,7 @@ import { type Auth } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { ArrowUpDown, Eye, Pencil, PlusCircle, Search, Trash2 } from 'lucide-react';
+import Heading from '@/components/heading';
 
 interface JobListing {
     id: number;
@@ -70,12 +71,11 @@ export default function JobListingIndex({ auth, jobListings }: Props) {
         <CompanyLayout>
             <Head title="Job Listings" />
 
-            <div className="py-8">
-                <div className="mx-auto max-w-7xl">
+            <div className="py-6">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="mb-8 flex items-center justify-between">
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight">Job Listings</h1>
-                            <p className="text-muted-foreground mt-2">Manage your job postings and track applications</p>
+                            <Heading title="Job Listings" description="Manage your company's job listings and applications" />
                         </div>
                         <Button asChild>
                             <Link href={route('company.job-listings.create')}>

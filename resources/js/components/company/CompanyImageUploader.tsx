@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { PencilIcon, UploadIcon } from 'lucide-react';
 import { useImageUpload } from '@/hooks/use-image-upload';
 import { ImageCropModal } from './ImageCropModal';
+import HeadingSmall from '@/components/heading-small';
 
 interface CompanyImageUploaderProps {
     /**
@@ -60,8 +61,8 @@ export function CompanyImageUploader({
     const logoUrl = currentLogoUrl || imageUpload.logo.previewUrl;
 
     return (
-        <Card className="overflow-hidden">
-            <div className="p-6">
+        <div className="overflow-hidden">
+            <div className="pb-6">
                 {/* Combined Banner and Logo Section with Overlap */}
                 <div className="space-y-4">
                     {/* Banner with Overlapping Logo */}
@@ -102,11 +103,11 @@ export function CompanyImageUploader({
                         </Card>
 
                         {/* Overlapping Logo positioned at bottom-left */}
-                        <div className="absolute -bottom-8 left-6 z-10">
+                        <div className="absolute -bottom-16 left-6 z-10">
                             <Card
                                 className={cn(
                                     'group relative flex-shrink-0 overflow-hidden transition-all hover:shadow-xl',
-                                    'ring-4 ring-white shadow-lg', // White border for visibility
+                                    'ring-4 ring-white shadow-lg',
                                     !disabled && 'hover:ring-primary/20 cursor-pointer hover:ring-4',
                                     disabled && 'cursor-not-allowed opacity-50',
                                 )}
@@ -151,17 +152,6 @@ export function CompanyImageUploader({
 
                     {/* Instructions and Error Messages */}
                     <div className="pt-8 space-y-3">
-                        {/* Banner Instructions */}
-                        <div className="space-y-1">
-                            <h3 className="font-medium">Company Images</h3>
-                            <p className="text-muted-foreground text-sm">
-                                Upload a banner image and company logo. The logo will appear overlapping the banner, similar to a social media profile.
-                            </p>
-                            <p className="text-muted-foreground text-xs">
-                                Banner: Min 1200×400px, max 16MB • Logo: Min 320×320px, max 8MB (PNG, JPG)
-                            </p>
-                        </div>
-
                         {/* Error Messages */}
                         {(errors.banner || errors.logo) && (
                             <div className="space-y-1">
@@ -203,6 +193,6 @@ export function CompanyImageUploader({
                 minDimensions={{ width: 320, height: 320 }}
                 maxFileSize={8 * 1024 * 1024} // 8MB
             />
-        </Card>
+        </div>
     );
 }

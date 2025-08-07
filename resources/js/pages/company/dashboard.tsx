@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import CompanyLayout from '@/layouts/company-layout';
-import { type Auth } from '@/types';
+import { type Auth, type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { AlertCircle, CheckCircle, Mail, Phone, HelpCircle, ChevronRight } from 'lucide-react';
 import { AvatarGroup } from '@/components/ui/avatar-group';
@@ -12,6 +12,7 @@ import avatar1 from '@images/avatar1.png';
 import avatar2 from '@images/avatar2.png';
 import avatar3 from '@images/avatar3.png';
 import avatar4 from '@images/avatar4.png';
+import Heading from '@/components/heading';
 
 type ProfileCompletion = {
     percentage: number;
@@ -34,13 +35,13 @@ export default function CompanyDashboard({
 }) {
     return (
         <CompanyLayout>
-            <Head title="Company Dashboard" />
+            <Head title="Dashboard" />
 
-            <div className="py-12">
+            <div className="py-6">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="flex flex-col space-y-6">
                         <div className="flex items-center justify-between">
-                            <h1 className="text-2xl font-bold">Dashboard</h1>
+                            <Heading title="Dashboard" description="Welcome to your company dashboard" />
                             {shouldShowOnboarding && profileCompletion && (
                                 <Button asChild variant="outline" size="sm">
                                     <Link href={route('company.profile')}>Complete Profile ({profileCompletion.percentage}%)</Link>

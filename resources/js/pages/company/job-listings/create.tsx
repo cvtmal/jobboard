@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import CompanyLayout from '@/layouts/company-layout';
-import { type Auth } from '@/types';
+import { type Auth, type BreadcrumbItem } from '@/types';
 import { ApplicationLanguage } from '@/types/enums/ApplicationLanguage';
 import { ApplicationProcess } from '@/types/enums/ApplicationProcess';
 import { CustomEmploymentType } from '@/types/enums/CustomEmploymentType';
@@ -17,6 +17,7 @@ import { SeniorityLevel } from '@/types/enums/SeniorityLevel';
 import { Workplace } from '@/types/enums/Workplace';
 import { Head, useForm } from '@inertiajs/react';
 import { FormEvent } from 'react';
+import Heading from '@/components/heading';
 
 interface Props {
     auth: Auth;
@@ -25,6 +26,13 @@ interface Props {
     companyLogo?: string | null;
     companyBanner?: string | null;
 }
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Job Listings / Create New Job',
+        href: '/company/job-listings/create',
+    },
+];
 
 export default function CreateJobListing({ auth, errors, categoryOptions, companyLogo, companyBanner }: Props) {
     const { data, setData, post, processing } = useForm({
@@ -79,27 +87,13 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
     };
 
     return (
-        <CompanyLayout>
-            <Head title="Create Job Listing" />
+        <CompanyLayout breadcrumbs={breadcrumbs}>
+            <Head title="Create Job" />
 
-            <div className="py-8">
-                <div className="mx-auto max-w-5xl">
-                    <div className="mb-8">
-                        <h1 className="text-3xl font-bold tracking-tight">Create New Job Listing</h1>
-                        <p className="text-muted-foreground mt-2">
-                            Fill in the details below to create your job listing and start attracting candidates.
-                        </p>
-                    </div>
-
+            <div className="py-6">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <form onSubmit={handleSubmit} className="space-y-8">
-                        {/* Company Branding Section */}
                         <Card>
-                            <CardHeader>
-                                <CardTitle>Company Branding</CardTitle>
-                                <CardDescription>
-                                    Add your company banner and logo to make your job listing stand out from the competition
-                                </CardDescription>
-                            </CardHeader>
                             <CardContent>
                                 <CompanyImageUploader
                                     currentBannerUrl={companyBanner || undefined}
@@ -113,14 +107,9 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                     }}
                                 />
                             </CardContent>
-                        </Card>
 
                         {/* Job Information Section */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Job Information</CardTitle>
-                                <CardDescription>Basic information about the job position</CardDescription>
-                            </CardHeader>
+
                             <CardContent className="space-y-6">
                                 <div>
                                     <Label htmlFor="title" className="text-base">
@@ -208,14 +197,10 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                     {errors.final_words && <p className="mt-1 text-sm text-red-500">{errors.final_words}</p>}
                                 </div>
                             </CardContent>
-                        </Card>
+
 
                         {/* Job Location Section */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Job Location</CardTitle>
-                                <CardDescription>Where the job will be performed</CardDescription>
-                            </CardHeader>
+
                             <CardContent className="space-y-6">
                                 <div>
                                     <Label htmlFor="workplace" className="text-base">
@@ -249,14 +234,10 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                     {errors.office_location && <p className="mt-1 text-sm text-red-500">{errors.office_location}</p>}
                                 </div>
                             </CardContent>
-                        </Card>
+
 
                         {/* Job Details Section */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Job Details</CardTitle>
-                                <CardDescription>Categorization and specifics of the position</CardDescription>
-                            </CardHeader>
+
                             <CardContent className="space-y-6">
                                 <div>
                                     <Label htmlFor="application_language" className="text-base">
@@ -375,14 +356,10 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                     {errors.seniority_level && <p className="mt-1 text-sm text-red-500">{errors.seniority_level}</p>}
                                 </div>
                             </CardContent>
-                        </Card>
+
 
                         {/* Salary Section */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Salary Information</CardTitle>
-                                <CardDescription>Optional compensation details</CardDescription>
-                            </CardHeader>
+
                             <CardContent className="space-y-6">
                                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <div>
@@ -435,14 +412,10 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                     {errors.salary_period && <p className="mt-1 text-sm text-red-500">{errors.salary_period}</p>}
                                 </div>
                             </CardContent>
-                        </Card>
+
 
                         {/* Skills Section */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Skills</CardTitle>
-                                <CardDescription>Required or preferred skills for the position (optional)</CardDescription>
-                            </CardHeader>
+
                             <CardContent>
                                 <div>
                                     <Label htmlFor="skills" className="text-base">
@@ -455,9 +428,6 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                         className="mt-1.5"
                                         placeholder="Enter skills separated by commas (e.g., JavaScript, React, PHP, Laravel)"
                                     />
-                                    <p className="text-muted-foreground mt-1.5 text-sm">
-                                        This is a temporary implementation. Skill selection will be improved in a future update.
-                                    </p>
                                     {errors.skills && <p className="mt-1 text-sm text-red-500">{errors.skills}</p>}
                                 </div>
                             </CardContent>
