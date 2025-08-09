@@ -7,7 +7,7 @@ import CompanyLayout from '@/layouts/company-layout';
 import { type Auth } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { ArrowLeft, Briefcase, CalendarDays, Clock, DollarSign, Download, Edit, MapPin, MessageSquare, Share } from 'lucide-react';
+import { ArrowLeft, Briefcase, CalendarDays, Clock, DollarSign, Download, Edit, ExternalLink, Gauge, Mail, MapPin, MessageSquare, Share } from 'lucide-react';
 
 interface JobListing {
     id: number;
@@ -24,6 +24,20 @@ interface JobListing {
     salary_type: string | null;
     applications_count: number;
     experience_level: string | null;
+    requirements: string | null;
+    benefits: string | null;
+    company_description: string | null;
+    final_words: string | null;
+    skills: string | null;
+    workload_min: number | null;
+    workload_max: number | null;
+    seniority_level: string | null;
+    application_process: string | null;
+    application_email: string | null;
+    application_url: string | null;
+    application_documents: { cv: string; cover_letter: string; } | null;
+    screening_questions: Array<{id: string; text: string; requirement: string; answerType: string; choices?: string[];}> | null;
+    company: { name: string; };
 }
 
 interface Props {
@@ -76,12 +90,51 @@ export default function JobListingShow({ auth, jobListing, categoryLabels }: Pro
             .join(' ');
     };
 
-    const formatExperienceLevel = (level: string | null) => {
+    const formatExperienceLevel = (level: string | null, seniorityLevel?: string | null) => {
+        if (seniorityLevel) {
+            return seniorityLevel
+                .split('-')
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        }
         if (!level) return 'Not specified';
         return level
             .split('-')
             .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
+    };
+
+    const formatWorkload = () => {
+        if (!jobListing.workload_min && !jobListing.workload_max) {
+            return 'Not specified';
+        }
+        
+        if (jobListing.workload_min && jobListing.workload_max) {
+            if (jobListing.workload_min === jobListing.workload_max) {
+                return `${jobListing.workload_min}%`;
+            }
+            return `${jobListing.workload_min}% - ${jobListing.workload_max}%`;
+        } else if (jobListing.workload_min) {
+            return `From ${jobListing.workload_min}%`;
+        } else if (jobListing.workload_max) {
+            return `Up to ${jobListing.workload_max}%`;
+        }
+    };
+
+    const parseSkills = (skillsString: string | null) => {
+        if (!skillsString) return [];
+        return skillsString.split(',').map(skill => skill.trim()).filter(skill => skill.length > 0);
+    };
+
+    const getDocumentRequirementColor = (requirement: string) => {
+        switch (requirement.toLowerCase()) {
+            case 'required':
+                return 'bg-red-500';
+            case 'optional':
+                return 'bg-yellow-500';
+            default:
+                return 'bg-gray-500';
+        }
     };
 
     const formatWorkplace = (workplace: string) => {
@@ -134,7 +187,7 @@ export default function JobListingShow({ auth, jobListing, categoryLabels }: Pro
                     </div>
 
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        <div className="md:col-span-2">
+                        <div className="md:col-span-2 space-y-6">
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Job Description</CardTitle>
@@ -145,6 +198,75 @@ export default function JobListingShow({ auth, jobListing, categoryLabels }: Pro
                                     </div>
                                 </CardContent>
                             </Card>
+
+                            {jobListing.requirements && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Job Requirements</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="prose dark:prose-invert max-w-none">
+                                            <SafeHtml content={jobListing.requirements} preserveLineBreaks />
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
+
+                            {jobListing.skills && parseSkills(jobListing.skills).length > 0 && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Required Skills</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="flex flex-wrap gap-2">
+                                            {parseSkills(jobListing.skills).map((skill, index) => (
+                                                <Badge key={index} variant="secondary">
+                                                    {skill}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
+
+                            {jobListing.benefits && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>What We Offer</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="prose dark:prose-invert max-w-none">
+                                            <SafeHtml content={jobListing.benefits} preserveLineBreaks />
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
+
+                            {jobListing.company_description && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>About This Role at {jobListing.company?.name || 'Our Company'}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="prose dark:prose-invert max-w-none">
+                                            <SafeHtml content={jobListing.company_description} preserveLineBreaks />
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
+
+                            {jobListing.final_words && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Additional Information</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="prose dark:prose-invert max-w-none">
+                                            <SafeHtml content={jobListing.final_words} preserveLineBreaks />
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
                         </div>
 
                         <div className="space-y-6">
@@ -186,9 +308,19 @@ export default function JobListingShow({ auth, jobListing, categoryLabels }: Pro
                                         <Clock className="text-muted-foreground mt-0.5 mr-3 h-5 w-5" />
                                         <div>
                                             <p className="font-medium">Experience</p>
-                                            <p className="text-muted-foreground text-sm">{formatExperienceLevel(jobListing.experience_level)}</p>
+                                            <p className="text-muted-foreground text-sm">{formatExperienceLevel(jobListing.experience_level, jobListing.seniority_level)}</p>
                                         </div>
                                     </div>
+
+                                    {(jobListing.workload_min || jobListing.workload_max) && (
+                                        <div className="flex items-start">
+                                            <Gauge className="text-muted-foreground mt-0.5 mr-3 h-5 w-5" />
+                                            <div>
+                                                <p className="font-medium">Workload</p>
+                                                <p className="text-muted-foreground text-sm">{formatWorkload()}</p>
+                                            </div>
+                                        </div>
+                                    )}
 
                                     <div className="flex items-start">
                                         <DollarSign className="text-muted-foreground mt-0.5 mr-3 h-5 w-5" />
@@ -199,6 +331,74 @@ export default function JobListingShow({ auth, jobListing, categoryLabels }: Pro
                                     </div>
                                 </CardContent>
                             </Card>
+
+                            {(jobListing.application_process || jobListing.application_email || jobListing.application_url || jobListing.application_documents || jobListing.screening_questions) && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Application Process</CardTitle>
+                                        <CardDescription>How candidates can apply for this position</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        {(jobListing.application_email || jobListing.application_url) && (
+                                            <div>
+                                                <p className="font-medium mb-2">Application Method</p>
+                                                <div className="space-y-2">
+                                                    {jobListing.application_email && (
+                                                        <div className="flex items-center space-x-2">
+                                                            <Mail className="h-4 w-4 text-muted-foreground" />
+                                                            <a href={`mailto:${jobListing.application_email}`} className="text-primary hover:underline text-sm">
+                                                                {jobListing.application_email}
+                                                            </a>
+                                                        </div>
+                                                    )}
+                                                    {jobListing.application_url && (
+                                                        <div className="flex items-center space-x-2">
+                                                            <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                                                            <a href={jobListing.application_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-sm">
+                                                                Apply via external website
+                                                            </a>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {jobListing.application_documents && (
+                                            <div>
+                                                <p className="font-medium mb-2">Required Documents</p>
+                                                <ul className="space-y-1">
+                                                    <li className="flex items-center space-x-2 text-sm">
+                                                        <div className={`w-2 h-2 rounded-full ${getDocumentRequirementColor(jobListing.application_documents.cv)}`}></div>
+                                                        <span>CV/Resume ({jobListing.application_documents.cv.toLowerCase()})</span>
+                                                    </li>
+                                                    <li className="flex items-center space-x-2 text-sm">
+                                                        <div className={`w-2 h-2 rounded-full ${getDocumentRequirementColor(jobListing.application_documents.cover_letter)}`}></div>
+                                                        <span>Cover Letter ({jobListing.application_documents.cover_letter.toLowerCase()})</span>
+                                                    </li>
+                                                </ul>
+                                                <div className="mt-2 text-xs text-muted-foreground">
+                                                    <span className="inline-flex items-center space-x-1"><div className="w-2 h-2 rounded-full bg-red-500"></div><span>Required</span></span>
+                                                    <span className="inline-flex items-center space-x-1 ml-4"><div className="w-2 h-2 rounded-full bg-yellow-500"></div><span>Optional</span></span>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {jobListing.screening_questions && jobListing.screening_questions.length > 0 && (
+                                            <div>
+                                                <p className="font-medium mb-2">Screening Questions</p>
+                                                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                                                    <MessageSquare className="h-4 w-4" />
+                                                    <span>Applicants will answer {jobListing.screening_questions.length} screening question{jobListing.screening_questions.length !== 1 ? 's' : ''}</span>
+                                                </div>
+                                                <Button variant="outline" size="sm" className="mt-2">
+                                                    <MessageSquare className="mr-2 h-4 w-4" />
+                                                    View Questions
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            )}
 
                             <Card>
                                 <CardHeader>
