@@ -13,7 +13,6 @@ import { Stepper } from '@/components/ui/stepper';
 import { Textarea } from '@/components/ui/textarea';
 import CompanyLayout from '@/layouts/company-layout';
 import { type Auth, type BreadcrumbItem } from '@/types';
-import { ApplicationLanguage } from '@/types/enums/ApplicationLanguage';
 import { ApplicationProcess } from '@/types/enums/ApplicationProcess';
 import { CustomEmploymentType } from '@/types/enums/CustomEmploymentType';
 import { JobStatus } from '@/types/enums/JobStatus';
@@ -116,7 +115,6 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
         office_location: auth.company?.city || '',
 
         // Application details
-        application_language: ApplicationLanguage.ENGLISH,
         categories: [] as string[],
         employment_type: CustomEmploymentType.PERMANENT,
         seniority_level: SeniorityLevel.MID_LEVEL,
@@ -151,20 +149,19 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
 
     // Form validation rules by step
     const step1ValidationRules = {
-        title: { required: true, minLength: 5, maxLength: 100 },
+        title: { required: true, minLength: 3, maxLength: 200 },
         categories: { required: true, minLength: 1 },
         workplace: { required: true },
         office_location: { required: true, minLength: 2 },
         employment_type: { required: true },
-        application_language: { required: true },
     };
 
     const step2ValidationRules = {
-        description: { required: true, minLength: 50, maxLength: 2000 },
-        requirements: { required: true, minLength: 30, maxLength: 1500 },
-        company_description: { maxLength: 500 },
+        description: { required: true, minLength: 10, maxLength: 2000 },
+        requirements: { required: true, minLength: 10, maxLength: 2000 },
+        company_description: { maxLength: 1000 },
         benefits: { maxLength: 800 },
-        skills: { maxLength: 300 },
+        skills: { maxLength: 500 },
     };
 
     const step3ValidationRules = {
@@ -583,63 +580,37 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                         {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
                                     </div>
 
-                                    {/* Job Categories and Application Language */}
-                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                        <div>
-                                            <Label htmlFor="categories" className="text-base">
-                                                Job Categories <span className="text-red-500">*</span>
-                                            </Label>
-                                            <div className="mt-1.5">
-                                                <MultiSelect
-                                                    options={Object.entries(categoryOptions).map(([value, label]) => ({
-                                                        value,
-                                                        label,
-                                                    }))}
-                                                    selected={data.categories}
-                                                    onSelectionChange={(selected) => setData('categories', selected)}
-                                                    onBlur={() => currentValidation.markFieldTouched('categories')}
-                                                    placeholder="Select job categories"
-                                                    className={
-                                                        currentValidation.touched.categories
-                                                            ? currentValidation.errors.categories
-                                                                ? 'border-red-500 focus-visible:border-red-500'
-                                                                : currentValidation.isFieldValid('categories')
-                                                                  ? 'border-green-500'
-                                                                  : ''
-                                                            : ''
-                                                    }
-                                                />
-                                            </div>
-                                            <FieldHelper>Choose one or more categories that best fit this role</FieldHelper>
-                                            {currentValidation.errors.categories && currentValidation.touched.categories && (
-                                                <p className="mt-1 text-sm text-red-500">{currentValidation.errors.categories}</p>
-                                            )}
-                                            {errors.categories && <p className="mt-1 text-sm text-red-500">{errors.categories}</p>}
+                                    {/* Job Categories */}
+                                    <div>
+                                        <Label htmlFor="categories" className="text-base">
+                                            Job Categories <span className="text-red-500">*</span>
+                                        </Label>
+                                        <div className="mt-1.5">
+                                            <MultiSelect
+                                                options={Object.entries(categoryOptions).map(([value, label]) => ({
+                                                    value,
+                                                    label,
+                                                }))}
+                                                selected={data.categories}
+                                                onSelectionChange={(selected) => setData('categories', selected)}
+                                                onBlur={() => currentValidation.markFieldTouched('categories')}
+                                                placeholder="Select job categories"
+                                                className={
+                                                    currentValidation.touched.categories
+                                                        ? currentValidation.errors.categories
+                                                            ? 'border-red-500 focus-visible:border-red-500'
+                                                            : currentValidation.isFieldValid('categories')
+                                                              ? 'border-green-500'
+                                                              : ''
+                                                        : ''
+                                                }
+                                            />
                                         </div>
-
-                                        <div>
-                                            <Label htmlFor="application_language" className="text-base">
-                                                Application Language <span className="text-red-500">*</span>
-                                            </Label>
-                                            <Select
-                                                value={data.application_language}
-                                                onValueChange={(value) => setData('application_language', value as ApplicationLanguage)}
-                                            >
-                                                <SelectTrigger id="application_language" className="mt-1.5">
-                                                    <SelectValue placeholder="Select language" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value={ApplicationLanguage.ENGLISH}>English</SelectItem>
-                                                    <SelectItem value={ApplicationLanguage.GERMAN}>German</SelectItem>
-                                                    <SelectItem value={ApplicationLanguage.FRENCH}>French</SelectItem>
-                                                    <SelectItem value={ApplicationLanguage.ITALIAN}>Italian</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            <FieldHelper>Language for the application form</FieldHelper>
-                                            {errors.application_language && (
-                                                <p className="mt-1 text-sm text-red-500">{errors.application_language}</p>
-                                            )}
-                                        </div>
+                                        <FieldHelper>Choose one or more categories that best fit this role</FieldHelper>
+                                        {currentValidation.errors.categories && currentValidation.touched.categories && (
+                                            <p className="mt-1 text-sm text-red-500">{currentValidation.errors.categories}</p>
+                                        )}
+                                        {errors.categories && <p className="mt-1 text-sm text-red-500">{errors.categories}</p>}
                                     </div>
 
                                     {/* Work Arrangement and Location */}
@@ -933,7 +904,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                             className="mt-1.5 min-h-[100px] md:min-h-[120px]"
                                             placeholder="e.g., JavaScript, React, Node.js, PostgreSQL, AWS"
                                         />
-                                        <CharacterCount current={data.skills.length} max={300} />
+                                        <CharacterCount current={data.skills.length} max={500} />
                                         <FieldHelper>
                                             List the most important skills separated by commas. Focus on the technologies, tools, and competencies
                                             that are essential for success in this role.
