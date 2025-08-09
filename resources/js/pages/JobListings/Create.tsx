@@ -56,12 +56,7 @@ export default function Create({ errors, auth }: CreateProps) {
         }
 
         // Include the company ID from auth
-        post(route('company.job-listings.store'), {
-            onSuccess: () => {
-                // Redirect to the job listings index on success
-                window.location.href = route('company.job-listings.index');
-            },
-        });
+        post(route('company.job-listings.store'));
     };
 
     const handleApplicationProcessChange = (value: string) => {

@@ -53,7 +53,8 @@ final class JobListingController
         $jobListing = $action->execute($company, $request->validated());
 
         return redirect()->route('company.job-listings.index', $jobListing)
-            ->with('success', 'Job created successfully.');
+            ->with('success', 'Job created successfully.')
+            ->with('clearLocalStorage', ['job-listing-draft']);
     }
 
     public function show(JobListing $jobListing): Response

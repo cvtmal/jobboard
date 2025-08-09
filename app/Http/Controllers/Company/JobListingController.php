@@ -64,7 +64,7 @@ final class JobListingController
         /** @var Company $company */
         $jobListing = $action->execute($company, $request->validated());
 
-        return redirect()->route('company.job-listings.screening', $jobListing);
+        return redirect()->route('company.job-listings.show', $jobListing);
     }
 
     public function show(JobListing $jobListing): Response
