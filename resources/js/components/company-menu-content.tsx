@@ -1,7 +1,7 @@
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { type Company } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { LogOut, Settings } from 'lucide-react';
 
 interface CompanyMenuContentProps {
@@ -31,11 +31,18 @@ export function CompanyMenuContent({ company }: CompanyMenuContentProps) {
                 </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-                <Link className="block w-full" method="post" href={route('company.logout')} as="button" onClick={cleanup}>
-                    <LogOut className="mr-2" />
-                    Log out
-                </Link>
+            <DropdownMenuItem 
+                onClick={() => {
+                    localStorage.removeItem('job-listing-draft');
+                    localStorage.removeItem('job-listing-current-step');
+                    localStorage.removeItem('job-listing-completed-steps');
+                    cleanup();
+                    router.post(route('company.logout'));
+                }}
+                className="cursor-pointer"
+            >
+                <LogOut className="mr-2" />
+                Log out
             </DropdownMenuItem>
         </>
     );

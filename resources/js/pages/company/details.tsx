@@ -420,7 +420,6 @@ export default function CompanyDetails({
                                             <Label htmlFor="url">Website URL</Label>
                                             <Input
                                                 id="url"
-                                                type="url"
                                                 value={data.url}
                                                 onChange={(e) => setData('url', e.target.value)}
                                                 placeholder="https://example.com"

@@ -35,7 +35,7 @@ final class CompanyProfileUpdateRequest extends FormRequest
             'city' => ['nullable', 'string', 'max:100'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
-            'url' => ['nullable', 'url', 'max:255'],
+            'url' => ['nullable', 'string', 'max:255'],
             'size' => ['nullable', 'string', 'max:50'],
             'type' => ['nullable', 'string', 'max:50'],
             'industry' => ['nullable', 'string', 'max:100'],
