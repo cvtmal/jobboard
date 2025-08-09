@@ -23,7 +23,6 @@ final class CreateCustomJobListingAction
     public function execute(Company $company, array $data): JobListing
     {
         return DB::transaction(function () use ($company, $data): JobListing {
-            // Map the custom fields to database fields
             $jobData = [
                 'company_id' => $company->id,
                 'title' => $data['title'],
@@ -31,18 +30,14 @@ final class CreateCustomJobListingAction
                 'workload_max' => $data['workload_max'],
                 'description' => $this->formatDescription($data),
                 'workplace' => $data['workplace'],
-                'status' => $data['status'],
-                'application_process' => $data['application_process'],
                 'city' => $data['office_location'],
             ];
 
-            // Add optional fields
             if (isset($data['employment_type'])) {
                 $jobData['employment_type'] = $data['employment_type'];
             }
 
             if (isset($data['seniority_level'])) {
-                // Map seniority level to experience level
                 $jobData['experience_level'] = match ($data['seniority_level']) {
                     'no_experience' => 'entry',
                     'junior' => 'junior',
@@ -54,7 +49,6 @@ final class CreateCustomJobListingAction
                 };
             }
 
-            // Add salary information if provided
             if (! empty($data['salary_min'])) {
                 $jobData['salary_min'] = $data['salary_min'];
             }
@@ -67,12 +61,10 @@ final class CreateCustomJobListingAction
                 $jobData['salary_type'] = $data['salary_type'];
             }
 
-            // Add categories if provided
             if (! empty($data['categories'])) {
                 $jobData['categories'] = $data['categories'];
             }
 
-            // Add screening data if provided (Step 4)
             if (isset($data['application_documents'])) {
                 $jobData['application_documents'] = $data['application_documents'];
             }
@@ -81,15 +73,7 @@ final class CreateCustomJobListingAction
                 $jobData['screening_questions'] = $data['screening_questions'];
             }
 
-            // Create the job listing
-            $jobListing = JobListing::create($jobData);
-
-            // Process skills if provided
-            if (! empty($data['skills'])) {
-                // Future implementation: Associate skills with the job listing
-            }
-
-            return $jobListing;
+            return JobListing::create($jobData);
         });
     }
 

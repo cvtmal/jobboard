@@ -63,7 +63,7 @@ final class CreateJobListingCustomRequest extends FormRequest
 
             // Screening data (Step 4)
             'application_documents' => ['nullable', 'array'],
-            'application_documents.cv' => ['required_with:application_documents', 'string', 'in:required,optional,hidden'],
+            'application_documents.cv' => ['nullable', 'string', 'in:required,optional,hidden'],
             'application_documents.cover_letter' => ['required_with:application_documents', 'string', 'in:required,optional,hidden'],
             'screening_questions' => ['nullable', 'array'],
             'screening_questions.*.id' => ['required_with:screening_questions.*', 'string'],

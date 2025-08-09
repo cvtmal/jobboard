@@ -24,7 +24,7 @@ import { Head, useForm } from '@inertiajs/react';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 // @ts-ignore
 import { useFormValidation } from '@/hooks/use-form-validation';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import { Award, Briefcase, Building2, Loader2 } from 'lucide-react';
 
 // Question interface for screening questions (Step 4)
@@ -172,7 +172,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
     };
 
     const step4ValidationRules = {
-        'application_documents.cv': { required: true },
+        // application_documents.cv is optional
         // screening_questions is optional
     };
 
@@ -214,6 +214,58 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
     const isStep2Valid = () => step2Validation.isFormValid();
     const isStep3Valid = () => step3Validation.isFormValid(); // Always true since step 3 is optional
     const isStep4Valid = () => step4Validation.isFormValid();
+
+    // Helper function to get detailed validation errors for debugging
+    const getDetailedValidationErrors = () => {
+        const allErrors = allFieldsValidation.validateAll();
+        const missingFields: Record<string, { step: number; field: string; error: string }> = {};
+
+        // Check step 1 fields
+        Object.keys(step1ValidationRules).forEach((field) => {
+            if (allErrors[field]) {
+                missingFields[field] = {
+                    step: 1,
+                    field: field,
+                    error: allErrors[field],
+                };
+            }
+        });
+
+        // Check step 2 fields
+        Object.keys(step2ValidationRules).forEach((field) => {
+            if (allErrors[field]) {
+                missingFields[field] = {
+                    step: 2,
+                    field: field,
+                    error: allErrors[field],
+                };
+            }
+        });
+
+        // Check step 3 fields
+        Object.keys(step3ValidationRules).forEach((field) => {
+            if (allErrors[field]) {
+                missingFields[field] = {
+                    step: 3,
+                    field: field,
+                    error: allErrors[field],
+                };
+            }
+        });
+
+        // Check step 4 fields
+        Object.keys(step4ValidationRules).forEach((field) => {
+            if (allErrors[field]) {
+                missingFields[field] = {
+                    step: 4,
+                    field: field,
+                    error: allErrors[field],
+                };
+            }
+        });
+
+        return missingFields;
+    };
 
     // Calculate form progress based on completed steps
     const calculateProgress = useCallback(() => {
@@ -416,6 +468,46 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
 
         // Validate all required fields instead of using progress percentage
         if (!allFieldsValidation.isFormValid()) {
+            // Log detailed validation errors to console for debugging
+            const missingFields = getDetailedValidationErrors();
+            const fieldCount = Object.keys(missingFields).length;
+            
+            if (fieldCount > 0) {
+                console.group('❌ Job Listing Submission Failed - Missing Required Fields');
+                console.log(`Total missing fields: ${fieldCount}`);
+                console.log('');
+                
+                // Group errors by step
+                const errorsByStep: Record<number, Array<{ field: string; error: string }>> = {};
+                Object.values(missingFields).forEach((fieldInfo) => {
+                    if (!errorsByStep[fieldInfo.step]) {
+                        errorsByStep[fieldInfo.step] = [];
+                    }
+                    errorsByStep[fieldInfo.step].push({
+                        field: fieldInfo.field,
+                        error: fieldInfo.error,
+                    });
+                });
+                
+                // Log errors by step
+                Object.keys(errorsByStep).sort().forEach((step) => {
+                    const stepNum = parseInt(step);
+                    const stepName = stepNum === 1 ? 'Job Essentials' : 
+                                    stepNum === 2 ? 'Job Details' : 
+                                    stepNum === 3 ? 'Job Settings' : 'Screening Questions';
+                    console.group(`📍 Step ${stepNum}: ${stepName}`);
+                    errorsByStep[stepNum].forEach((error) => {
+                        console.log(`   • ${error.field}: ${error.error}`);
+                        console.log(`     Current value:`, data[error.field as keyof typeof data]);
+                    });
+                    console.groupEnd();
+                });
+                
+                console.log('');
+                console.log('💡 Tip: Complete all required fields before submitting the form.');
+                console.groupEnd();
+            }
+            
             return;
         }
 
@@ -1253,11 +1345,53 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                     Please complete all required fields to continue
                                 </div>
                             )}
-                            {currentStep === 4 && !allFieldsValidation.isFormValid() && (
-                                <div className="mt-2 text-center text-sm text-orange-600 sm:text-right">
-                                    Please complete all required fields from previous steps
-                                </div>
-                            )}
+                            {currentStep === 4 && !allFieldsValidation.isFormValid() && (() => {
+                                // Log detailed validation errors to console for debugging
+                                const missingFields = getDetailedValidationErrors();
+                                const fieldCount = Object.keys(missingFields).length;
+                                
+                                if (fieldCount > 0) {
+                                    console.group('❌ Job Listing Validation Failed - Missing Required Fields');
+                                    console.log(`Total missing fields: ${fieldCount}`);
+                                    console.log('');
+                                    
+                                    // Group errors by step
+                                    const errorsByStep: Record<number, Array<{ field: string; error: string }>> = {};
+                                    Object.values(missingFields).forEach((fieldInfo) => {
+                                        if (!errorsByStep[fieldInfo.step]) {
+                                            errorsByStep[fieldInfo.step] = [];
+                                        }
+                                        errorsByStep[fieldInfo.step].push({
+                                            field: fieldInfo.field,
+                                            error: fieldInfo.error,
+                                        });
+                                    });
+                                    
+                                    // Log errors by step
+                                    Object.keys(errorsByStep).sort().forEach((step) => {
+                                        const stepNum = parseInt(step);
+                                        const stepName = stepNum === 1 ? 'Job Essentials' : 
+                                                        stepNum === 2 ? 'Job Details' : 
+                                                        stepNum === 3 ? 'Job Settings' : 'Screening Questions';
+                                        console.group(`📍 Step ${stepNum}: ${stepName}`);
+                                        errorsByStep[stepNum].forEach((error) => {
+                                            console.log(`   • ${error.field}: ${error.error}`);
+                                            console.log(`     Current value:`, data[error.field as keyof typeof data]);
+                                        });
+                                        console.groupEnd();
+                                    });
+                                    
+                                    console.log('');
+                                    console.log('💡 Tip: Navigate back to the step(s) above and fill in the missing required fields.');
+                                    console.groupEnd();
+                                }
+                                
+                                return (
+                                    <div className="mt-2 text-center text-sm text-orange-600 sm:text-right">
+                                        Please complete all required fields from previous steps
+                                    </div>
+                                );
+                            })()}
                         </div>
                     </form>
                 </div>

@@ -14,24 +14,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Company-specific job listing routes
 Route::middleware(['auth:company', 'verified.company'])->group(function () {
-    Route::get('company/job-listings', [CompanyJobListingController::class, 'index'])
-        ->name('company.job-listings.index');
-    Route::get('company/job-listings/create', [CompanyJobListingController::class, 'create'])
-        ->name('company.job-listings.create');
-    Route::post('company/job-listings', [CompanyJobListingController::class, 'store'])
-        ->name('company.job-listings.store');
-    Route::get('company/job-listings/{jobListing}/screening', [CompanyJobListingController::class, 'editScreening'])
-        ->name('company.job-listings.screening');
-    Route::post('company/job-listings/{jobListing}/screening', [CompanyJobListingController::class, 'updateScreening'])
-        ->name('company.job-listings.screening.update');
-    Route::get('company/job-listings/{jobListing}', [CompanyJobListingController::class, 'show'])
-        ->name('company.job-listings.show');
-    Route::get('company/job-listings/{jobListing}/edit', [CompanyJobListingController::class, 'edit'])
-        ->name('company.job-listings.edit');
-    Route::put('company/job-listings/{jobListing}', [CompanyJobListingController::class, 'update'])
-        ->name('company.job-listings.update');
-    Route::delete('company/job-listings/{jobListing}', [CompanyJobListingController::class, 'destroy'])
-        ->name('company.job-listings.destroy');
+    Route::get('company/job-listings', [CompanyJobListingController::class, 'index'])->name('company.job-listings.index');
+    Route::get('company/job-listings/create', [CompanyJobListingController::class, 'create'])->name('company.job-listings.create');
+    Route::post('company/job-listings', [CompanyJobListingController::class, 'store'])->name('company.job-listings.store');
+    Route::get('company/job-listings/{jobListing}/screening', [CompanyJobListingController::class, 'editScreening'])->name('company.job-listings.screening');
+    Route::post('company/job-listings/{jobListing}/screening', [CompanyJobListingController::class, 'updateScreening'])->name('company.job-listings.screening.update');
+    Route::get('company/job-listings/{jobListing}', [CompanyJobListingController::class, 'show'])->name('company.job-listings.show');
+    Route::get('company/job-listings/{jobListing}/edit', [CompanyJobListingController::class, 'edit'])->name('company.job-listings.edit');
+    Route::put('company/job-listings/{jobListing}', [CompanyJobListingController::class, 'update'])->name('company.job-listings.update');
+    Route::delete('company/job-listings/{jobListing}', [CompanyJobListingController::class, 'destroy'])->name('company.job-listings.destroy');
 
     // Job listing image management routes
     Route::prefix('company/job-listings/{jobListing}/images')->name('company.job-listings.images.')->group(function () {
