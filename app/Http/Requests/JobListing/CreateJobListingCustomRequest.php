@@ -48,7 +48,8 @@ final class CreateJobListingCustomRequest extends FormRequest
 
             // Job details
             'application_language' => ['required', 'string', 'in:english,german,french,italian'],
-            'category' => ['required', new Enum(JobCategory::class)],
+            'categories' => ['required', 'array', 'min:1'],
+            'categories.*' => ['required', new Enum(JobCategory::class)],
             'employment_type' => ['required', 'string', 'in:permanent,temporary,freelance,internship,side-job,apprenticeship,working-student,interim'],
             'seniority_level' => ['nullable', 'string', 'in:no_experience,junior,mid_level,professional,senior,lead'],
 
@@ -59,6 +60,18 @@ final class CreateJobListingCustomRequest extends FormRequest
 
             // Skills
             'skills' => ['nullable', 'string'],
+
+            // Screening data (Step 4)
+            'application_documents' => ['nullable', 'array'],
+            'application_documents.cv' => ['required_with:application_documents', 'string', 'in:required,optional,hidden'],
+            'application_documents.cover_letter' => ['required_with:application_documents', 'string', 'in:required,optional,hidden'],
+            'screening_questions' => ['nullable', 'array'],
+            'screening_questions.*.id' => ['required_with:screening_questions.*', 'string'],
+            'screening_questions.*.text' => ['required_with:screening_questions.*', 'string'],
+            'screening_questions.*.requirement' => ['required_with:screening_questions.*', 'string', 'in:optional,required,knockout'],
+            'screening_questions.*.answerType' => ['required_with:screening_questions.*', 'string', 'in:yes/no,single-choice,multiple-choice,date,number,file-upload,short-text'],
+            'screening_questions.*.choices' => ['nullable', 'array'],
+            'screening_questions.*.choices.*' => ['string'],
 
             // Hidden fields
             'application_process' => ['required', new Enum(ApplicationProcess::class)],

@@ -33,13 +33,12 @@ final class CreateCustomJobListingAction
                 'workplace' => $data['workplace'],
                 'status' => $data['status'],
                 'application_process' => $data['application_process'],
-                'category' => $data['category'],
                 'city' => $data['office_location'],
             ];
 
             // Add optional fields
-            if (isset($data['employment_type_mapped'])) {
-                $jobData['employment_type'] = $data['employment_type_mapped'];
+            if (isset($data['employment_type'])) {
+                $jobData['employment_type'] = $data['employment_type'];
             }
 
             if (isset($data['seniority_level'])) {
@@ -68,7 +67,21 @@ final class CreateCustomJobListingAction
                 $jobData['salary_type'] = $data['salary_type'];
             }
 
-            // Create and return the job listing
+            // Add categories if provided
+            if (! empty($data['categories'])) {
+                $jobData['categories'] = $data['categories'];
+            }
+
+            // Add screening data if provided (Step 4)
+            if (isset($data['application_documents'])) {
+                $jobData['application_documents'] = $data['application_documents'];
+            }
+
+            if (isset($data['screening_questions'])) {
+                $jobData['screening_questions'] = $data['screening_questions'];
+            }
+
+            // Create the job listing
             $jobListing = JobListing::create($jobData);
 
             // Process skills if provided

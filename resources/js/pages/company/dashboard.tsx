@@ -1,18 +1,18 @@
+import Heading from '@/components/heading';
+import HeadingSmall from '@/components/heading-small';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AvatarGroup } from '@/components/ui/avatar-group';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import CompanyLayout from '@/layouts/company-layout';
-import { type Auth, type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
-import { AlertCircle, CheckCircle, Mail, Phone, HelpCircle, ChevronRight } from 'lucide-react';
-import { AvatarGroup } from '@/components/ui/avatar-group';
-import HeadingSmall from '@/components/heading-small';
+import { type Auth } from '@/types';
 import avatar1 from '@images/avatar1.png';
 import avatar2 from '@images/avatar2.png';
 import avatar3 from '@images/avatar3.png';
 import avatar4 from '@images/avatar4.png';
-import Heading from '@/components/heading';
+import { Head, Link } from '@inertiajs/react';
+import { AlertCircle, CheckCircle, ChevronRight, HelpCircle, Mail, Phone } from 'lucide-react';
 
 type ProfileCompletion = {
     percentage: number;
@@ -136,7 +136,10 @@ export default function CompanyDashboard({
                                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-sm font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                                             2
                                         </div>
-                                        <HeadingSmall title="Fill out company details" description="Complete your company profile to attract better candidates." />
+                                        <HeadingSmall
+                                            title="Fill out company details"
+                                            description="Complete your company profile to attract better candidates."
+                                        />
                                     </div>
                                     <Button asChild size="default">
                                         <Link href={route('company.details')}>Complete Profile</Link>
@@ -174,10 +177,10 @@ export default function CompanyDashboard({
                                 <div className="flex justify-center">
                                     <AvatarGroup
                                         avatars={[
-                                            { name: "Lukas Meier", src: avatar1 },
-                                            { name: "Lara Schmid", src: avatar2 },
-                                            { name: "Céline Rochat", src: avatar3 },
-                                            { name: "Matteo Bernasconi", src: avatar4 },
+                                            { name: 'Lukas Meier', src: avatar1 },
+                                            { name: 'Lara Schmid', src: avatar2 },
+                                            { name: 'Céline Rochat', src: avatar3 },
+                                            { name: 'Matteo Bernasconi', src: avatar4 },
                                         ]}
                                         max={4}
                                         size="xl"
@@ -187,16 +190,16 @@ export default function CompanyDashboard({
                                 </div>
 
                                 {/* Customer Service Team Info */}
-                                <div className="text-center space-y-3">
+                                <div className="space-y-3 text-center">
                                     <h3 className="text-lg font-semibold">Customer Service Team</h3>
                                     <div className="space-y-2">
-                                        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                                        <div className="text-muted-foreground flex items-center justify-center gap-2 text-sm">
                                             <Mail className="h-4 w-4" />
                                             <a href="mailto:info@superjobs.ch" className="hover:text-primary transition-colors">
                                                 info@superjobs.ch
                                             </a>
                                         </div>
-                                        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                                        <div className="text-muted-foreground flex items-center justify-center gap-2 text-sm">
                                             <Phone className="h-4 w-4" />
                                             <a href="tel:+41441234567" className="hover:text-primary transition-colors">
                                                 +41 44 123 45 67
@@ -216,7 +219,7 @@ export default function CompanyDashboard({
                                 {/* Help center item */}
                                 <Link
                                     href={route('company.dashboard')}
-                                    className="flex items-center justify-between p-4 -m-4 mb-2 rounded-lg transition-all duration-200 hover:bg-muted/50 group"
+                                    className="hover:bg-muted/50 group -m-4 mb-2 flex items-center justify-between rounded-lg p-4 transition-all duration-200"
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 transition-transform group-hover:scale-105 dark:bg-blue-900/30">
@@ -224,13 +227,13 @@ export default function CompanyDashboard({
                                         </div>
                                         <HeadingSmall title="Help center" description="See guides and tutorials" />
                                     </div>
-                                    <ChevronRight className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-foreground" />
+                                    <ChevronRight className="text-muted-foreground group-hover:text-foreground h-5 w-5 transition-all group-hover:translate-x-1" />
                                 </Link>
 
                                 {/* Email us item */}
                                 <Link
                                     href={route('company.dashboard')}
-                                    className="flex items-center justify-between p-4 -m-4 rounded-lg transition-all duration-200 hover:bg-muted/50 group"
+                                    className="hover:bg-muted/50 group -m-4 flex items-center justify-between rounded-lg p-4 transition-all duration-200"
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 transition-transform group-hover:scale-105 dark:bg-green-900/30">
@@ -238,7 +241,7 @@ export default function CompanyDashboard({
                                         </div>
                                         <HeadingSmall title="Email us" description="Get support from our experts" />
                                     </div>
-                                    <ChevronRight className="h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-foreground" />
+                                    <ChevronRight className="text-muted-foreground group-hover:text-foreground h-5 w-5 transition-all group-hover:translate-x-1" />
                                 </Link>
                             </CardContent>
                         </Card>

@@ -644,8 +644,15 @@ namespace App\Models {
     /**
      * App\Models\Company
      *
+     * @property-read mixed $logo_url
+     * @property-read mixed $banner_url
+     * @property-read mixed $career_page_image_url
+     * @property-read mixed $logo_file_size_formatted
+     * @property-read mixed $banner_file_size_formatted
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\JobListing> $jobs
      * @property-read int|null $jobs_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\JobListing> $jobListings
+     * @property-read int|null $jobListings_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
      * @property-read int|null $notifications_count
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereId($value)
@@ -661,12 +668,23 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereUrl($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereSize($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereType($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereIndustry($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereDescriptionGerman($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereDescriptionEnglish($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereDescriptionFrench($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereDescriptionItalian($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereLogo($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereCover($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereLogoPath($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereLogoOriginalName($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereLogoFileSize($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereLogoMimeType($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereLogoDimensions($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereLogoUploadedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereBannerPath($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereBannerOriginalName($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereBannerFileSize($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereBannerMimeType($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereBannerDimensions($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereBannerUploadedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereVideo($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereNewsletter($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereInternalNotes($value)
@@ -678,6 +696,13 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereRememberToken($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereUpdatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereCareerPageEnabled($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereCareerPageSlug($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereCareerPageImage($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereCareerPageVideos($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereCareerPageDomain($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereSpontaneousApplicationEnabled($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company whereCareerPageVisibility($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Company>|Company query()
@@ -1286,7 +1311,13 @@ namespace App\Models {
      *
      * @property array|null $screening_questions
      * @property array|null $application_documents
-     * @property \App\Enums\JobCategory|null $category
+     * @property array|null $categories
+     * @property string|null $category
+     * @property-read mixed $job_categories
+     * @property-read mixed $effective_logo_url
+     * @property-read mixed $effective_banner_url
+     * @property-read mixed $logo_url
+     * @property-read mixed $banner_url
      * @property-read \App\Models\Company $company
      * @property-read \App\Models\JobTier $jobTier
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\JobApplication> $applications
@@ -1298,6 +1329,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereCategory($value)
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereCompanyId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereCategories($value)
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereReferenceNumber($value)
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereTitle($value)
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereDescription($value)
@@ -1335,6 +1367,20 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereContactPerson($value)
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereContactEmail($value)
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereInternalNotes($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereUseCompanyLogo($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereUseCompanyBanner($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereLogoPath($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereLogoOriginalName($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereLogoFileSize($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereLogoMimeType($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereLogoDimensions($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereLogoUploadedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereBannerPath($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereBannerOriginalName($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereBannerFileSize($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereBannerMimeType($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereBannerDimensions($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereBannerUploadedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereApplicationDocuments($value)
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing whereScreeningQuestions($value)
@@ -1345,6 +1391,8 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing inRegion()
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing remote()
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing inSubRegion()
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing inCategories()
+     * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing inCategory()
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<JobListing>|JobListing query()

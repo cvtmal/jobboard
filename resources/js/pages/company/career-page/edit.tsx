@@ -1,8 +1,9 @@
 import { Transition } from '@headlessui/react';
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import { Eye, ImageIcon, Plus, Trash2, Upload, Youtube } from 'lucide-react';
-import { FormEventHandler, useState, useEffect } from 'react';
+import { FormEventHandler, useEffect, useState } from 'react';
 
+import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,7 +11,6 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import CompanyLayout from '@/layouts/company-layout';
 import type { BreadcrumbItem } from '@/types';
-import Heading from '@/components/heading';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -18,7 +18,6 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/company/career-page',
     },
 ];
-
 
 interface CareerPageVideo {
     id?: string;
@@ -148,10 +147,10 @@ export default function CareerPageEdit({ company, status }: Props) {
         if (imagePreview) {
             URL.revokeObjectURL(imagePreview);
         }
-        
+
         setData('career_page_image', null);
         setImagePreview(null);
-        
+
         if (company.career_page_image) {
             router.delete(route('company.career-page.image.destroy'), {
                 preserveScroll: true,
@@ -170,23 +169,27 @@ export default function CareerPageEdit({ company, status }: Props) {
         }
 
         // Make direct Inertia call to backend
-        router.post(route('company.career-page.videos.store'), {
-            url: newVideoUrl,
-            title: 'YouTube Video',
-        }, {
-            preserveScroll: true,
-            onSuccess: () => {
-                setNewVideoUrl('');
-                setShowVideoInput(false);
+        router.post(
+            route('company.career-page.videos.store'),
+            {
+                url: newVideoUrl,
+                title: 'YouTube Video',
             },
-            onError: (errors) => {
-                if (errors.url) {
-                    alert(errors.url);
-                } else {
-                    alert('Failed to add video. Please try again.');
-                }
-            }
-        });
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setNewVideoUrl('');
+                    setShowVideoInput(false);
+                },
+                onError: (errors) => {
+                    if (errors.url) {
+                        alert(errors.url);
+                    } else {
+                        alert('Failed to add video. Please try again.');
+                    }
+                },
+            },
+        );
     };
 
     const removeVideo = (videoId: string) => {
@@ -195,7 +198,7 @@ export default function CareerPageEdit({ company, status }: Props) {
             preserveScroll: true,
             onError: () => {
                 alert('Failed to remove video. Please try again.');
-            }
+            },
         });
     };
 
@@ -214,9 +217,9 @@ export default function CareerPageEdit({ company, status }: Props) {
 
             <div className="py-6">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                         {/* Main Content */}
-                        <div className="lg:col-span-2 space-y-8">
+                        <div className="space-y-8 lg:col-span-2">
                             {/* Header */}
                             <div className="flex items-center justify-between">
                                 <div>
@@ -254,15 +257,13 @@ export default function CareerPageEdit({ company, status }: Props) {
                                 <Card>
                                     <CardHeader>
                                         <CardTitle>Career Page</CardTitle>
-                                        <CardDescription>
-                                            Enable or disable your company's career page
-                                        </CardDescription>
+                                        <CardDescription>Enable or disable your company's career page</CardDescription>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="flex items-center justify-between">
                                             <div className="flex-1">
                                                 <Label htmlFor="career-page-enabled">Enable Career Page</Label>
-                                                <p className="text-sm text-gray-500 mt-1">
+                                                <p className="mt-1 text-sm text-gray-500">
                                                     When enabled, your company will have a dedicated career page
                                                 </p>
                                             </div>
@@ -281,32 +282,34 @@ export default function CareerPageEdit({ company, status }: Props) {
                                         <Card>
                                             <CardHeader>
                                                 <CardTitle>Career Page Image</CardTitle>
-                                                <CardDescription>
-                                                    Add an image to showcase your company culture and workspace
-                                                </CardDescription>
+                                                <CardDescription>Add an image to showcase your company culture and workspace</CardDescription>
                                             </CardHeader>
                                             <CardContent className="space-y-6">
                                                 {/* Upload Area */}
                                                 <div
-                                                    className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                                                        dragActive
-                                                            ? 'border-primary bg-primary/5'
-                                                            : 'border-gray-300 hover:border-gray-400'
+                                                    className={`rounded-lg border-2 border-dashed p-8 text-center transition-colors ${
+                                                        dragActive ? 'border-primary bg-primary/5' : 'border-gray-300 hover:border-gray-400'
                                                     }`}
                                                     onDragEnter={handleDrag}
                                                     onDragLeave={handleDrag}
                                                     onDragOver={handleDrag}
                                                     onDrop={handleDrop}
                                                 >
-                                                    <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                                                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                                        {data.career_page_image || company.career_page_image ? 'Replace image' : 'Drag & drop image upload'}
+                                                    <ImageIcon className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                                                    <h3 className="mb-2 text-lg font-medium text-gray-900">
+                                                        {data.career_page_image || company.career_page_image
+                                                            ? 'Replace image'
+                                                            : 'Drag & drop image upload'}
                                                     </h3>
-                                                    <p className="text-gray-500 mb-4">
+                                                    <p className="mb-4 text-gray-500">
                                                         Upload an image smaller than 3.5MB and at least 752px by 480px.
                                                     </p>
-                                                    <Button type="button" variant="outline" onClick={() => document.getElementById('file-upload')?.click()}>
-                                                        <Upload className="h-4 w-4 mr-2" />
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        onClick={() => document.getElementById('file-upload')?.click()}
+                                                    >
+                                                        <Upload className="mr-2 h-4 w-4" />
                                                         {data.career_page_image || company.career_page_image ? 'Replace Image' : 'Choose Image'}
                                                     </Button>
                                                     <input
@@ -320,16 +323,16 @@ export default function CareerPageEdit({ company, status }: Props) {
 
                                                 {/* Image Preview */}
                                                 {(data.career_page_image || imagePreview || company.career_page_image) && (
-                                                    <div className="relative group inline-block">
+                                                    <div className="group relative inline-block">
                                                         <img
                                                             src={imagePreview || company.career_page_image || ''}
                                                             alt="Career page image"
-                                                            className="w-full max-w-md h-48 object-cover rounded-lg"
+                                                            className="h-48 w-full max-w-md rounded-lg object-cover"
                                                         />
                                                         <button
                                                             type="button"
                                                             onClick={removeImage}
-                                                            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                                            className="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
                                                         >
                                                             <Trash2 className="h-4 w-4" />
                                                         </button>
@@ -348,14 +351,14 @@ export default function CareerPageEdit({ company, status }: Props) {
                                             </CardHeader>
                                             <CardContent className="space-y-6">
                                                 {company.career_page_videos.length === 0 && !showVideoInput ? (
-                                                    <div className="text-center py-12">
-                                                        <Youtube className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                                                        <h3 className="text-lg font-medium text-gray-900 mb-2">No videos yet</h3>
-                                                        <p className="text-gray-500 mb-6">
+                                                    <div className="py-12 text-center">
+                                                        <Youtube className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                                                        <h3 className="mb-2 text-lg font-medium text-gray-900">No videos yet</h3>
+                                                        <p className="mb-6 text-gray-500">
                                                             You haven't added any videos yet. You can add videos from YouTube.
                                                         </p>
                                                         <Button type="button" onClick={() => setShowVideoInput(true)}>
-                                                            <Plus className="h-4 w-4 mr-2" />
+                                                            <Plus className="mr-2 h-4 w-4" />
                                                             Add video
                                                         </Button>
                                                     </div>
@@ -363,7 +366,7 @@ export default function CareerPageEdit({ company, status }: Props) {
                                                     <div className="space-y-4">
                                                         {/* Existing videos */}
                                                         {company.career_page_videos.map((video) => (
-                                                            <div key={video.id} className="flex items-center justify-between p-4 border rounded-lg">
+                                                            <div key={video.id} className="flex items-center justify-between rounded-lg border p-4">
                                                                 <div className="flex items-center gap-3">
                                                                     <Youtube className="h-5 w-5 text-red-500" />
                                                                     <div>
@@ -409,7 +412,7 @@ export default function CareerPageEdit({ company, status }: Props) {
 
                                                         {!showVideoInput && (
                                                             <Button type="button" variant="outline" onClick={() => setShowVideoInput(true)}>
-                                                                <Plus className="h-4 w-4 mr-2" />
+                                                                <Plus className="mr-2 h-4 w-4" />
                                                                 Add video
                                                             </Button>
                                                         )}
@@ -422,14 +425,12 @@ export default function CareerPageEdit({ company, status }: Props) {
                                         <Card>
                                             <CardHeader>
                                                 <CardTitle>Domain</CardTitle>
-                                                <CardDescription>
-                                                    Customize your company's career page URL
-                                                </CardDescription>
+                                                <CardDescription>Customize your company's career page URL</CardDescription>
                                             </CardHeader>
                                             <CardContent>
                                                 <div className="grid gap-2">
                                                     <div className="flex">
-                                                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                                                        <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
                                                             https://
                                                         </span>
                                                         <Input
@@ -453,8 +454,9 @@ export default function CareerPageEdit({ company, status }: Props) {
                                                 <div className="flex items-start justify-between">
                                                     <div className="flex-1">
                                                         <Label htmlFor="spontaneous">Spontaneous Applications</Label>
-                                                        <p className="text-sm text-gray-500 mt-1">
-                                                            Allow candidates to apply to your company even if they haven't found a suitable job posting.
+                                                        <p className="mt-1 text-sm text-gray-500">
+                                                            Allow candidates to apply to your company even if they haven't found a suitable job
+                                                            posting.
                                                         </p>
                                                     </div>
                                                     <Switch
@@ -466,7 +468,7 @@ export default function CareerPageEdit({ company, status }: Props) {
                                                 <div className="flex items-start justify-between">
                                                     <div className="flex-1">
                                                         <Label htmlFor="visibility">Career Page Visibility</Label>
-                                                        <p className="text-sm text-gray-500 mt-1">
+                                                        <p className="mt-1 text-sm text-gray-500">
                                                             Control whether your career page is publicly visible.
                                                         </p>
                                                     </div>
@@ -491,7 +493,7 @@ export default function CareerPageEdit({ company, status }: Props) {
                                     <CardTitle className="text-lg">Tips for Success</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <ul className="text-sm text-gray-600 space-y-2">
+                                    <ul className="space-y-2 text-sm text-gray-600">
                                         <li>• Use a high-quality image that showcases your company culture</li>
                                         <li>• Keep your career page URL short and memorable</li>
                                         <li>• Enable spontaneous applications to catch passive candidates</li>
@@ -508,7 +510,8 @@ export default function CareerPageEdit({ company, status }: Props) {
                                 </CardHeader>
                                 <CardContent>
                                     <p className="text-sm text-gray-600">
-                                        Including a photo on your company profile helps potential candidates get a glimpse of your workplace and company culture.
+                                        Including a photo on your company profile helps potential candidates get a glimpse of your workplace and
+                                        company culture.
                                     </p>
                                 </CardContent>
                             </Card>

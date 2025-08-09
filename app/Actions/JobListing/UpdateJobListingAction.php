@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\JobListing;
 
+use App\Enums\JobCategory;
 use App\Models\Company;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,14 @@ final class UpdateJobListingAction
     public function execute(Company $company, JobListing $jobListing, array $data): JobListing
     {
         return DB::transaction(function () use ($jobListing, $data): JobListing {
+            // Convert categories to array format for JSON storage if provided
+            if (isset($data['categories'])) {
+                $data['categories'] = array_map(
+                    fn ($category) => $category instanceof JobCategory ? $category->value : $category,
+                    $data['categories']
+                );
+            }
+
             $jobListing->update($data);
 
             return $jobListing;

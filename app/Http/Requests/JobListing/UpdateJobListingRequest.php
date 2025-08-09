@@ -35,7 +35,8 @@ final class UpdateJobListingRequest extends FormRequest
     {
         return [
             'reference_number' => ['nullable', 'string', 'max:255'],
-            'category' => ['nullable', new Enum(JobCategory::class)],
+            'categories' => ['nullable', 'array'],
+            'categories.*' => ['required', new Enum(JobCategory::class)],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'employment_type' => ['nullable', new Enum(EmploymentType::class)],

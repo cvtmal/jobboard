@@ -60,7 +60,6 @@ export default function CompanyRegister() {
                             />
                             <InputError message={errors.name} className="mt-2" />
                         </div>
-
                     </div>
 
                     {/* Contact Person Details Section */}

@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { useAppearance } from '@/hooks/use-appearance';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BarChart3, Briefcase, Building2, Folder, Globe, Home, LayoutDashboard, PlayCircle, Settings, User, Users } from 'lucide-react';
+import { BarChart3, Briefcase, Building2, Folder, Home, LayoutDashboard, Settings, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [

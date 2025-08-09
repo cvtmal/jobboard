@@ -58,11 +58,11 @@ final class JobListingController
 
     public function show(JobListing $jobListing): Response
     {
-        $jobListing->load('company');
+        $jobListing->load('company', 'jobCategoryPivots');
 
         return Inertia::render('JobListings/Show', [
             'jobListing' => $jobListing,
-            'categoryLabel' => $jobListing->category?->label(),
+            'categoryLabels' => $jobListing->jobCategories->map(fn ($category) => $category->label())->toArray(),
         ]);
     }
 

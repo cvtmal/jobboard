@@ -1,3 +1,4 @@
+import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +11,6 @@ import { type Auth } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { ArrowUpDown, Eye, Pencil, PlusCircle, Search, Trash2 } from 'lucide-react';
-import Heading from '@/components/heading';
 
 interface JobListing {
     id: number;

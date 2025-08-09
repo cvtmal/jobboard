@@ -1,10 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useImageUpload } from '@/hooks/use-image-upload';
 import { cn } from '@/lib/utils';
 import { PencilIcon, UploadIcon } from 'lucide-react';
-import { useImageUpload } from '@/hooks/use-image-upload';
 import { ImageCropModal } from './ImageCropModal';
-import HeadingSmall from '@/components/heading-small';
 
 interface CompanyImageUploaderProps {
     /**
@@ -90,7 +89,7 @@ export function CompanyImageUploader({
                                     <Button
                                         size="sm"
                                         variant="secondary"
-                                        className="absolute top-3 right-3 shadow-md transition-all opacity-0 group-hover:opacity-100"
+                                        className="absolute top-3 right-3 opacity-0 shadow-md transition-all group-hover:opacity-100"
                                         onClick={() => imageUpload.openModal('banner')}
                                         disabled={disabled}
                                     >
@@ -107,14 +106,14 @@ export function CompanyImageUploader({
                             <Card
                                 className={cn(
                                     'group relative flex-shrink-0 overflow-hidden transition-all hover:shadow-xl',
-                                    'ring-4 ring-white shadow-lg',
+                                    'shadow-lg ring-4 ring-white',
                                     !disabled && 'hover:ring-primary/20 cursor-pointer hover:ring-4',
                                     disabled && 'cursor-not-allowed opacity-50',
                                 )}
                             >
                                 <Button
                                     variant="ghost"
-                                    className="h-20 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28 p-0 hover:bg-transparent rounded-lg"
+                                    className="h-20 w-20 rounded-lg p-0 hover:bg-transparent sm:h-24 sm:w-24 md:h-28 md:w-28"
                                     onClick={() => imageUpload.openModal('logo')}
                                     disabled={disabled}
                                 >
@@ -130,7 +129,7 @@ export function CompanyImageUploader({
                                             {/* Overlay with edit hint */}
                                             {!disabled && (
                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/40">
-                                                    <div className="rounded-md bg-white/95 px-2 py-1 text-xs font-medium opacity-0 transition-opacity group-hover:opacity-100 shadow-sm">
+                                                    <div className="rounded-md bg-white/95 px-2 py-1 text-xs font-medium opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
                                                         Edit Logo
                                                     </div>
                                                 </div>
@@ -142,7 +141,7 @@ export function CompanyImageUploader({
                                             <div className="bg-muted group-hover:bg-muted-foreground/10 rounded-full p-2 transition-colors">
                                                 <UploadIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                                             </div>
-                                            <span className="text-xs font-medium hidden sm:block">Logo</span>
+                                            <span className="hidden text-xs font-medium sm:block">Logo</span>
                                         </div>
                                     )}
                                 </Button>
@@ -151,7 +150,7 @@ export function CompanyImageUploader({
                     </div>
 
                     {/* Instructions and Error Messages */}
-                    <div className="pt-8 space-y-3">
+                    <div className="space-y-3 pt-8">
                         {/* Error Messages */}
                         {(errors.banner || errors.logo) && (
                             <div className="space-y-1">

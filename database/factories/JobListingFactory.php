@@ -37,7 +37,6 @@ final class JobListingFactory extends Factory
 
         return [
             'company_id' => $companyId,
-            'category' => fake()->optional(0.9)->randomElement(JobCategory::cases()),
             'reference_number' => 'JOB-'.Str::upper(Str::random(8)),
             'title' => $title,
             'description' => fake()->paragraphs(3, true),
@@ -132,6 +131,37 @@ final class JobListingFactory extends Factory
     {
         return $this->state(fn (array $attributes): array => [
             'status' => JobStatus::CLOSED,
+        ]);
+    }
+
+    /**
+     * Configure the model factory.
+     */
+    public function configure(): static
+    {
+        return $this->afterMaking(function (JobListing $jobListing): void {
+            // Add 1-3 random categories to the job listing
+            if (! $jobListing->categories) {
+                $jobListing->categories = fake()->randomElements(
+                    array_column(JobCategory::cases(), 'value'),
+                    fake()->numberBetween(1, 3)
+                );
+            }
+        });
+    }
+
+    /**
+     * Create a job listing with specific categories.
+     *
+     * @param  array<JobCategory|string>  $categories
+     */
+    public function withCategories(array $categories): static
+    {
+        return $this->state(fn (): array => [
+            'categories' => array_map(
+                fn ($category) => $category instanceof JobCategory ? $category->value : $category,
+                $categories
+            ),
         ]);
     }
 }

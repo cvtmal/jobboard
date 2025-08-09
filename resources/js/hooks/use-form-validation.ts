@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ValidationRule {
     required?: boolean;
@@ -16,10 +16,7 @@ interface ValidationErrors {
     [key: string]: string;
 }
 
-export function useFormValidation<T extends Record<string, any>>(
-    data: T,
-    rules: ValidationRules
-) {
+export function useFormValidation<T extends Record<string, any>>(data: T, rules: ValidationRules) {
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [touched, setTouched] = useState<Record<string, boolean>>({});
 
@@ -35,11 +32,11 @@ export function useFormValidation<T extends Record<string, any>>(
             if (rule.minLength && value.length < rule.minLength) {
                 return `Minimum length is ${rule.minLength} characters`;
             }
-            
+
             if (rule.maxLength && value.length > rule.maxLength) {
                 return `Maximum length is ${rule.maxLength} characters`;
             }
-            
+
             if (rule.pattern && !rule.pattern.test(value)) {
                 return 'Invalid format';
             }
@@ -54,8 +51,8 @@ export function useFormValidation<T extends Record<string, any>>(
 
     const validateAll = (): ValidationErrors => {
         const newErrors: ValidationErrors = {};
-        
-        Object.keys(rules).forEach(field => {
+
+        Object.keys(rules).forEach((field) => {
             const error = validateField(field, data[field as keyof T]);
             if (error) {
                 newErrors[field] = error;
@@ -70,7 +67,7 @@ export function useFormValidation<T extends Record<string, any>>(
     };
 
     const markFieldTouched = (field: string) => {
-        setTouched(prev => ({ ...prev, [field]: true }));
+        setTouched((prev) => ({ ...prev, [field]: true }));
     };
 
     const isFieldValid = (field: string): boolean => {
@@ -85,8 +82,8 @@ export function useFormValidation<T extends Record<string, any>>(
     // Validate on data changes for touched fields
     useEffect(() => {
         const newErrors: ValidationErrors = {};
-        
-        Object.keys(touched).forEach(field => {
+
+        Object.keys(touched).forEach((field) => {
             if (touched[field]) {
                 const error = validateField(field, data[field as keyof T]);
                 if (error) {

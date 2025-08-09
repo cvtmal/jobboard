@@ -29,10 +29,10 @@ interface JobListing {
 interface Props {
     auth: Auth;
     jobListing: JobListing;
-    categoryLabel: string | null;
+    categoryLabels: string[];
 }
 
-export default function JobListingShow({ auth, jobListing, categoryLabel }: Props) {
+export default function JobListingShow({ auth, jobListing, categoryLabels }: Props) {
     const { appearance } = useAppearance();
     const isDarkMode = appearance === 'dark' || (appearance === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
@@ -110,7 +110,9 @@ export default function JobListingShow({ auth, jobListing, categoryLabel }: Prop
                                 <Badge variant="outline" className={getStatusColor(jobListing.status)}>
                                     {jobListing.status.charAt(0).toUpperCase() + jobListing.status.slice(1)}
                                 </Badge>
-                                {categoryLabel && <Badge variant="outline">{categoryLabel}</Badge>}
+                                {categoryLabels.map((category, index) => (
+                                    <Badge key={index} variant="outline">{category}</Badge>
+                                ))}
                             </div>
                         </div>
                         <div className="flex flex-wrap gap-2">

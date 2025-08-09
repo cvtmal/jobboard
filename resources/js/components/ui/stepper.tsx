@@ -11,14 +11,25 @@ interface StepperStep {
 interface StepperProps {
     steps: StepperStep[];
     className?: string;
+    onStepClick?: (stepIndex: number) => void;
 }
 
-export function Stepper({ steps, className }: StepperProps) {
+export function Stepper({ steps, className, onStepClick }: StepperProps) {
     return (
         <div className={cn('flex items-center justify-between', className)}>
             {steps.map((step, index) => (
                 <div key={index} className="flex items-center flex-1">
-                    <div className="flex items-center">
+                    <div 
+                        className={cn(
+                            "flex items-center",
+                            onStepClick && (step.isCompleted || step.isCurrent) && "cursor-pointer"
+                        )}
+                        onClick={() => {
+                            if (onStepClick && (step.isCompleted || step.isCurrent)) {
+                                onStepClick(index + 1);
+                            }
+                        }}
+                    >
                         {/* Step Circle */}
                         <div
                             className={cn(
@@ -27,7 +38,8 @@ export function Stepper({ steps, className }: StepperProps) {
                                     ? 'border-green-500 bg-green-500 text-white'
                                     : step.isCurrent
                                     ? 'border-primary bg-primary text-primary-foreground'
-                                    : 'border-muted-foreground/20 bg-muted text-muted-foreground'
+                                    : 'border-muted-foreground/20 bg-muted text-muted-foreground',
+                                onStepClick && (step.isCompleted || step.isCurrent) && "hover:scale-105"
                             )}
                         >
                             {step.isCompleted ? (

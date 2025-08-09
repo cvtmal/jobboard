@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { ArrowRight, Building, CheckCircle, Globe, Star, Upload, Users } from 'lucide-react';
+import { ArrowRight, Building, CheckCircle, Globe, Star } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,15 +13,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function CompanyProfileOverview({
-    auth,
-    company,
-    shouldShowOnboarding,
-}: {
-    auth: Auth;
-    company: any;
-    shouldShowOnboarding: boolean;
-}) {
+export default function CompanyProfileOverview({ auth, company, shouldShowOnboarding }: { auth: Auth; company: any; shouldShowOnboarding: boolean }) {
     const profileCompletion = calculateProfileCompletion(company);
 
     return (
@@ -37,7 +29,8 @@ export default function CompanyProfileOverview({
                                 Welcome! Set Up Your Company Profile
                             </CardTitle>
                             <CardDescription>
-                                Complete your profile to create better job listings and attract quality candidates. Start with your company details below.
+                                Complete your profile to create better job listings and attract quality candidates. Start with your company details
+                                below.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -57,9 +50,7 @@ export default function CompanyProfileOverview({
                                 <Building className="h-5 w-5" />
                                 Company Details
                             </CardTitle>
-                            <CardDescription>
-                                Manage your company information, branding, and contact details
-                            </CardDescription>
+                            <CardDescription>Manage your company information, branding, and contact details</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
@@ -67,9 +58,9 @@ export default function CompanyProfileOverview({
                                     <span>Profile Completion</span>
                                     <span className="font-medium">{profileCompletion.percentage}%</span>
                                 </div>
-                                <div className="h-2 bg-gray-200 rounded-full">
-                                    <div 
-                                        className="h-2 bg-primary rounded-full transition-all duration-300"
+                                <div className="h-2 rounded-full bg-gray-200">
+                                    <div
+                                        className="bg-primary h-2 rounded-full transition-all duration-300"
                                         style={{ width: `${profileCompletion.percentage}%` }}
                                     />
                                 </div>
@@ -84,14 +75,12 @@ export default function CompanyProfileOverview({
                                 ))}
                                 {profileCompletion.missing.slice(0, 2).map((item, index) => (
                                     <div key={index} className="flex items-center gap-2 text-sm text-gray-500">
-                                        <div className="h-4 w-4 border rounded-full border-gray-300" />
+                                        <div className="h-4 w-4 rounded-full border border-gray-300" />
                                         <span>{item}</span>
                                     </div>
                                 ))}
                                 {profileCompletion.missing.length > 2 && (
-                                    <div className="text-sm text-gray-500">
-                                        +{profileCompletion.missing.length - 2} more to complete
-                                    </div>
+                                    <div className="text-sm text-gray-500">+{profileCompletion.missing.length - 2} more to complete</div>
                                 )}
                             </div>
 
@@ -111,18 +100,17 @@ export default function CompanyProfileOverview({
                                 <Globe className="h-5 w-5" />
                                 Career Page
                             </CardTitle>
-                            <CardDescription>
-                                Customize your public career page and company showcase
-                            </CardDescription>
+                            <CardDescription>Customize your public career page and company showcase</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="flex items-center gap-2 text-sm">
-                                <div className="h-2 w-2 bg-yellow-500 rounded-full"></div>
+                                <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
                                 <span className="text-gray-600">Coming Soon</span>
                             </div>
 
                             <p className="text-sm text-gray-600">
-                                Create a branded career page where candidates can learn about your company culture, view open positions, and apply directly.
+                                Create a branded career page where candidates can learn about your company culture, view open positions, and apply
+                                directly.
                             </p>
 
                             <Link href="/company/career-page">
@@ -142,39 +130,31 @@ export default function CompanyProfileOverview({
                             <Star className="h-5 w-5" />
                             Profile Impact
                         </CardTitle>
-                        <CardDescription>
-                            See how your profile affects your job listing performance
-                        </CardDescription>
+                        <CardDescription>See how your profile affects your job listing performance</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="grid gap-6 md:grid-cols-3">
                             <div className="text-center">
-                                <div className="text-2xl font-bold text-primary">{company.logo_url ? '✓' : '!'}</div>
+                                <div className="text-primary text-2xl font-bold">{company.logo_url ? '✓' : '!'}</div>
                                 <div className="text-sm font-medium">Company Logo</div>
                                 <div className="text-xs text-gray-600">
                                     {company.logo_url ? 'Increases trust by 40%' : 'Upload for better visibility'}
                                 </div>
                             </div>
-                            
+
                             <div className="text-center">
-                                <div className="text-2xl font-bold text-primary">
-                                    {company.description_english ? '✓' : '!'}
-                                </div>
+                                <div className="text-primary text-2xl font-bold">{company.description_english ? '✓' : '!'}</div>
                                 <div className="text-sm font-medium">Company Description</div>
                                 <div className="text-xs text-gray-600">
                                     {company.description_english ? 'Attracts quality candidates' : 'Add to improve applications'}
                                 </div>
                             </div>
-                            
+
                             <div className="text-center">
-                                <div className="text-2xl font-bold text-primary">
-                                    {(company.benefits && company.benefits.length > 0) ? '✓' : '!'}
-                                </div>
+                                <div className="text-primary text-2xl font-bold">{company.benefits && company.benefits.length > 0 ? '✓' : '!'}</div>
                                 <div className="text-sm font-medium">Benefits Listed</div>
                                 <div className="text-xs text-gray-600">
-                                    {(company.benefits && company.benefits.length > 0) 
-                                        ? 'Increases application rate' 
-                                        : 'Add benefits to stand out'}
+                                    {company.benefits && company.benefits.length > 0 ? 'Increases application rate' : 'Add benefits to stand out'}
                                 </div>
                             </div>
                         </div>

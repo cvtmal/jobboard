@@ -1,8 +1,9 @@
 import { Transition } from '@headlessui/react';
-import { Head, useForm, router } from '@inertiajs/react';
-import { Building, CheckCircle, MapPin, Target, Upload, Users, X, Image } from 'lucide-react';
-import { FormEventHandler, useState, useRef, ChangeEvent } from 'react';
+import { Head, router, useForm } from '@inertiajs/react';
+import { Building, CheckCircle, Image, MapPin, Target, Upload, Users, X } from 'lucide-react';
+import { ChangeEvent, FormEventHandler, useRef, useState } from 'react';
 
+import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +12,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import CompanyLayout from '@/layouts/company-layout';
 import type { Auth, BreadcrumbItem } from '@/types';
-import Heading from '@/components/heading';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -89,25 +89,29 @@ export default function CompanyDetails({
 
         // Upload using Inertia with file
         setUploadingLogo(true);
-        
-        router.post(route('company.images.logo.upload'), {
-            logo: file,
-        }, {
-            forceFormData: true,
-            preserveScroll: true,
-            onSuccess: () => {
-                setUploadingLogo(false);
-                // Reload to get updated logo_url from server
-                router.reload({ only: ['company'] });
+
+        router.post(
+            route('company.images.logo.upload'),
+            {
+                logo: file,
             },
-            onError: () => {
-                setUploadingLogo(false);
-                setLogoPreview(company.logo_url || null);
+            {
+                forceFormData: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    setUploadingLogo(false);
+                    // Reload to get updated logo_url from server
+                    router.reload({ only: ['company'] });
+                },
+                onError: () => {
+                    setUploadingLogo(false);
+                    setLogoPreview(company.logo_url || null);
+                },
+                onFinish: () => {
+                    setUploadingLogo(false);
+                },
             },
-            onFinish: () => {
-                setUploadingLogo(false);
-            },
-        });
+        );
     };
 
     const handleBannerUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -123,25 +127,29 @@ export default function CompanyDetails({
 
         // Upload using Inertia with file
         setUploadingBanner(true);
-        
-        router.post(route('company.images.banner.upload'), {
-            banner: file,
-        }, {
-            forceFormData: true,
-            preserveScroll: true,
-            onSuccess: () => {
-                setUploadingBanner(false);
-                // Reload to get updated banner_url from server
-                router.reload({ only: ['company'] });
+
+        router.post(
+            route('company.images.banner.upload'),
+            {
+                banner: file,
             },
-            onError: () => {
-                setUploadingBanner(false);
-                setBannerPreview(company.banner_url || null);
+            {
+                forceFormData: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    setUploadingBanner(false);
+                    // Reload to get updated banner_url from server
+                    router.reload({ only: ['company'] });
+                },
+                onError: () => {
+                    setUploadingBanner(false);
+                    setBannerPreview(company.banner_url || null);
+                },
+                onFinish: () => {
+                    setUploadingBanner(false);
+                },
             },
-            onFinish: () => {
-                setUploadingBanner(false);
-            },
-        });
+        );
     };
 
     const handleLogoDelete = () => {
@@ -170,7 +178,6 @@ export default function CompanyDetails({
         }
     };
 
-
     return (
         <CompanyLayout breadcrumbs={breadcrumbs}>
             <Head title="Company Details" />
@@ -198,15 +205,11 @@ export default function CompanyDetails({
                                         <div className="flex items-center gap-4">
                                             {logoPreview ? (
                                                 <div className="relative">
-                                                    <img
-                                                        src={logoPreview}
-                                                        alt="Company logo"
-                                                        className="h-24 w-24 rounded-lg object-cover border"
-                                                    />
+                                                    <img src={logoPreview} alt="Company logo" className="h-24 w-24 rounded-lg border object-cover" />
                                                     <button
                                                         type="button"
                                                         onClick={handleLogoDelete}
-                                                        className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                                                        className="absolute -top-2 -right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
                                                     >
                                                         <X className="h-4 w-4" />
                                                     </button>
@@ -233,9 +236,7 @@ export default function CompanyDetails({
                                                 >
                                                     {uploadingLogo ? 'Uploading...' : logoPreview ? 'Change Logo' : 'Upload Logo'}
                                                 </Button>
-                                                <p className="mt-1 text-xs text-gray-500">
-                                                    Min: 320x320px, Max: 8MB (PNG, JPG)
-                                                </p>
+                                                <p className="mt-1 text-xs text-gray-500">Min: 320x320px, Max: 8MB (PNG, JPG)</p>
                                             </div>
                                         </div>
                                     </div>
@@ -249,18 +250,21 @@ export default function CompanyDetails({
                                                     <img
                                                         src={bannerPreview}
                                                         alt="Company banner"
-                                                        className="absolute inset-0 h-full w-full rounded-lg object-cover border"
+                                                        className="absolute inset-0 h-full w-full rounded-lg border object-cover"
                                                     />
                                                     <button
                                                         type="button"
                                                         onClick={handleBannerDelete}
-                                                        className="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                                                        className="absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
                                                     >
                                                         <X className="h-4 w-4" />
                                                     </button>
                                                 </div>
                                             ) : (
-                                                <div className="flex w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50" style={{ aspectRatio: '3/1' }}>
+                                                <div
+                                                    className="flex w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50"
+                                                    style={{ aspectRatio: '3/1' }}
+                                                >
                                                     <Image className="h-8 w-8 text-gray-400" />
                                                 </div>
                                             )}
@@ -281,9 +285,7 @@ export default function CompanyDetails({
                                                 >
                                                     {uploadingBanner ? 'Uploading...' : bannerPreview ? 'Change Banner' : 'Upload Banner'}
                                                 </Button>
-                                                <p className="mt-1 text-xs text-gray-500">
-                                                    Min: 1200x400px, Max: 16MB (PNG, JPG)
-                                                </p>
+                                                <p className="mt-1 text-xs text-gray-500">Min: 1200x400px, Max: 16MB (PNG, JPG)</p>
                                             </div>
                                         </div>
                                     </div>
@@ -496,7 +498,6 @@ export default function CompanyDetails({
                                             />
                                             <InputError message={errors.description_english} />
                                         </div>
-
                                     </CardContent>
                                 </Card>
 

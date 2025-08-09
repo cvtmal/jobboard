@@ -1,23 +1,32 @@
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from '@/components/ui/sidebar';
+import {
+    SidebarGroup,
+    SidebarGroupLabel,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
+} from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export function CompanyNavMain({ items = [] }: { items: NavItem[] }) {
     const { url } = usePage();
-    
+
     // Helper functions
     const isCurrentPath = (href: string) => url === href;
     const isParentActive = (item: NavItem) => {
         if (isCurrentPath(item.href)) return true;
-        return item.subItems?.some(subItem => isCurrentPath(subItem.href)) || false;
+        return item.subItems?.some((subItem) => isCurrentPath(subItem.href)) || false;
     };
 
     // Initialize expanded state based on current active routes
     const getInitialExpandedItems = () => {
         const initialExpanded = new Set<string>();
-        items.forEach(item => {
+        items.forEach((item) => {
             if (item.subItems && item.subItems.length > 0 && isParentActive(item)) {
                 initialExpanded.add(item.title);
             }
@@ -30,7 +39,7 @@ export function CompanyNavMain({ items = [] }: { items: NavItem[] }) {
     // Update expanded state when route changes (for parent items with active children)
     useEffect(() => {
         const newExpanded = new Set(expandedItems);
-        items.forEach(item => {
+        items.forEach((item) => {
             if (item.subItems && item.subItems.length > 0) {
                 const shouldBeExpanded = isParentActive(item);
                 if (shouldBeExpanded && !newExpanded.has(item.title)) {
@@ -38,10 +47,9 @@ export function CompanyNavMain({ items = [] }: { items: NavItem[] }) {
                 }
             }
         });
-        
+
         // Only update state if there are changes to prevent unnecessary re-renders
-        if (newExpanded.size !== expandedItems.size || 
-            Array.from(newExpanded).some(item => !expandedItems.has(item))) {
+        if (newExpanded.size !== expandedItems.size || Array.from(newExpanded).some((item) => !expandedItems.has(item))) {
             setExpandedItems(newExpanded);
         }
     }, [url]);
@@ -77,20 +85,13 @@ export function CompanyNavMain({ items = [] }: { items: NavItem[] }) {
                                     >
                                         {item.icon && <item.icon />}
                                         <span>{item.title}</span>
-                                        <ChevronRight
-                                            className={`ml-auto h-4 w-4 transition-transform ${
-                                                isExpanded ? 'rotate-90' : ''
-                                            }`}
-                                        />
+                                        <ChevronRight className={`ml-auto h-4 w-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                                     </SidebarMenuButton>
                                     {isExpanded && (
                                         <SidebarMenuSub>
                                             {item.subItems!.map((subItem) => (
                                                 <SidebarMenuSubItem key={subItem.title}>
-                                                    <SidebarMenuSubButton
-                                                        asChild
-                                                        isActive={isCurrentPath(subItem.href)}
-                                                    >
+                                                    <SidebarMenuSubButton asChild isActive={isCurrentPath(subItem.href)}>
                                                         <Link href={subItem.href}>
                                                             {subItem.icon && <subItem.icon />}
                                                             <span>{subItem.title}</span>
@@ -102,11 +103,7 @@ export function CompanyNavMain({ items = [] }: { items: NavItem[] }) {
                                     )}
                                 </>
                             ) : (
-                                <SidebarMenuButton
-                                    asChild
-                                    isActive={isCurrentPath(item.href)}
-                                    tooltip={{ children: item.title }}
-                                >
+                                <SidebarMenuButton asChild isActive={isCurrentPath(item.href)} tooltip={{ children: item.title }}>
                                     <Link href={item.href}>
                                         {item.icon && <item.icon />}
                                         <span>{item.title}</span>

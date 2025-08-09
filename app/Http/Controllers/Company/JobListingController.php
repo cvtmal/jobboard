@@ -79,7 +79,7 @@ final class JobListingController
 
         return Inertia::render('company/job-listings/show', [
             'jobListing' => $jobListing,
-            'categoryLabel' => $jobListing->category?->label(),
+            'categoryLabels' => $jobListing->jobCategories->map(fn ($category) => $category->label())->toArray(),
         ]);
     }
 
@@ -95,6 +95,7 @@ final class JobListingController
         return Inertia::render('company/job-listings/edit', [
             'jobListing' => $jobListing,
             'categoryOptions' => JobCategory::options(),
+            'selectedCategories' => $jobListing->categories ?? [],
         ]);
     }
 

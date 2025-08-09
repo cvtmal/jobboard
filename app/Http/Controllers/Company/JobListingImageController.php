@@ -14,6 +14,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Number;
 use Throwable;
 
 final readonly class JobListingImageController
@@ -63,7 +64,7 @@ final readonly class JobListingImageController
                 'effective_logo_url' => $jobListing->effective_logo_url,
                 'logo_metadata' => [
                     'original_name' => $jobListing->logo_original_name,
-                    'file_size' => $jobListing->logo_file_size_formatted,
+                    'file_size' => $jobListing->logo_file_size ? Number::fileSize($jobListing->logo_file_size) : null,
                     'mime_type' => $jobListing->logo_mime_type,
                     'dimensions' => $jobListing->logo_dimensions,
                     'uploaded_at' => $jobListing->logo_uploaded_at?->format('Y-m-d H:i:s'),
@@ -116,7 +117,7 @@ final readonly class JobListingImageController
                 'effective_banner_url' => $jobListing->effective_banner_url,
                 'banner_metadata' => [
                     'original_name' => $jobListing->banner_original_name,
-                    'file_size' => $jobListing->banner_file_size_formatted,
+                    'file_size' => $jobListing->banner_file_size ? Number::fileSize($jobListing->banner_file_size) : null,
                     'mime_type' => $jobListing->banner_mime_type,
                     'dimensions' => $jobListing->banner_dimensions,
                     'uploaded_at' => $jobListing->banner_uploaded_at?->format('Y-m-d H:i:s'),
@@ -230,7 +231,7 @@ final readonly class JobListingImageController
             'logo' => $jobListing->hasCustomLogo() ? [
                 'url' => $jobListing->logo_url,
                 'original_name' => $jobListing->logo_original_name,
-                'file_size' => $jobListing->logo_file_size_formatted,
+                'file_size' => $jobListing->logo_file_size ? Number::fileSize($jobListing->logo_file_size) : null,
                 'mime_type' => $jobListing->logo_mime_type,
                 'dimensions' => $jobListing->logo_dimensions,
                 'uploaded_at' => $jobListing->logo_uploaded_at?->format('Y-m-d H:i:s'),
@@ -238,7 +239,7 @@ final readonly class JobListingImageController
             'banner' => $jobListing->hasCustomBanner() ? [
                 'url' => $jobListing->banner_url,
                 'original_name' => $jobListing->banner_original_name,
-                'file_size' => $jobListing->banner_file_size_formatted,
+                'file_size' => $jobListing->banner_file_size ? Number::fileSize($jobListing->banner_file_size) : null,
                 'mime_type' => $jobListing->banner_mime_type,
                 'dimensions' => $jobListing->banner_dimensions,
                 'uploaded_at' => $jobListing->banner_uploaded_at?->format('Y-m-d H:i:s'),

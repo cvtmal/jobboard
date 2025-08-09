@@ -34,45 +34,33 @@ export default function CareerPagePreview({ company, jobListings }: Props) {
             <Head title={`${company.name} - Career Page Preview`} />
 
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="mb-8 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Button variant="outline" onClick={backToEdit}>
-                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        <ArrowLeft className="mr-2 h-4 w-4" />
                         Back to Edit
                     </Button>
                     <div>
                         <h1 className="text-2xl font-semibold text-gray-900">Career Page Preview</h1>
-                        <p className="text-gray-600 mt-1">
-                            This is how your career page will look to visitors
-                        </p>
+                        <p className="mt-1 text-gray-600">This is how your career page will look to visitors</p>
                     </div>
                 </div>
             </div>
 
             {/* Preview Container */}
-            <div className="bg-white border rounded-lg shadow-sm">
+            <div className="rounded-lg border bg-white shadow-sm">
                 {/* Company Header */}
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8">
-                    <div className="max-w-4xl mx-auto">
+                    <div className="mx-auto max-w-4xl">
                         <div className="flex items-start gap-6">
                             {company.logo_url && (
                                 <div className="flex-shrink-0">
-                                    <img
-                                        src={company.logo_url}
-                                        alt={`${company.name} logo`}
-                                        className="h-20 w-20 rounded-lg object-cover"
-                                    />
+                                    <img src={company.logo_url} alt={`${company.name} logo`} className="h-20 w-20 rounded-lg object-cover" />
                                 </div>
                             )}
                             <div className="flex-1">
-                                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                                    {company.name}
-                                </h1>
-                                {company.tagline && (
-                                    <p className="text-lg text-gray-700 mb-4">
-                                        {company.tagline}
-                                    </p>
-                                )}
+                                <h1 className="mb-2 text-3xl font-bold text-gray-900">{company.name}</h1>
+                                {company.tagline && <p className="mb-4 text-lg text-gray-700">{company.tagline}</p>}
                                 <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                                     {company.location && (
                                         <div className="flex items-center gap-1">
@@ -89,7 +77,7 @@ export default function CareerPagePreview({ company, jobListings }: Props) {
                                     {company.website && (
                                         <div className="flex items-center gap-1">
                                             <Globe className="h-4 w-4" />
-                                            <a 
+                                            <a
                                                 href={company.website}
                                                 className="text-blue-600 hover:underline"
                                                 target="_blank"
@@ -108,15 +96,11 @@ export default function CareerPagePreview({ company, jobListings }: Props) {
                 {/* Company Banner/Images */}
                 {company.career_page_images && company.career_page_images.length > 0 && (
                     <div className="px-8 py-6">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="mx-auto max-w-4xl">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                                 {company.career_page_images.slice(0, 5).map((image, index) => (
-                                    <div key={index} className="aspect-video rounded-lg overflow-hidden">
-                                        <img
-                                            src={image.url}
-                                            alt={`${company.name} workplace`}
-                                            className="w-full h-full object-cover"
-                                        />
+                                    <div key={index} className="aspect-video overflow-hidden rounded-lg">
+                                        <img src={image.url} alt={`${company.name} workplace`} className="h-full w-full object-cover" />
                                     </div>
                                 ))}
                             </div>
@@ -125,9 +109,9 @@ export default function CareerPagePreview({ company, jobListings }: Props) {
                 )}
 
                 {/* Company Description */}
-                <div className="px-8 py-6 border-t">
-                    <div className="max-w-4xl mx-auto">
-                        <h2 className="text-2xl font-semibold text-gray-900 mb-4">About {company.name}</h2>
+                <div className="border-t px-8 py-6">
+                    <div className="mx-auto max-w-4xl">
+                        <h2 className="mb-4 text-2xl font-semibold text-gray-900">About {company.name}</h2>
                         {company.description ? (
                             <div className="prose max-w-none text-gray-700">
                                 {company.description.split('\\n').map((paragraph, index) => (
@@ -137,27 +121,23 @@ export default function CareerPagePreview({ company, jobListings }: Props) {
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-gray-500 italic">
-                                No company description provided yet.
-                            </p>
+                            <p className="text-gray-500 italic">No company description provided yet.</p>
                         )}
                     </div>
                 </div>
 
                 {/* Videos Section */}
                 {company.career_page_videos && company.career_page_videos.length > 0 && (
-                    <div className="px-8 py-6 border-t">
-                        <div className="max-w-4xl mx-auto">
-                            <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                                Get to Know Us
-                            </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="border-t px-8 py-6">
+                        <div className="mx-auto max-w-4xl">
+                            <h2 className="mb-6 text-2xl font-semibold text-gray-900">Get to Know Us</h2>
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 {company.career_page_videos.map((video, index) => (
-                                    <div key={index} className="aspect-video rounded-lg overflow-hidden bg-gray-100">
+                                    <div key={index} className="aspect-video overflow-hidden rounded-lg bg-gray-100">
                                         <iframe
                                             src={video.url.replace('watch?v=', 'embed/')}
                                             title={video.title || 'Company Video'}
-                                            className="w-full h-full"
+                                            className="h-full w-full"
                                             frameBorder="0"
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                             allowFullScreen
@@ -170,12 +150,10 @@ export default function CareerPagePreview({ company, jobListings }: Props) {
                 )}
 
                 {/* Job Listings */}
-                <div className="px-8 py-6 border-t">
-                    <div className="max-w-4xl mx-auto">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-2xl font-semibold text-gray-900">
-                                Open Positions
-                            </h2>
+                <div className="border-t px-8 py-6">
+                    <div className="mx-auto max-w-4xl">
+                        <div className="mb-6 flex items-center justify-between">
+                            <h2 className="text-2xl font-semibold text-gray-900">Open Positions</h2>
                             <span className="text-sm text-gray-500">
                                 {jobListings.length} {jobListings.length === 1 ? 'position' : 'positions'} available
                             </span>
@@ -184,14 +162,12 @@ export default function CareerPagePreview({ company, jobListings }: Props) {
                         {jobListings.length > 0 ? (
                             <div className="space-y-4">
                                 {jobListings.map((job) => (
-                                    <Card key={job.id} className="hover:shadow-md transition-shadow">
+                                    <Card key={job.id} className="transition-shadow hover:shadow-md">
                                         <CardContent className="p-6">
                                             <div className="flex items-start justify-between">
                                                 <div className="flex-1">
-                                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                                                        {job.title}
-                                                    </h3>
-                                                    <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-3">
+                                                    <h3 className="mb-2 text-lg font-semibold text-gray-900">{job.title}</h3>
+                                                    <div className="mb-3 flex flex-wrap gap-4 text-sm text-gray-600">
                                                         <div className="flex items-center gap-1">
                                                             <Briefcase className="h-4 w-4" />
                                                             <span>{job.employment_type}</span>
@@ -205,17 +181,11 @@ export default function CareerPagePreview({ company, jobListings }: Props) {
                                                         {job.created_at && (
                                                             <div className="flex items-center gap-1">
                                                                 <Clock className="h-4 w-4" />
-                                                                <span>
-                                                                    Posted {new Date(job.created_at).toLocaleDateString()}
-                                                                </span>
+                                                                <span>Posted {new Date(job.created_at).toLocaleDateString()}</span>
                                                             </div>
                                                         )}
                                                     </div>
-                                                    {job.summary && (
-                                                        <p className="text-gray-700 text-sm line-clamp-2">
-                                                            {job.summary}
-                                                        </p>
-                                                    )}
+                                                    {job.summary && <p className="line-clamp-2 text-sm text-gray-700">{job.summary}</p>}
                                                 </div>
                                                 <Button variant="outline" size="sm">
                                                     View Details
@@ -226,14 +196,10 @@ export default function CareerPagePreview({ company, jobListings }: Props) {
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-12">
-                                <Briefcase className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                    No open positions
-                                </h3>
-                                <p className="text-gray-500">
-                                    There are currently no open positions at this company.
-                                </p>
+                            <div className="py-12 text-center">
+                                <Briefcase className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                                <h3 className="mb-2 text-lg font-medium text-gray-900">No open positions</h3>
+                                <p className="text-gray-500">There are currently no open positions at this company.</p>
                             </div>
                         )}
                     </div>
@@ -241,27 +207,23 @@ export default function CareerPagePreview({ company, jobListings }: Props) {
 
                 {/* Spontaneous Applications */}
                 {company.spontaneous_application_enabled && (
-                    <div className="px-8 py-6 border-t bg-gray-50">
-                        <div className="max-w-4xl mx-auto text-center">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                                Don't see the right position?
-                            </h3>
-                            <p className="text-gray-600 mb-4">
-                                We're always looking for talented people to join our team. 
-                                Send us your application and we'll keep you in mind for future opportunities.
+                    <div className="border-t bg-gray-50 px-8 py-6">
+                        <div className="mx-auto max-w-4xl text-center">
+                            <h3 className="mb-2 text-lg font-semibold text-gray-900">Don't see the right position?</h3>
+                            <p className="mb-4 text-gray-600">
+                                We're always looking for talented people to join our team. Send us your application and we'll keep you in mind for
+                                future opportunities.
                             </p>
-                            <Button>
-                                Apply Spontaneously
-                            </Button>
+                            <Button>Apply Spontaneously</Button>
                         </div>
                     </div>
                 )}
 
                 {/* Footer */}
-                <div className="px-8 py-6 border-t bg-gray-50 text-center text-sm text-gray-500">
+                <div className="border-t bg-gray-50 px-8 py-6 text-center text-sm text-gray-500">
                     <p>
-                        This is a preview of your career page. 
-                        <a href={route('company.career-page.edit')} className="text-blue-600 hover:underline ml-1">
+                        This is a preview of your career page.
+                        <a href={route('company.career-page.edit')} className="ml-1 text-blue-600 hover:underline">
                             Go back to edit
                         </a>
                     </p>
