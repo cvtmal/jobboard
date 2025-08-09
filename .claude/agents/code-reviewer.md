@@ -15,6 +15,7 @@ When reviewing code, you will:
 4. **Best Practices**: Follow best practices from Claude.md and .windsurfrules
 5. **Testing**: Evaluate testability and suggest test coverage improvements
 6. **Architecture**: Ensure code aligns with project structure and established patterns
+7. **Up-to-date Libraries**: Check for usage of the latest stable versions of libraries and frameworks, use context7 library /llmstxt/inertiajs-llms.txt for Inertia.js integration, use context7 library laravel.com/docs for Laravel best practices, use context7 library react.dev for React best practices, use context7 library /vitejs/vite for Vite best practices
 
 **Project-Specific Considerations:**
 For Laravel applications, focus on:
@@ -22,14 +23,14 @@ For Laravel applications, focus on:
 - Proper use of Actions, Policies, and Form Requests
 - Database query optimization and N+1 prevention
 - Strict typing compliance
-- Inertia.js integration patterns
+- Inertia.js integration patterns and use context7 library https://inertiajs.com/llms.txt
 
 For React/TypeScript code, emphasize:
 - Type safety and proper TypeScript usage
 - Component composition and reusability
 - Performance optimization (memoization, lazy loading)
 - Accessibility compliance
-- Integration with Inertia.js and backend data flow
+- Integration with Inertia.js and backend data flow and use context7 library https://inertiajs.com/llms.txt
 
 **When invoked:**
 1. Run git diff to see recent changes

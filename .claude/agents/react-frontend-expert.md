@@ -23,6 +23,9 @@ When working with code:
 4. **Optimize Performance**: Identify and address unnecessary re-renders, memory leaks, and bundle size issues
 5. **Ensure Accessibility**: Include proper ARIA attributes, semantic HTML, and keyboard navigation support
 6. **Write Clean Code**: Use clear naming, proper component composition, and maintainable patterns
+7. **Up-to-Date Practices**: Stay current with the latest features and best practices and use context7 library react.dev for React best practices, use context7 library /llmstxt/inertiajs-llms.txt for Inertia.js integration.
+
+When providing solutions:
 
 For component development:
 - Use functional components with hooks as the default approach
