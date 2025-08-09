@@ -47,7 +47,6 @@ final class CreateJobListingCustomRequest extends FormRequest
             'office_location' => ['required', 'string', 'max:255'],
 
             // Job details
-            'application_language' => ['required', 'string', 'in:english,german,french,italian'],
             'categories' => ['required', 'array', 'min:1'],
             'categories.*' => ['required', new Enum(JobCategory::class)],
             'employment_type' => ['required', 'string', 'in:permanent,temporary,freelance,internship,side-job,apprenticeship,working-student,interim'],
@@ -73,8 +72,12 @@ final class CreateJobListingCustomRequest extends FormRequest
             'screening_questions.*.choices' => ['nullable', 'array'],
             'screening_questions.*.choices.*' => ['string'],
 
-            // Hidden fields
+            // Application process fields
             'application_process' => ['required', new Enum(ApplicationProcess::class)],
+            'application_email' => ['required_if:application_process,email', 'nullable', 'email'],
+            'application_url' => ['required_if:application_process,url', 'nullable', 'string'],
+
+            // Hidden fields
             'status' => ['required', new Enum(JobStatus::class)],
         ];
     }

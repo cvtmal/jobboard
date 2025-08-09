@@ -73,6 +73,19 @@ final class CreateCustomJobListingAction
                 $jobData['screening_questions'] = $data['screening_questions'];
             }
 
+            // Add application process fields
+            if (isset($data['application_process'])) {
+                $jobData['application_process'] = $data['application_process'];
+            }
+
+            if (! empty($data['application_email'])) {
+                $jobData['application_email'] = $data['application_email'];
+            }
+
+            if (! empty($data['application_url'])) {
+                $jobData['application_url'] = $data['application_url'];
+            }
+
             return JobListing::create($jobData);
         });
     }

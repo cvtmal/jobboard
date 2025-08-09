@@ -24,7 +24,7 @@ import { FormEvent, useCallback, useEffect, useState } from 'react';
 // @ts-ignore
 import { useFormValidation } from '@/hooks/use-form-validation';
 import debounce from 'lodash/debounce';
-import { Award, Briefcase, Building2, Loader2 } from 'lucide-react';
+import { Award, Briefcase, Building2, ExternalLink, Loader2, Mail } from 'lucide-react';
 
 // Question interface for screening questions (Step 4)
 interface Question {
@@ -138,8 +138,12 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
         },
         screening_questions: initialScreeningQuestions,
 
-        // Hidden fields for form processing
+        // Application process fields
         application_process: ApplicationProcess.EMAIL,
+        application_email: '',
+        application_url: '',
+        
+        // Hidden fields for form processing
         status: JobStatus.PUBLISHED,
         company_id: auth.company?.id || '',
     });
@@ -169,8 +173,26 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
     };
 
     const step4ValidationRules = {
-        // application_documents.cv is optional
-        // screening_questions is optional
+        application_process: { required: true },
+        application_email: { 
+            custom: (value: any) => {
+                if (data.application_process === ApplicationProcess.EMAIL && !value) {
+                    return 'Email is required when using email application process';
+                }
+                if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    return 'Please enter a valid email address';
+                }
+                return null;
+            }
+        },
+        application_url: {
+            custom: (value: any) => {
+                if (data.application_process === ApplicationProcess.URL && !value) {
+                    return 'URL is required when using external website application process';
+                }
+                return null;
+            }
+        },
     };
 
     // Combined validation rules for final submission
@@ -614,7 +636,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                     </div>
 
                                     {/* Work Arrangement and Location */}
-                                    <div className="space-y-4">
+                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                         <div>
                                             <Label htmlFor="workplace" className="text-base">
                                                 Work Arrangement <span className="text-red-500">*</span>
@@ -1053,6 +1075,125 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                         {/* Step 4: Screening Questions */}
                         {currentStep === 4 && (
                             <div className="space-y-6">
+                                {/* Application Process */}
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle className="flex items-center gap-3">
+                                            <Mail className="text-primary h-5 w-5" />
+                                            Application Process
+                                        </CardTitle>
+                                        <CardDescription>Choose how candidates should apply for this position</CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <div>
+                                            <Label htmlFor="application_process" className="text-base">
+                                                Application Method <span className="text-red-500">*</span>
+                                            </Label>
+                                            <Select
+                                                value={data.application_process}
+                                                onValueChange={(value) => {
+                                                    setData('application_process', value as ApplicationProcess);
+                                                    // Clear the fields when switching
+                                                    if (value === ApplicationProcess.EMAIL) {
+                                                        setData('application_url', '');
+                                                    } else if (value === ApplicationProcess.URL) {
+                                                        setData('application_email', '');
+                                                    }
+                                                }}
+                                            >
+                                                <SelectTrigger id="application_process" className="mt-1.5">
+                                                    <SelectValue placeholder="Select application method" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value={ApplicationProcess.EMAIL}>
+                                                        <div className="flex items-center gap-2">
+                                                            <Mail className="h-4 w-4" />
+                                                            Email Application
+                                                        </div>
+                                                    </SelectItem>
+                                                    <SelectItem value={ApplicationProcess.URL}>
+                                                        <div className="flex items-center gap-2">
+                                                            <ExternalLink className="h-4 w-4" />
+                                                            External Website
+                                                        </div>
+                                                    </SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FieldHelper>
+                                                Choose whether applicants should apply via email or through your company's external application system
+                                            </FieldHelper>
+                                            {errors.application_process && <p className="mt-1 text-sm text-red-500">{errors.application_process}</p>}
+                                        </div>
+
+                                        {/* Conditional Email Field */}
+                                        {data.application_process === ApplicationProcess.EMAIL && (
+                                            <div>
+                                                <Label htmlFor="application_email" className="text-base">
+                                                    Application Email <span className="text-red-500">*</span>
+                                                </Label>
+                                                <Input
+                                                    id="application_email"
+                                                    type="email"
+                                                    value={data.application_email}
+                                                    onChange={(e) => setData('application_email', e.target.value)}
+                                                    onBlur={() => currentValidation.markFieldTouched('application_email')}
+                                                    className={`mt-1.5 ${
+                                                        currentValidation.touched.application_email
+                                                            ? currentValidation.errors.application_email
+                                                                ? 'border-red-500 focus-visible:border-red-500'
+                                                                : currentValidation.isFieldValid('application_email')
+                                                                  ? 'border-green-500'
+                                                                  : ''
+                                                            : ''
+                                                    }`}
+                                                    placeholder="hr@company.com"
+                                                    required
+                                                />
+                                                <FieldHelper>
+                                                    Applications will be sent to this email address. Make sure it's actively monitored.
+                                                </FieldHelper>
+                                                {currentValidation.errors.application_email && currentValidation.touched.application_email && (
+                                                    <p className="mt-1 text-sm text-red-500">{currentValidation.errors.application_email}</p>
+                                                )}
+                                                {errors.application_email && <p className="mt-1 text-sm text-red-500">{errors.application_email}</p>}
+                                            </div>
+                                        )}
+
+                                        {/* Conditional URL Field */}
+                                        {data.application_process === ApplicationProcess.URL && (
+                                            <div>
+                                                <Label htmlFor="application_url" className="text-base">
+                                                    Application URL <span className="text-red-500">*</span>
+                                                </Label>
+                                                <Input
+                                                    id="application_url"
+                                                    value={data.application_url}
+                                                    onChange={(e) => setData('application_url', e.target.value)}
+                                                    onBlur={() => currentValidation.markFieldTouched('application_url')}
+                                                    className={`mt-1.5 ${
+                                                        currentValidation.touched.application_url
+                                                            ? currentValidation.errors.application_url
+                                                                ? 'border-red-500 focus-visible:border-red-500'
+                                                                : currentValidation.isFieldValid('application_url')
+                                                                  ? 'border-green-500'
+                                                                  : ''
+                                                            : ''
+                                                    }`}
+                                                    placeholder="https://careers.company.com/apply/job-id"
+                                                    required
+                                                />
+                                                <FieldHelper>
+                                                    Applicants will be redirected to this URL to complete their application on your website.
+                                                </FieldHelper>
+                                                {currentValidation.errors.application_url && currentValidation.touched.application_url && (
+                                                    <p className="mt-1 text-sm text-red-500">{currentValidation.errors.application_url}</p>
+                                                )}
+                                                {errors.application_url && <p className="mt-1 text-sm text-red-500">{errors.application_url}</p>}
+                                            </div>
+                                        )}
+                                    </CardContent>
+                                </Card>
+
                                 {/* Application Documents */}
                                 <Card>
                                     <CardHeader>

@@ -24,10 +24,31 @@ export function useFormValidation<T extends Record<string, any>>(data: T, rules:
         const rule = rules[field];
         if (!rule) return null;
 
-        if (rule.required && (!value || (typeof value === 'string' && !value.trim()))) {
-            return 'This field is required';
+        // Handle required validation for different types
+        if (rule.required) {
+            if (!value) {
+                return 'This field is required';
+            }
+            if (typeof value === 'string' && !value.trim()) {
+                return 'This field is required';
+            }
+            if (Array.isArray(value) && value.length === 0) {
+                return 'Please select at least one option';
+            }
         }
 
+        // Handle array validation
+        if (Array.isArray(value)) {
+            if (rule.minLength && value.length < rule.minLength) {
+                return `Please select at least ${rule.minLength} option${rule.minLength > 1 ? 's' : ''}`;
+            }
+
+            if (rule.maxLength && value.length > rule.maxLength) {
+                return `Maximum ${rule.maxLength} option${rule.maxLength > 1 ? 's' : ''} allowed`;
+            }
+        }
+
+        // Handle string validation
         if (typeof value === 'string') {
             if (rule.minLength && value.length < rule.minLength) {
                 return `Minimum length is ${rule.minLength} characters`;
