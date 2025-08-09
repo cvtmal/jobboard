@@ -465,19 +465,19 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
             return;
         }
 
-        // Validate all required fields instead of using progress percentage
         if (!allFieldsValidation.isFormValid()) {
-            
             return;
         }
 
-        // Clear auto-save draft and step data on successful submit
-        localStorage.removeItem('job-listing-draft');
-        localStorage.removeItem('job-listing-current-step');
-        localStorage.removeItem('job-listing-completed-steps');
-
         post(route('company.job-listings.store'), {
-            forceFormData: true, // Required for file uploads
+            forceFormData: true,
+            onSuccess: () => {
+                setTimeout(() => {
+                    localStorage.removeItem('job-listing-draft');
+                    localStorage.removeItem('job-listing-current-step');
+                    localStorage.removeItem('job-listing-completed-steps');
+                }, 100);
+            }
         });
     };
 
