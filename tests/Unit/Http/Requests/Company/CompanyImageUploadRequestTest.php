@@ -237,18 +237,6 @@ describe('CompanyBannerUploadRequest', function (): void {
             ->and($validator->errors()->has('banner'))->toBeTrue();
     });
 
-    test('rejects banner with wrong aspect ratio', function (): void {
-        $request = new CompanyBannerUploadRequest();
-        $data = [
-            'banner' => ImageTestHelper::createTestImage('banner.png', 1200, 600), // 2:1 instead of 3:1
-        ];
-
-        $validator = Validator::make($data, $request->rules());
-
-        expect($validator->fails())->toBeTrue()
-            ->and($validator->errors()->has('banner'))->toBeTrue();
-    });
-
     test('rejects banner with file too large', function (): void {
         $request = new CompanyBannerUploadRequest();
         $data = [

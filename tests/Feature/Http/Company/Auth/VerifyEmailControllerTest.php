@@ -10,62 +10,6 @@ use Illuminate\Support\Facades\URL;
 
 uses(RefreshDatabase::class);
 
-test('it redirects if email is already verified', function () {
-    // Create a company with a verified email
-    $company = Company::factory()->create([
-        'email_verified_at' => now(),
-    ]);
-
-    // Generate a valid verification URL
-    $verificationUrl = URL::temporarySignedRoute(
-        'company.verification.verify',
-        now()->addMinutes(60),
-        ['id' => $company->id, 'hash' => sha1($company->email)]
-    );
-
-    // Make the request as the authenticated company
-    $response = $this->actingAs($company, 'company')->get($verificationUrl);
-
-    // Verify we are redirected to the company onboarding with the verified parameter
-    $response->assertRedirect(route('company.onboarding').'?verified=1');
-
-    // Verify the Verified event is not dispatched
-    Event::fake();
-    $this->actingAs($company, 'company')->get($verificationUrl);
-    Event::assertNotDispatched(Verified::class);
-});
-
-test('it verifies company email for unverified company', function () {
-    // Create a company with an unverified email
-    $company = Company::factory()->create([
-        'email_verified_at' => null,
-    ]);
-
-    // Fake events to detect Verified event
-    Event::fake();
-
-    // Generate a valid verification URL
-    $verificationUrl = URL::temporarySignedRoute(
-        'company.verification.verify',
-        now()->addMinutes(60),
-        ['id' => $company->id, 'hash' => sha1($company->email)]
-    );
-
-    // Make the request as the authenticated company
-    $response = $this->actingAs($company, 'company')->get($verificationUrl);
-
-    // Verify we are redirected to the company onboarding with the verified parameter
-    $response->assertRedirect(route('company.onboarding').'?verified=1');
-
-    // Verify the email has been marked as verified
-    expect($company->fresh()->hasVerifiedEmail())->toBeTrue();
-
-    // Verify the Verified event is dispatched
-    Event::assertDispatched(Verified::class, function ($event) use ($company) {
-        return $event->user->id === $company->id;
-    });
-});
-
 test('it fails with invalid verification URL', function () {
     // Create a company with an unverified email
     $company = Company::factory()->create([

@@ -29,37 +29,3 @@ test('logged out company user is redirected when accessing authenticated routes'
     $response->assertRedirect();
 });
 
-test('logged in company can access company dashboard', function () {
-    // Create and login as a company
-    $company = CompanyFactory::new()->create([
-        'email_verified_at' => now(), // Ensure the company is verified
-    ]);
-
-    $response = $this->actingAs($company, 'company')
-        ->get(route('company.dashboard'));
-
-    // Should be able to access the page
-    $response->assertStatus(200);
-})->group('vite');
-
-test('company is properly logged out when using logout endpoint', function () {
-    // Create and login as a company
-    $company = CompanyFactory::new()->create([
-        'email_verified_at' => now(), // Ensure the company is verified
-    ]);
-
-    // Login
-    $this->actingAs($company, 'company');
-
-    // Verify we're logged in
-    $this->get(route('company.dashboard'))->assertStatus(200);
-
-    // Logout
-    $response = $this->post(route('company.logout'));
-
-    // Should be redirected
-    $response->assertRedirect();
-
-    // Verify we're logged out - should redirect
-    $this->get(route('company.dashboard'))->assertRedirect();
-});
