@@ -21,7 +21,7 @@ Route::middleware(['auth:company', 'verified.company'])->group(function () {
     Route::post('company/job-listings/{jobListing}/screening', [CompanyJobListingController::class, 'updateScreening'])->name('company.job-listings.screening.update');
     Route::get('company/job-listings/{jobListing}', [CompanyJobListingController::class, 'show'])->name('company.job-listings.show');
     Route::get('company/job-listings/{jobListing}/edit', [CompanyJobListingController::class, 'edit'])->name('company.job-listings.edit');
-    Route::put('company/job-listings/{jobListing}', [CompanyJobListingController::class, 'update'])->name('company.job-listings.update');
+    Route::post('company/job-listings/{jobListing}', [CompanyJobListingController::class, 'update'])->name('company.job-listings.update');
     Route::delete('company/job-listings/{jobListing}', [CompanyJobListingController::class, 'destroy'])->name('company.job-listings.destroy');
 
     // Job listing image management routes

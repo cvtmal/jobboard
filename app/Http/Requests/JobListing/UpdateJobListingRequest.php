@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\JobListing;
 
-use App\Enums\ApplicationProcess;
 use App\Enums\EmploymentType;
-use App\Enums\ExperienceLevel;
-use App\Enums\JobCategory;
 use App\Enums\JobStatus;
-use App\Enums\SalaryOption;
 use App\Enums\SalaryType;
 use App\Enums\Workplace;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -34,42 +30,101 @@ final class UpdateJobListingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'reference_number' => ['nullable', 'string', 'max:255'],
-            'categories' => ['nullable', 'array'],
-            'categories.*' => ['required', new Enum(JobCategory::class)],
             'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'employment_type' => ['nullable', new Enum(EmploymentType::class)],
-            'workload_min' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'workload_max' => ['nullable', 'integer', 'min:1', 'max:100', 'gte:workload_min'],
-            'active_from' => ['nullable', 'date'],
-            'active_until' => ['nullable', 'date', 'after_or_equal:active_from'],
-            'workplace' => ['nullable', new Enum(Workplace::class)],
-            'hierarchy' => ['nullable', 'string', 'max:255'],
-            'experience_level' => ['nullable', new Enum(ExperienceLevel::class)],
-            'experience_years_min' => ['nullable', 'integer', 'min:0'],
-            'experience_years_max' => ['nullable', 'integer', 'min:0', 'gte:experience_years_min'],
-            'education_level' => ['nullable', 'string', 'max:255'],
-            'languages' => ['nullable', 'array'],
-            'languages.*' => ['string'],
-            'address' => ['nullable', 'string', 'max:255'],
-            'postcode' => ['nullable', 'string', 'max:20'],
-            'city' => ['nullable', 'string', 'max:255'],
-            'no_salary' => ['boolean'],
-            'salary_type' => ['nullable', new Enum(SalaryType::class)],
-            'salary_option' => ['nullable', new Enum(SalaryOption::class)],
+            'workload_min' => ['required', 'numeric', 'min:0'],
+            'workload_max' => ['required', 'numeric', 'min:0', 'max:100', 'gte:workload_min'],
+            'description_and_requirements' => ['required', 'string', 'min:20', 'max:4000'],
+            'benefits' => ['nullable', 'string'],
+            'contact_person' => ['nullable', 'string', 'max:255'],
+
+            // Location
+            'workplace' => ['required', new Enum(Workplace::class)],
+            'office_location' => ['required', 'string', 'max:255'],
+
+            // Job details
+            'employment_type' => ['required', 'string', 'in:permanent,temporary,freelance,internship,side-job,apprenticeship,working-student,interim'],
+            'seniority_level' => ['nullable', 'string', 'in:no_experience,junior,mid_level,professional,senior,lead'],
+
+            // Salary
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
-            'salary_currency' => ['nullable', 'string', 'max:3'],
-            'job_tier' => ['nullable', 'string', 'max:255'],
-            'job_tier_id' => ['nullable', 'integer', 'exists:job_tiers,id'],
-            'application_process' => ['required', new Enum(ApplicationProcess::class)],
-            'application_email' => ['nullable', 'email', 'max:255'],
-            'application_url' => ['nullable', 'url', 'max:255'],
-            'contact_person' => ['nullable', 'string', 'max:255'],
-            'contact_email' => ['nullable', 'email', 'max:255'],
-            'internal_notes' => ['nullable', 'string'],
+            'salary_period' => ['nullable', 'string', 'in:hourly,daily,weekly,monthly,yearly'],
+
+            // Skills
+            'skills' => ['nullable', 'string'],
+
+            // Screening data (Step 4)
+            'application_documents' => ['nullable', 'array'],
+            'application_documents.cv' => ['nullable', 'string', 'in:required,optional,hidden'],
+            'application_documents.cover_letter' => ['required_with:application_documents', 'string', 'in:required,optional,hidden'],
+            'screening_questions' => ['nullable', 'array'],
+            'screening_questions.*.id' => ['required_with:screening_questions.*', 'string'],
+            'screening_questions.*.text' => ['required_with:screening_questions.*', 'string'],
+            'screening_questions.*.requirement' => ['required_with:screening_questions.*', 'string', 'in:optional,required,knockout'],
+            'screening_questions.*.answerType' => ['required_with:screening_questions.*', 'string', 'in:yes/no,single-choice,multiple-choice,date,number,file-upload,short-text'],
+            'screening_questions.*.choices' => ['nullable', 'array'],
+            'screening_questions.*.choices.*' => ['string'],
+
+            // Application process fields
+            'application_process' => ['required', 'string', 'in:email,url,both'],
+            'application_email' => ['required_if:application_process,email', 'required_if:application_process,both', 'nullable', 'email'],
+            'application_url' => ['required_if:application_process,url', 'required_if:application_process,both', 'nullable', 'string'],
+
+            // Hidden fields
             'status' => ['required', new Enum(JobStatus::class)],
+        ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    public function prepareForValidation(): void
+    {
+        // Map custom employment type to standard EmploymentType enum
+        if ($this->has('employment_type')) {
+            $mappedType = match ($this->input('employment_type')) {
+                'permanent' => EmploymentType::PERMANENT->value,
+                'temporary' => EmploymentType::TEMPORARY->value,
+                'freelance' => EmploymentType::FREELANCE->value,
+                'internship' => EmploymentType::INTERNSHIP->value,
+                'side-job' => EmploymentType::SIDE_JOB->value,
+                'apprenticeship' => EmploymentType::APPRENTICESHIP->value,
+                'working-student' => EmploymentType::WORKING_STUDENT->value,
+                'interim' => EmploymentType::INTERIM->value,
+                default => EmploymentType::PERMANENT->value,
+            };
+
+            $this->merge([
+                'employment_type_mapped' => $mappedType,
+            ]);
+        }
+
+        // Map salary period to SalaryType
+        if ($this->has('salary_period')) {
+            $mappedSalaryType = match ($this->input('salary_period')) {
+                'hourly' => SalaryType::HOURLY->value,
+                'daily' => SalaryType::DAILY->value,
+                'weekly' => SalaryType::MONTHLY->value, // No weekly type, so map to monthly
+                'monthly' => SalaryType::MONTHLY->value,
+                'yearly' => SalaryType::YEARLY->value,
+                default => SalaryType::YEARLY->value,
+            };
+
+            $this->merge([
+                'salary_type' => $mappedSalaryType,
+            ]);
+        }
+    }
+
+    /**
+     * Get custom error messages.
+     */
+    public function messages(): array
+    {
+        return [
+            'application_process.required' => 'Please select an application method.',
+            'application_email.required_if' => 'Email address is required when email application method is selected.',
+            'application_url.required_if' => 'Website URL is required when URL application method is selected.',
         ];
     }
 }

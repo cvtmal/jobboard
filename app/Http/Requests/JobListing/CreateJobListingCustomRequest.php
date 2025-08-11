@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\JobListing;
 
-use App\Enums\ApplicationProcess;
 use App\Enums\EmploymentType;
 use App\Enums\JobStatus;
 use App\Enums\SalaryType;
@@ -68,9 +67,9 @@ final class CreateJobListingCustomRequest extends FormRequest
             'screening_questions.*.choices.*' => ['string'],
 
             // Application process fields
-            'application_process' => ['required', new Enum(ApplicationProcess::class)],
-            'application_email' => ['required_if:application_process,email', 'nullable', 'email'],
-            'application_url' => ['required_if:application_process,url', 'nullable', 'string'],
+            'application_process' => ['required', 'string', 'in:email,url,both'],
+            'application_email' => ['required_if:application_process,email', 'required_if:application_process,both', 'nullable', 'email'],
+            'application_url' => ['required_if:application_process,url', 'required_if:application_process,both', 'nullable', 'string'],
 
             // Hidden fields
             'status' => ['required', new Enum(JobStatus::class)],
