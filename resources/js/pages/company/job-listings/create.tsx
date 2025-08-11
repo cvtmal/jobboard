@@ -102,11 +102,8 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
 
     const { data, setData, post, processing } = useForm({
         title: '',
-        company_description: '',
-        description: '',
-        requirements: '',
+        description_and_requirements: '',
         benefits: '',
-        final_words: '',
         workload_min: 80,
         workload_max: 100,
 
@@ -115,7 +112,6 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
         office_location: auth.company?.city || '',
 
         // Application details
-        categories: [] as string[],
         employment_type: CustomEmploymentType.PERMANENT,
         seniority_level: SeniorityLevel.MID_LEVEL,
 
@@ -142,6 +138,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
         application_process: ApplicationProcess.EMAIL,
         application_email: '',
         application_url: '',
+        contact_person: '',
         
         // Hidden fields for form processing
         status: JobStatus.PUBLISHED,
@@ -154,23 +151,18 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
     // Form validation rules by step
     const step1ValidationRules = {
         title: { required: true, minLength: 3, maxLength: 200 },
-        categories: { required: true, minLength: 1 },
+        employment_type: { required: true },
         workplace: { required: true },
         office_location: { required: true, minLength: 2 },
-        employment_type: { required: true },
     };
 
     const step2ValidationRules = {
-        description: { required: true, minLength: 10, maxLength: 2000 },
-        requirements: { required: true, minLength: 10, maxLength: 2000 },
-        company_description: { maxLength: 1000 },
+        description_and_requirements: { required: true, minLength: 20, maxLength: 4000 },
         benefits: { maxLength: 800 },
         skills: { maxLength: 500 },
     };
 
-    const step3ValidationRules = {
-        final_words: { maxLength: 400 },
-    };
+    const step3ValidationRules = {};
 
     const step4ValidationRules = {
         application_process: { required: true },
@@ -602,104 +594,9 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                         {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
                                     </div>
 
-                                    {/* Job Categories */}
-                                    <div>
-                                        <Label htmlFor="categories" className="text-base">
-                                            Job Categories <span className="text-red-500">*</span>
-                                        </Label>
-                                        <div className="mt-1.5">
-                                            <MultiSelect
-                                                options={Object.entries(categoryOptions).map(([value, label]) => ({
-                                                    value,
-                                                    label,
-                                                }))}
-                                                selected={data.categories}
-                                                onSelectionChange={(selected) => setData('categories', selected)}
-                                                onBlur={() => currentValidation.markFieldTouched('categories')}
-                                                placeholder="Select job categories"
-                                                className={
-                                                    currentValidation.touched.categories
-                                                        ? currentValidation.errors.categories
-                                                            ? 'border-red-500 focus-visible:border-red-500'
-                                                            : currentValidation.isFieldValid('categories')
-                                                              ? 'border-green-500'
-                                                              : ''
-                                                        : ''
-                                                }
-                                            />
-                                        </div>
-                                        <FieldHelper>Choose one or more categories that best fit this role</FieldHelper>
-                                        {currentValidation.errors.categories && currentValidation.touched.categories && (
-                                            <p className="mt-1 text-sm text-red-500">{currentValidation.errors.categories}</p>
-                                        )}
-                                        {errors.categories && <p className="mt-1 text-sm text-red-500">{errors.categories}</p>}
-                                    </div>
-
-                                    {/* Work Arrangement and Location */}
+                                    {/* Employment Type and Workload Range - Side by Side */}
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                        <div>
-                                            <Label htmlFor="workplace" className="text-base">
-                                                Work Arrangement <span className="text-red-500">*</span>
-                                            </Label>
-                                            <Select value={data.workplace} onValueChange={(value) => setData('workplace', value as Workplace)}>
-                                                <SelectTrigger id="workplace" className="mt-1.5">
-                                                    <SelectValue placeholder="Select work arrangement" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value={Workplace.ONSITE}>On-site</SelectItem>
-                                                    <SelectItem value={Workplace.HYBRID}>Hybrid</SelectItem>
-                                                    <SelectItem value={Workplace.REMOTE}>Remote</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            <FieldHelper>Choose the primary work arrangement for this position</FieldHelper>
-                                            {errors.workplace && <p className="mt-1 text-sm text-red-500">{errors.workplace}</p>}
-                                        </div>
-
-                                        {/* Conditional location field */}
-                                        {(data.workplace === Workplace.ONSITE ||
-                                            data.workplace === Workplace.HYBRID ||
-                                            data.workplace === Workplace.REMOTE) && (
-                                            <div>
-                                                <Label htmlFor="office_location" className="text-base">
-                                                    {data.workplace === Workplace.REMOTE ? 'Company Location' : 'Office Location'}{' '}
-                                                    <span className="text-red-500">*</span>
-                                                </Label>
-                                                <Input
-                                                    id="office_location"
-                                                    value={data.office_location}
-                                                    onChange={(e) => setData('office_location', e.target.value)}
-                                                    onBlur={() => currentValidation.markFieldTouched('office_location')}
-                                                    className={`mt-1.5 ${
-                                                        currentValidation.touched.office_location
-                                                            ? currentValidation.errors.office_location
-                                                                ? 'border-red-500 focus-visible:border-red-500'
-                                                                : currentValidation.isFieldValid('office_location')
-                                                                  ? 'border-green-500'
-                                                                  : ''
-                                                            : ''
-                                                    }`}
-                                                    placeholder={
-                                                        data.workplace === Workplace.REMOTE
-                                                            ? 'Company headquarters location'
-                                                            : 'Office city or location'
-                                                    }
-                                                    required
-                                                />
-                                                <FieldHelper>
-                                                    {data.workplace === Workplace.REMOTE
-                                                        ? "Your company's main location (for legal/tax purposes)"
-                                                        : 'Specific city, district, or area where the office is located'}
-                                                </FieldHelper>
-                                                {currentValidation.errors.office_location && currentValidation.touched.office_location && (
-                                                    <p className="mt-1 text-sm text-red-500">{currentValidation.errors.office_location}</p>
-                                                )}
-                                                {errors.office_location && <p className="mt-1 text-sm text-red-500">{errors.office_location}</p>}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Employment Type and Workload */}
-                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                        {/* Employment Type */}
                                         <div>
                                             <Label htmlFor="employment_type" className="text-base">
                                                 Employment Type <span className="text-red-500">*</span>
@@ -726,81 +623,139 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                             {errors.employment_type && <p className="mt-1 text-sm text-red-500">{errors.employment_type}</p>}
                                         </div>
 
-                                        <div className="space-y-3">
-                                            <div>
-                                                <Label htmlFor="workload" className="text-base">
-                                                    Workload Range <span className="text-red-500">*</span>
-                                                </Label>
-                                                <div className="mt-6 px-2">
-                                                    <Slider
-                                                        id="workload"
-                                                        min={10}
-                                                        max={100}
-                                                        step={10}
-                                                        value={[data.workload_min, data.workload_max]}
-                                                        onValueChange={(values) => {
-                                                            setData('workload_min', values[0]);
-                                                            setData('workload_max', values[1]);
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div className="text-muted-foreground mt-2 flex justify-between text-sm">
-                                                    <span>
-                                                        Current range: {data.workload_min}% - {data.workload_max}%
-                                                    </span>
-                                                </div>
-                                                {/* Quick select buttons for mobile */}
-                                                <div className="mt-3 grid grid-cols-4 gap-2 md:hidden">
-                                                    <Button
-                                                        type="button"
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => {
-                                                            setData('workload_min', 20);
-                                                            setData('workload_max', 40);
-                                                        }}
-                                                    >
-                                                        20-40%
-                                                    </Button>
-                                                    <Button
-                                                        type="button"
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => {
-                                                            setData('workload_min', 50);
-                                                            setData('workload_max', 70);
-                                                        }}
-                                                    >
-                                                        50-70%
-                                                    </Button>
-                                                    <Button
-                                                        type="button"
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => {
-                                                            setData('workload_min', 80);
-                                                            setData('workload_max', 100);
-                                                        }}
-                                                    >
-                                                        80-100%
-                                                    </Button>
-                                                    <Button
-                                                        type="button"
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => {
-                                                            setData('workload_min', 100);
-                                                            setData('workload_max', 100);
-                                                        }}
-                                                    >
-                                                        100%
-                                                    </Button>
-                                                </div>
-                                                <FieldHelper>Specify the percentage of full-time work expected</FieldHelper>
-                                                {(errors.workload_min || errors.workload_max) && (
-                                                    <p className="mt-1 text-sm text-red-500">{errors.workload_min || errors.workload_max}</p>
-                                                )}
+                                        {/* Workload Range */}
+                                        <div>
+                                            <Label htmlFor="workload" className="text-base">
+                                                Workload Range <span className="text-red-500">*</span>
+                                            </Label>
+                                            <div className="mt-6 px-2">
+                                                <Slider
+                                                    id="workload"
+                                                    min={10}
+                                                    max={100}
+                                                    step={10}
+                                                    value={[data.workload_min, data.workload_max]}
+                                                    onValueChange={(values) => {
+                                                        setData('workload_min', values[0]);
+                                                        setData('workload_max', values[1]);
+                                                    }}
+                                                />
                                             </div>
+                                            <div className="text-muted-foreground mt-2 flex justify-between text-sm">
+                                                <span>
+                                                    Current range: {data.workload_min}% - {data.workload_max}%
+                                                </span>
+                                            </div>
+                                            {/* Quick select buttons for mobile */}
+                                            <div className="mt-3 grid grid-cols-4 gap-2 md:hidden">
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        setData('workload_min', 20);
+                                                        setData('workload_max', 40);
+                                                    }}
+                                                >
+                                                    20-40%
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        setData('workload_min', 50);
+                                                        setData('workload_max', 70);
+                                                    }}
+                                                >
+                                                    50-70%
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        setData('workload_min', 80);
+                                                        setData('workload_max', 100);
+                                                    }}
+                                                >
+                                                    80-100%
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        setData('workload_min', 100);
+                                                        setData('workload_max', 100);
+                                                    }}
+                                                >
+                                                    100%
+                                                </Button>
+                                            </div>
+                                            <FieldHelper>Specify the percentage of full-time work expected</FieldHelper>
+                                            {(errors.workload_min || errors.workload_max) && (
+                                                <p className="mt-1 text-sm text-red-500">{errors.workload_min || errors.workload_max}</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Work Arrangement and Office Location */}
+                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                        <div>
+                                            <Label htmlFor="workplace" className="text-base">
+                                                Work Arrangement <span className="text-red-500">*</span>
+                                            </Label>
+                                            <Select value={data.workplace} onValueChange={(value) => setData('workplace', value as Workplace)}>
+                                                <SelectTrigger id="workplace" className="mt-1.5">
+                                                    <SelectValue placeholder="Select work arrangement" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value={Workplace.ONSITE}>On-site</SelectItem>
+                                                    <SelectItem value={Workplace.HYBRID}>Hybrid</SelectItem>
+                                                    <SelectItem value={Workplace.REMOTE}>Remote</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FieldHelper>Choose the primary work arrangement for this position</FieldHelper>
+                                            {errors.workplace && <p className="mt-1 text-sm text-red-500">{errors.workplace}</p>}
+                                        </div>
+
+                                        {/* Office Location field */}
+                                        <div>
+                                            <Label htmlFor="office_location" className="text-base">
+                                                {data.workplace === Workplace.REMOTE ? 'Company Location' : 'Office Location'}{' '}
+                                                <span className="text-red-500">*</span>
+                                            </Label>
+                                            <Input
+                                                id="office_location"
+                                                value={data.office_location}
+                                                onChange={(e) => setData('office_location', e.target.value)}
+                                                onBlur={() => currentValidation.markFieldTouched('office_location')}
+                                                className={`mt-1.5 ${
+                                                    currentValidation.touched.office_location
+                                                        ? currentValidation.errors.office_location
+                                                            ? 'border-red-500 focus-visible:border-red-500'
+                                                            : currentValidation.isFieldValid('office_location')
+                                                              ? 'border-green-500'
+                                                              : ''
+                                                        : ''
+                                                }`}
+                                                placeholder={
+                                                    data.workplace === Workplace.REMOTE
+                                                        ? 'Company headquarters location'
+                                                        : 'Office city or location'
+                                                }
+                                                required
+                                            />
+                                            <FieldHelper>
+                                                {data.workplace === Workplace.REMOTE
+                                                    ? "Your company's main location (for legal/tax purposes)"
+                                                    : 'Specific city, district, or area where the office is located'}
+                                            </FieldHelper>
+                                            {currentValidation.errors.office_location && currentValidation.touched.office_location && (
+                                                <p className="mt-1 text-sm text-red-500">{currentValidation.errors.office_location}</p>
+                                            )}
+                                            {errors.office_location && <p className="mt-1 text-sm text-red-500">{errors.office_location}</p>}
                                         </div>
                                     </div>
                                 </CardContent>
@@ -815,86 +770,39 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                         <Building2 className="text-primary h-5 w-5" />
                                         Job Details & Description
                                     </CardTitle>
-                                    <CardDescription>Now let's add detailed information about the role and your company</CardDescription>
+                                    <CardDescription>Provide detailed information about the role</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
-                                    {/* Company Description */}
+                                    {/* Merged Job Description and Requirements */}
                                     <div>
-                                        <Label htmlFor="company_description" className="text-base">
-                                            Company Description
+                                        <Label htmlFor="description_and_requirements" className="text-base">
+                                            Job Description & Requirements <span className="text-red-500">*</span>
                                         </Label>
                                         <Textarea
-                                            id="company_description"
-                                            value={data.company_description}
-                                            onChange={(e) => setData('company_description', e.target.value)}
-                                            className="mt-1.5 min-h-[120px] md:min-h-[150px]"
-                                            placeholder="Tell candidates about your company..."
-                                        />
-                                        <CharacterCount current={data.company_description.length} max={500} />
-                                        <FieldHelper>Brief overview of your company, mission, and culture (optional but recommended)</FieldHelper>
-                                        {errors.company_description && <p className="mt-1 text-sm text-red-500">{errors.company_description}</p>}
-                                    </div>
-
-                                    {/* Job Description */}
-                                    <div>
-                                        <Label htmlFor="description" className="text-base">
-                                            Job Description <span className="text-red-500">*</span>
-                                        </Label>
-                                        <Textarea
-                                            id="description"
-                                            value={data.description}
-                                            onChange={(e) => setData('description', e.target.value)}
-                                            onBlur={() => currentValidation.markFieldTouched('description')}
-                                            className={`mt-1.5 min-h-[150px] md:min-h-[180px] ${
-                                                currentValidation.touched.description
-                                                    ? currentValidation.errors.description
+                                            id="description_and_requirements"
+                                            value={data.description_and_requirements}
+                                            onChange={(e) => setData('description_and_requirements', e.target.value)}
+                                            onBlur={() => currentValidation.markFieldTouched('description_and_requirements')}
+                                            className={`mt-1.5 min-h-[250px] md:min-h-[350px] ${
+                                                currentValidation.touched.description_and_requirements
+                                                    ? currentValidation.errors.description_and_requirements
                                                         ? 'border-red-500 focus-visible:border-red-500'
-                                                        : currentValidation.isFieldValid('description')
+                                                        : currentValidation.isFieldValid('description_and_requirements')
                                                           ? 'border-green-500'
                                                           : ''
                                                     : ''
                                             }`}
-                                            placeholder="Describe the role, responsibilities, and expectations..."
+                                            placeholder="Describe the role, responsibilities, expectations, and requirements for this position..."
                                             required
                                         />
-                                        <CharacterCount current={data.description.length} max={2000} />
-                                        <FieldHelper>Clearly outline the role, key responsibilities, and day-to-day expectations</FieldHelper>
-                                        {currentValidation.errors.description && currentValidation.touched.description && (
-                                            <p className="mt-1 text-sm text-red-500">{currentValidation.errors.description}</p>
-                                        )}
-                                        {errors.description && <p className="mt-1 text-sm text-red-500">{errors.description}</p>}
-                                    </div>
-
-                                    {/* Requirements */}
-                                    <div>
-                                        <Label htmlFor="requirements" className="text-base">
-                                            Requirements <span className="text-red-500">*</span>
-                                        </Label>
-                                        <Textarea
-                                            id="requirements"
-                                            value={data.requirements}
-                                            onChange={(e) => setData('requirements', e.target.value)}
-                                            onBlur={() => currentValidation.markFieldTouched('requirements')}
-                                            className={`mt-1.5 min-h-[150px] md:min-h-[180px] ${
-                                                currentValidation.touched.requirements
-                                                    ? currentValidation.errors.requirements
-                                                        ? 'border-red-500 focus-visible:border-red-500'
-                                                        : currentValidation.isFieldValid('requirements')
-                                                          ? 'border-green-500'
-                                                          : ''
-                                                    : ''
-                                            }`}
-                                            placeholder="List the qualifications, skills, and experience required..."
-                                            required
-                                        />
-                                        <CharacterCount current={data.requirements.length} max={1500} />
+                                        <CharacterCount current={data.description_and_requirements.length} max={4000} />
                                         <FieldHelper>
-                                            List must-have qualifications, skills, and experience. Be specific but not overly restrictive
+                                            Include the role overview, key responsibilities, day-to-day expectations, required qualifications, skills, and experience
                                         </FieldHelper>
-                                        {currentValidation.errors.requirements && currentValidation.touched.requirements && (
-                                            <p className="mt-1 text-sm text-red-500">{currentValidation.errors.requirements}</p>
+                                        {currentValidation.errors.description_and_requirements && currentValidation.touched.description_and_requirements && (
+                                            <p className="mt-1 text-sm text-red-500">{currentValidation.errors.description_and_requirements}</p>
                                         )}
-                                        {errors.requirements && <p className="mt-1 text-sm text-red-500">{errors.requirements}</p>}
+                                        {errors.description_and_requirements && <p className="mt-1 text-sm text-red-500">{errors.description_and_requirements}</p>}
                                     </div>
 
                                     {/* Benefits */}
@@ -948,6 +856,22 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                     <CardDescription>Add optional features to make your job listing more attractive</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
+                                    {/* Company Branding - Moved to first position */}
+                                    <div className="space-y-4">
+                                        <h4 className="text-lg font-medium">Company Branding</h4>
+                                        <CompanyImageUploader
+                                            currentBannerUrl={companyBanner || undefined}
+                                            currentLogoUrl={companyLogo || undefined}
+                                            onBannerChange={(file) => setData('banner_image', file || undefined)}
+                                            onLogoChange={(file) => setData('logo_image', file || undefined)}
+                                            disabled={processing}
+                                            errors={{
+                                                banner: errors.banner_image,
+                                                logo: errors.logo_image,
+                                            }}
+                                        />
+                                    </div>
+
                                     {/* Salary Information */}
                                     <div className="space-y-4">
                                         <h4 className="text-lg font-medium">Salary Information</h4>
@@ -1035,39 +959,6 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                         <FieldHelper>Target experience level for this position (helps filter candidates)</FieldHelper>
                                         {errors.seniority_level && <p className="mt-1 text-sm text-red-500">{errors.seniority_level}</p>}
                                     </div>
-
-                                    {/* Company Branding */}
-                                    <div className="space-y-4">
-                                        <h4 className="text-lg font-medium">Company Branding</h4>
-                                        <CompanyImageUploader
-                                            currentBannerUrl={companyBanner || undefined}
-                                            currentLogoUrl={companyLogo || undefined}
-                                            onBannerChange={(file) => setData('banner_image', file || undefined)}
-                                            onLogoChange={(file) => setData('logo_image', file || undefined)}
-                                            disabled={processing}
-                                            errors={{
-                                                banner: errors.banner_image,
-                                                logo: errors.logo_image,
-                                            }}
-                                        />
-                                    </div>
-
-                                    {/* Final Words */}
-                                    <div>
-                                        <Label htmlFor="final_words" className="text-base">
-                                            Closing Message
-                                        </Label>
-                                        <Textarea
-                                            id="final_words"
-                                            value={data.final_words}
-                                            onChange={(e) => setData('final_words', e.target.value)}
-                                            className="mt-1.5 min-h-[120px] md:min-h-[150px]"
-                                            placeholder="Add any closing remarks or application instructions..."
-                                        />
-                                        <CharacterCount current={data.final_words.length} max={400} />
-                                        <FieldHelper>Optional closing message, application tips, or next steps information</FieldHelper>
-                                        {errors.final_words && <p className="mt-1 text-sm text-red-500">{errors.final_words}</p>}
-                                    </div>
                                 </CardContent>
                             </Card>
                         )}
@@ -1123,6 +1014,24 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                                 Choose whether applicants should apply via email or through your company's external application system
                                             </FieldHelper>
                                             {errors.application_process && <p className="mt-1 text-sm text-red-500">{errors.application_process}</p>}
+                                        </div>
+
+                                        {/* Contact Person Field */}
+                                        <div>
+                                            <Label htmlFor="contact_person" className="text-base">
+                                                Contact Person
+                                            </Label>
+                                            <Input
+                                                id="contact_person"
+                                                value={data.contact_person}
+                                                onChange={(e) => setData('contact_person', e.target.value)}
+                                                className="mt-1.5"
+                                                placeholder="e.g., John Appleseed"
+                                            />
+                                            <FieldHelper>
+                                                Name of the person handling applications for this position
+                                            </FieldHelper>
+                                            {errors.contact_person && <p className="mt-1 text-sm text-red-500">{errors.contact_person}</p>}
                                         </div>
 
                                         {/* Conditional Email Field */}

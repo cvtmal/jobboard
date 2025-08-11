@@ -6,7 +6,6 @@ namespace App\Http\Requests\JobListing;
 
 use App\Enums\ApplicationProcess;
 use App\Enums\EmploymentType;
-use App\Enums\JobCategory;
 use App\Enums\JobStatus;
 use App\Enums\SalaryType;
 use App\Enums\Workplace;
@@ -36,19 +35,15 @@ final class CreateJobListingCustomRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'workload_min' => ['required', 'numeric', 'min:0'],
             'workload_max' => ['required', 'numeric', 'min:0', 'max:100', 'gte:workload_min'],
-            'company_description' => ['nullable', 'string'],
-            'description' => ['required', 'string'],
-            'requirements' => ['required', 'string'],
+            'description_and_requirements' => ['required', 'string', 'min:20', 'max:4000'],
             'benefits' => ['nullable', 'string'],
-            'final_words' => ['nullable', 'string'],
+            'contact_person' => ['nullable', 'string', 'max:255'],
 
             // Location
             'workplace' => ['required', new Enum(Workplace::class)],
             'office_location' => ['required', 'string', 'max:255'],
 
             // Job details
-            'categories' => ['required', 'array', 'min:1'],
-            'categories.*' => ['required', new Enum(JobCategory::class)],
             'employment_type' => ['required', 'string', 'in:permanent,temporary,freelance,internship,side-job,apprenticeship,working-student,interim'],
             'seniority_level' => ['nullable', 'string', 'in:no_experience,junior,mid_level,professional,senior,lead'],
 

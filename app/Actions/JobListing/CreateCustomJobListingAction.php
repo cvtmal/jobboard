@@ -61,8 +61,8 @@ final class CreateCustomJobListingAction
                 $jobData['salary_type'] = $data['salary_type'];
             }
 
-            if (! empty($data['categories'])) {
-                $jobData['categories'] = $data['categories'];
+            if (! empty($data['contact_person'])) {
+                $jobData['contact_person'] = $data['contact_person'];
             }
 
             if (isset($data['application_documents'])) {
@@ -99,28 +99,17 @@ final class CreateCustomJobListingAction
     {
         $sections = [];
 
-        // Add company description if provided
-        if (! empty($data['company_description'])) {
-            $sections[] = "## About Us\n\n".$data['company_description'];
+        // Add the merged job description and requirements (required)
+        if (! empty($data['description_and_requirements'])) {
+            $sections[] = $data['description_and_requirements'];
         }
-
-        // Add job description (required)
-        $sections[] = "## Job Description\n\n".$data['description'];
-
-        // Add requirements (required)
-        $sections[] = "## Requirements\n\n".$data['requirements'];
 
         // Add benefits if provided
         if (! empty($data['benefits'])) {
-            $sections[] = "## Benefits\n\n".$data['benefits'];
+            $sections[] = "\n\n## Benefits\n\n".$data['benefits'];
         }
 
-        // Add final words if provided
-        if (! empty($data['final_words'])) {
-            $sections[] = "## Additional Information\n\n".$data['final_words'];
-        }
-
-        // Combine all sections with double line breaks
-        return implode("\n\n", $sections);
+        // Combine all sections
+        return implode('', $sections);
     }
 }
