@@ -117,7 +117,7 @@ final class JobListingController
             abort(403);
         }
 
-        $updatedJobListing = $action->execute($company, $jobListing, $request->validated());
+        $action->execute($company, $jobListing, $request->validated());
 
         return redirect()->route('company.job-listings.show', $jobListing)
             ->with('success', 'Job listing updated successfully.');
@@ -198,9 +198,9 @@ final class JobListingController
             'temporary' => 'temporary',
             'freelance' => 'freelance',
             'internship' => 'internship',
-            'side_job' => 'side-job',
+            'side-job' => 'side_job',
             'apprenticeship' => 'apprenticeship',
-            'working_student' => 'working-student',
+            'working-student' => 'working_student',
             'interim' => 'interim',
             default => 'permanent',
         };
@@ -223,7 +223,7 @@ final class JobListingController
             'workload_max' => $jobListing->workload_max ?? 100,
 
             // Location information
-            'workplace' => $jobListing->workplace?->value ?? 'onsite',
+            'workplace' => $jobListing->workplace->value ?? 'onsite',
             'office_location' => $jobListing->city ?? '',
 
             // Employment details
@@ -236,7 +236,7 @@ final class JobListingController
             'salary_period' => $salaryPeriod,
 
             // Skills
-            'skills' => $this->extractSkillsFromDescription() ?? '',
+            'skills' => $this->extractSkillsFromDescription(),
 
             // Screening and application fields
             'application_documents' => $jobListing->application_documents ?? [
@@ -246,13 +246,13 @@ final class JobListingController
             'screening_questions' => $jobListing->screening_questions ?? [],
 
             // Application process
-            'application_process' => $jobListing->application_process?->value ?? 'email',
+            'application_process' => $jobListing->application_process->value,
             'application_email' => $jobListing->application_email ?? '',
             'application_url' => $jobListing->application_url ?? '',
             'contact_person' => $jobListing->contact_person ?? '',
 
             // Status
-            'status' => $jobListing->status?->value ?? 'published',
+            'status' => $jobListing->status->value,
 
             // Company ID for validation
             'company_id' => $jobListing->company_id,

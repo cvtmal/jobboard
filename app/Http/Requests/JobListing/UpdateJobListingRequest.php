@@ -118,6 +118,8 @@ final class UpdateJobListingRequest extends FormRequest
 
     /**
      * Get custom error messages.
+     *
+     * @return array<string, string>
      */
     public function messages(): array
     {

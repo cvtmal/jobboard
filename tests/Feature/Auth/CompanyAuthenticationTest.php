@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Models\Company;
-use Database\Factories\CompanyFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 
@@ -28,4 +27,3 @@ test('logged out company user is redirected when accessing authenticated routes'
     // Check that we're redirected away (don't check exact URL as it might be configurable)
     $response->assertRedirect();
 });
-
