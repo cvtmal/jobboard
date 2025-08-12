@@ -73,6 +73,9 @@ final class CreateJobListingCustomRequest extends FormRequest
 
             // Hidden fields
             'status' => ['required', new Enum(JobStatus::class)],
+
+            // Package selection (step 5)
+            'selected_tier_id' => ['nullable', 'integer', 'exists:job_tiers,id'],
         ];
     }
 

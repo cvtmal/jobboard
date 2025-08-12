@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Company;
 
 use App\Actions\JobListing\CreateCustomJobListingAction;
+use App\Actions\JobListing\CreateJobListingWithSubscriptionAction;
 use App\Actions\JobListing\DeleteJobListingAction;
 use App\Actions\JobListing\UpdateJobListingAction;
+use App\Actions\JobListing\UpdateJobListingWithSubscriptionAction;
 use App\Enums\JobCategory;
 use App\Http\Requests\JobListing\CreateJobListingCustomRequest;
 use App\Http\Requests\JobListing\DeleteJobListingRequest;
 use App\Http\Requests\JobListing\UpdateJobListingRequest;
 use App\Models\Company;
 use App\Models\JobListing;
+use App\Models\JobTier;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
@@ -49,6 +52,7 @@ final class JobListingController
             'categoryOptions' => JobCategory::options(),
             'companyLogo' => $company?->logo_url,
             'companyBanner' => $company?->banner_url,
+            'jobTiers' => JobTier::all(),
         ]);
     }
 
@@ -100,6 +104,8 @@ final class JobListingController
             'categoryOptions' => JobCategory::options(),
             'companyLogo' => $jobListing->effective_logo_url,
             'companyBanner' => $jobListing->effective_banner_url,
+            'jobTiers' => JobTier::all(),
+            'currentSubscription' => $jobListing->activeSubscription(),
         ]);
     }
 
@@ -170,6 +176,39 @@ final class JobListingController
 
         return redirect()->route('company.job-listings.index')
             ->with('success', 'Job listing deleted successfully.');
+    }
+
+    /**
+     * Store a new job listing with subscription.
+     *
+     * @throws Throwable
+     */
+    public function storeWithSubscription(CreateJobListingCustomRequest $request, CreateJobListingWithSubscriptionAction $action): RedirectResponse
+    {
+        $this->authorize('create', JobListing::class);
+
+        $company = $request->user('company');
+
+        /** @var Company $company */
+        $jobListing = $action->execute($company, $request->validated());
+
+        return redirect()->route('company.job-listings.show', $jobListing)
+            ->with('success', 'Job listing created and published successfully!');
+    }
+
+    /**
+     * Update a job listing with subscription changes.
+     *
+     * @throws Throwable
+     */
+    public function updateWithSubscription(UpdateJobListingRequest $request, JobListing $jobListing, UpdateJobListingWithSubscriptionAction $action): RedirectResponse
+    {
+        $this->authorize('update', $jobListing);
+
+        $updatedJobListing = $action->execute($jobListing, $request->validated());
+
+        return redirect()->route('company.job-listings.show', $updatedJobListing)
+            ->with('success', 'Job listing updated successfully!');
     }
 
     /**

@@ -6,9 +6,7 @@ namespace Database\Seeders;
 
 use App\Enums\ApplicationProcess;
 use App\Enums\EmploymentType;
-use App\Enums\JobCategory;
 use App\Enums\JobStatus;
-use App\Enums\SwissCanton;
 use App\Enums\Workplace;
 use App\Models\Company;
 use App\Models\JobListing;
@@ -53,6 +51,7 @@ final class TestCompanySeeder extends Seeder
                 'workplace' => Workplace::HYBRID,
                 'allows_remote' => true,
                 'no_salary' => false,
+                'city' => 'Zürich',
                 'salary_min' => 100000,
                 'salary_max' => 130000,
                 'salary_currency' => 'CHF',

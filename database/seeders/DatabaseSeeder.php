@@ -15,6 +15,7 @@ final class DatabaseSeeder extends Seeder
     {
         $this->call([
             TestCompanySeeder::class,
+            JobTierSeeder::class,
         ]);
     }
 }

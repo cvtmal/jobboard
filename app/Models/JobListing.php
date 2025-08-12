@@ -214,6 +214,16 @@ final class JobListing extends Model
     }
 
     /**
+     * Get all subscriptions for this job listing.
+     *
+     * @return HasMany<JobListingSubscription, $this>
+     */
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(JobListingSubscription::class);
+    }
+
+    /**
      * Get the applications for this job listing.
      *
      * @return HasMany<JobApplication, $this>
@@ -447,5 +457,25 @@ final class JobListing extends Model
     public function hasCustomBanner(): bool
     {
         return ! is_null($this->banner_path) && Storage::disk('public')->exists($this->banner_path);
+    }
+
+    /**
+     * Get the active subscription for the job listing.
+     */
+    public function activeSubscription(): ?JobListingSubscription
+    {
+        return $this->subscriptions()
+            ->where('payment_status', JobListingSubscription::STATUS_COMPLETED)
+            ->where('expires_at', '>', now())
+            ->orderBy('expires_at', 'desc')
+            ->first();
+    }
+
+    /**
+     * Check if the job listing has an active subscription.
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->activeSubscription() instanceof JobListingSubscription;
     }
 }

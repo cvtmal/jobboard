@@ -11,6 +11,8 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { Slider } from '@/components/ui/slider';
 import { Stepper } from '@/components/ui/stepper';
 import { Textarea } from '@/components/ui/textarea';
+import { PackageSelector, type JobTier } from './components/PackageSelector';
+import { OrderSummary } from './components/OrderSummary';
 import CompanyLayout from '@/layouts/company-layout';
 import { type Auth, type BreadcrumbItem } from '@/types';
 import { ApplicationProcess } from '@/types/enums/ApplicationProcess';
@@ -49,6 +51,7 @@ interface Props {
     categoryOptions: Record<string, string>;
     companyLogo?: string | null;
     companyBanner?: string | null;
+    jobTiers: JobTier[];
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -58,9 +61,10 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function CreateJobListing({ auth, errors, categoryOptions, companyLogo, companyBanner }: Props) {
+export default function CreateJobListing({ auth, errors, categoryOptions, companyLogo, companyBanner, jobTiers }: Props) {
     const [currentStep, setCurrentStep] = useState(1);
     const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+    const [selectedTier, setSelectedTier] = useState<JobTier | null>(null);
 
     // Predefined screening questions
     const predefinedQuestions: PredefinedQuestion[] = [
@@ -141,8 +145,11 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
         contact_person: '',
         
         // Hidden fields for form processing
-        status: JobStatus.PUBLISHED,
+        status: JobStatus.DRAFT,
         company_id: auth.company?.id || '',
+        
+        // Package selection (step 5)
+        selected_tier_id: null as number | null,
     });
 
     const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
@@ -202,6 +209,14 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
     const step4Validation = useFormValidation(data, step4ValidationRules);
     const allFieldsValidation = useFormValidation(data, allValidationRules);
 
+    // Check if steps are valid and complete
+    const isStep1Valid = () => step1Validation.isFormValid();
+    const isStep2Valid = () => step2Validation.isFormValid();
+    const isStep3Valid = () => step3Validation.isFormValid(); // Always true since step 3 is optional
+    const isStep4Valid = () => step4Validation.isFormValid();
+    const isStep5Valid = () => !!selectedTier;
+    const isStep6Valid = () => true; // Review step is always valid if you reach it
+
     // Get current step validation
     const getCurrentStepValidation = () => {
         switch (currentStep) {
@@ -213,18 +228,16 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                 return step3Validation;
             case 4:
                 return step4Validation;
+            case 5:
+                return { isFormValid: isStep5Valid, errors: {}, touched: {}, validateAll: () => ({}), markFieldTouched: () => {}, isFieldValid: () => true };
+            case 6:
+                return { isFormValid: isStep6Valid, errors: {}, touched: {}, validateAll: () => ({}), markFieldTouched: () => {}, isFieldValid: () => true };
             default:
                 return step1Validation;
         }
     };
 
     const currentValidation = getCurrentStepValidation();
-
-    // Check if steps are valid and complete
-    const isStep1Valid = () => step1Validation.isFormValid();
-    const isStep2Valid = () => step2Validation.isFormValid();
-    const isStep3Valid = () => step3Validation.isFormValid(); // Always true since step 3 is optional
-    const isStep4Valid = () => step4Validation.isFormValid();
 
     // Helper function to get detailed validation errors for debugging
     const getDetailedValidationErrors = () => {
@@ -281,10 +294,12 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
     // Calculate form progress based on completed steps
     const calculateProgress = useCallback(() => {
         let progress = 0;
-        if (isStep1Valid()) progress += 30; // Step 1 is 30%
-        if (isStep2Valid()) progress += 35; // Step 2 is 35%
-        if (completedSteps.includes(3)) progress += 25; // Step 3 is 25%
-        if (completedSteps.includes(4)) progress += 10; // Step 4 is 10%
+        if (isStep1Valid()) progress += 20; // Step 1 is 20%
+        if (isStep2Valid()) progress += 25; // Step 2 is 25%
+        if (completedSteps.includes(3)) progress += 20; // Step 3 is 20%
+        if (completedSteps.includes(4)) progress += 15; // Step 4 is 15%
+        if (completedSteps.includes(5)) progress += 10; // Step 5 is 10%
+        if (completedSteps.includes(6)) progress += 10; // Step 6 is 10%
         return Math.min(progress, 100);
     }, [isStep1Valid, isStep2Valid, completedSteps]);
 
@@ -317,7 +332,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                 setCompletedSteps(newCompletedSteps);
                 localStorage.setItem('job-listing-completed-steps', JSON.stringify(newCompletedSteps));
             }
-            if (currentStep < 4) {
+            if (currentStep < 6) {
                 const nextStep = currentStep + 1;
                 setCurrentStep(nextStep);
                 localStorage.setItem('job-listing-current-step', nextStep.toString());
@@ -409,7 +424,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
         if (savedStep) {
             try {
                 const stepNumber = parseInt(savedStep, 10);
-                if (stepNumber >= 1 && stepNumber <= 4) {
+                if (stepNumber >= 1 && stepNumber <= 6) {
                     setCurrentStep(stepNumber);
                 }
             } catch (error) {
@@ -427,6 +442,18 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                 }
             } catch (error) {
                 // Failed to load completed steps
+            }
+        }
+
+        // Load selected tier
+        const savedTier = localStorage.getItem('job-listing-selected-tier');
+        if (savedTier) {
+            try {
+                const tierData = JSON.parse(savedTier);
+                setSelectedTier(tierData);
+                updates.selected_tier_id = tierData.id;
+            } catch (error) {
+                // Failed to load selected tier
             }
         }
 
@@ -480,7 +507,11 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
             return;
         }
 
-        post(route('company.job-listings.store'), {
+        // Set data for final submission
+        setData('selected_tier_id', selectedTier?.id || null);
+        setData('status', JobStatus.PUBLISHED);
+        
+        post(route('company.job-listings.store-with-subscription'), {
             forceFormData: true,
             onSuccess: () => {
                 setTimeout(() => {
@@ -513,10 +544,22 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
             isCurrent: currentStep === 3,
         },
         {
-            title: 'Screening Questions',
-            description: 'Application requirements',
-            isCompleted: completedSteps.includes(4),
+            title: 'Application',
+            description: 'Screening & requirements',
+            isCompleted: completedSteps.includes(4) || (currentStep > 4 && isStep4Valid()),
             isCurrent: currentStep === 4,
+        },
+        {
+            title: 'Package Selection',
+            description: 'Choose subscription tier',
+            isCompleted: completedSteps.includes(5) || (currentStep > 5 && isStep5Valid()),
+            isCurrent: currentStep === 5,
+        },
+        {
+            title: 'Review & Publish',
+            description: 'Final review',
+            isCompleted: completedSteps.includes(6),
+            isCurrent: currentStep === 6,
         },
     ];
 
@@ -531,8 +574,13 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                         <div className="text-center">
                             <h1 className="text-3xl font-bold tracking-tight">Create New Job Listing</h1>
                             <p className="text-muted-foreground mt-2">
-                                Complete the {currentStep === 1 ? 'essential' : currentStep === 2 ? 'detailed' : 'optional'} information for your job
-                                listing. Your progress is automatically saved.
+                                {currentStep <= 4 ? (
+                                    <>Complete the {currentStep === 1 ? 'essential' : currentStep === 2 ? 'detailed' : 'optional'} information for your job listing. Your progress is automatically saved.</>
+                                ) : currentStep === 5 ? (
+                                    <>Choose the right package for your job listing to maximize visibility and applications.</>
+                                ) : (
+                                    <>Review your job details and complete your order to publish immediately.</>
+                                )}
                             </p>
                         </div>
 
@@ -553,7 +601,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                         </div>
                     </div>
 
-                    <form onSubmit={currentStep === 4 ? handleSubmit : (e) => e.preventDefault()} className="space-y-6">
+                    <form onSubmit={currentStep === 6 ? handleSubmit : (e) => e.preventDefault()} className="space-y-6">
                         {/* Step 1: Job Essentials */}
                         {currentStep === 1 && (
                             <Card>
@@ -1247,21 +1295,58 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                             </div>
                         )}
 
+                        {/* Step 5: Package Selection */}
+                        {currentStep === 5 && (
+                            <PackageSelector
+                                tiers={jobTiers}
+                                selectedTier={selectedTier}
+                                onSelect={(tier) => {
+                                    setSelectedTier(tier);
+                                    setData('selected_tier_id', tier.id);
+                                    
+                                    // Save to localStorage
+                                    localStorage.setItem('job-listing-selected-tier', JSON.stringify(tier));
+                                }}
+                                disabled={processing}
+                            />
+                        )}
+
+                        {/* Step 6: Review & Publish */}
+                        {currentStep === 6 && selectedTier && (
+                            <OrderSummary
+                                jobData={data}
+                                selectedTier={selectedTier}
+                                companyName={auth.company?.name || 'Your Company'}
+                                onPublish={() => {
+                                    const mockEvent = {
+                                        preventDefault: () => {}
+                                    } as FormEvent;
+                                    handleSubmit(mockEvent);
+                                }}
+                                onGoBack={() => setCurrentStep(5)}
+                                isProcessing={processing}
+                            />
+                        )}
+
                         {/* Step Navigation */}
                         <div className="bg-muted/30 mt-8 rounded-lg p-6">
                             <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
                                 <div className="text-muted-foreground text-sm">
                                     <div className="font-medium">
-                                        {currentStep === 1 && 'Step 1 of 4: Job Essentials'}
-                                        {currentStep === 2 && 'Step 2 of 4: Job Details & Description'}
-                                        {currentStep === 3 && 'Step 3 of 4: Job Settings'}
-                                        {currentStep === 4 && 'Step 4 of 4: Screening Questions'}
+                                        {currentStep === 1 && 'Step 1 of 6: Job Essentials'}
+                                        {currentStep === 2 && 'Step 2 of 6: Job Details & Description'}
+                                        {currentStep === 3 && 'Step 3 of 6: Job Settings'}
+                                        {currentStep === 4 && 'Step 4 of 6: Application Process'}
+                                        {currentStep === 5 && 'Step 5 of 6: Package Selection'}
+                                        {currentStep === 6 && 'Step 6 of 6: Review & Publish'}
                                     </div>
                                     <div>
                                         {currentStep === 1 && 'Fill in the basic information about your job'}
                                         {currentStep === 2 && 'Add detailed descriptions and requirements'}
                                         {currentStep === 3 && 'Configure salary, experience level and branding'}
                                         {currentStep === 4 && 'Set up application documents and screening questions'}
+                                        {currentStep === 5 && 'Choose the right package for maximum visibility'}
+                                        {currentStep === 6 && 'Review your job and complete payment to publish'}
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4">
@@ -1293,7 +1378,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                     </Button>
 
                                     {/* Next/Submit Button */}
-                                    {currentStep < 4 ? (
+                                    {currentStep < 6 ? (
                                         <Button
                                             type="button"
                                             onClick={(e) => {
@@ -1304,31 +1389,46 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                             disabled={processing || !getCurrentStepValidation().isFormValid()}
                                             className="min-w-[140px]"
                                         >
-                                            Next Step
+                                            {currentStep === 5 ? 'Continue to Review' : 'Next'}
                                         </Button>
                                     ) : (
-                                        <Button type="submit" disabled={processing || !allFieldsValidation.isFormValid()} className="min-w-[200px]">
-                                            {processing ? (
-                                                <>
-                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                    Creating...
-                                                </>
-                                            ) : (
-                                                'Create Job Listing'
-                                            )}
-                                        </Button>
+                                        currentStep === 6 && (
+                                            <Button 
+                                                type="button" 
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    goToNextStep();
+                                                }}
+                                                disabled={processing || !selectedTier} 
+                                                className="min-w-[200px]"
+                                            >
+                                                {processing ? (
+                                                    <>
+                                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                        Publishing...
+                                                    </>
+                                                ) : (
+                                                    'Continue to Payment'
+                                                )}
+                                            </Button>
+                                        )
                                     )}
                                 </div>
                             </div>
                             {/* Progress feedback */}
-                            {currentStep < 4 && !getCurrentStepValidation().isFormValid() && (
+                            {currentStep < 5 && !getCurrentStepValidation().isFormValid() && (
                                 <div className="mt-2 text-center text-sm text-orange-600 sm:text-right">
                                     Please complete all required fields to continue
                                 </div>
                             )}
-                            {currentStep === 4 && !allFieldsValidation.isFormValid() && (
+                            {currentStep === 5 && !selectedTier && (
                                 <div className="mt-2 text-center text-sm text-orange-600 sm:text-right">
-                                    Please complete all required fields from previous steps
+                                    Please select a package to continue
+                                </div>
+                            )}
+                            {currentStep === 6 && !selectedTier && (
+                                <div className="mt-2 text-center text-sm text-orange-600 sm:text-right">
+                                    Package selection is required
                                 </div>
                             )}
                         </div>
