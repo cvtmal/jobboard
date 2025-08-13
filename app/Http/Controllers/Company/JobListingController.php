@@ -356,8 +356,50 @@ final class JobListingController
 
         $action->execute($jobListing, $validated['selected_tier_id']);
 
-        return redirect()->route('company.job-listings.show', $jobListing)
-            ->with('success', 'Job listing published successfully!');
+        // Store success data in session for the success page
+        session()->flash('publish_success', [
+            'tier_id' => $validated['selected_tier_id'],
+            'published_at' => now()->toDateTimeString(),
+        ]);
+
+        return redirect()->route('company.job-listings.success', $jobListing);
+    }
+
+    /**
+     * Show publish success page
+     * 
+     * @throws AuthorizationException
+     */
+    public function publishSuccess(JobListing $jobListing): Response
+    {
+        $this->authorize('view', $jobListing);
+
+        if ($jobListing->company_id !== auth('company')->id()) {
+            abort(403);
+        }
+
+        $jobListing->load(['company', 'jobTier']);
+
+        // Get success data from session if available
+        $successData = session('publish_success', []);
+
+        return Inertia::render('company/job-listings/success', [
+            'jobListing' => array_merge($jobListing->toArray(), [
+                'employment_type' => $jobListing->employment_type ? [
+                    'value' => $jobListing->employment_type->value,
+                    'label' => $jobListing->employment_type->label(),
+                ] : null,
+                'experience_level' => $jobListing->experience_level ? [
+                    'value' => $jobListing->experience_level->value,
+                    'label' => $jobListing->experience_level->label(),
+                ] : null,
+                'status' => [
+                    'value' => $jobListing->status->value,
+                    'label' => $jobListing->status->label(),
+                ],
+            ]),
+            'successData' => $successData,
+        ]);
     }
 
     /**

@@ -30,6 +30,7 @@ Route::middleware(['auth:company', 'verified.company'])->group(function () {
     Route::get('company/job-listings/{jobListing}/order-summary', [CompanyJobListingController::class, 'orderSummary'])->name('company.job-listings.order-summary');
     Route::get('company/job-listings/{jobListing}/already-published', [CompanyJobListingController::class, 'alreadyPublished'])->name('company.job-listings.already-published');
     Route::post('company/job-listings/{jobListing}/publish-with-subscription', [CompanyJobListingController::class, 'publishWithSubscription'])->name('company.job-listings.publish-with-subscription');
+    Route::get('company/job-listings/{jobListing}/success', [CompanyJobListingController::class, 'publishSuccess'])->name('company.job-listings.success');
 
     // Job listing image management routes
     Route::prefix('company/job-listings/{jobListing}/images')->name('company.job-listings.images.')->group(function () {
