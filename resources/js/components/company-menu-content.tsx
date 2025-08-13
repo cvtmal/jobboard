@@ -33,9 +33,32 @@ export function CompanyMenuContent({ company }: CompanyMenuContentProps) {
             <DropdownMenuSeparator />
             <DropdownMenuItem 
                 onClick={() => {
+                    // Clear all job listing related localStorage items
+                    
+                    // Create form localStorage keys
                     localStorage.removeItem('job-listing-draft');
                     localStorage.removeItem('job-listing-current-step');
                     localStorage.removeItem('job-listing-completed-steps');
+                    localStorage.removeItem('job-listing-selected-tier');
+                    
+                    // Clear all edit form localStorage keys (for all job listings)
+                    // Since we don't know which job listings were being edited, we need to scan all localStorage keys
+                    const keysToRemove: string[] = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && (
+                            key.startsWith('job-listing-edit-draft-') ||
+                            key.startsWith('job-listing-edit-current-step-') ||
+                            key.startsWith('job-listing-edit-completed-steps-') ||
+                            key.startsWith('job-listing-edit-selected-tier-')
+                        )) {
+                            keysToRemove.push(key);
+                        }
+                    }
+                    
+                    // Remove all identified keys
+                    keysToRemove.forEach(key => localStorage.removeItem(key));
+                    
                     cleanup();
                     router.post(route('company.logout'));
                 }}

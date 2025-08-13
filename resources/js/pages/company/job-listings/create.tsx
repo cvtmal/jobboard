@@ -13,6 +13,7 @@ import { Stepper } from '@/components/ui/stepper';
 import { Textarea } from '@/components/ui/textarea';
 import { PackageSelector, type JobTier } from './components/PackageSelector';
 import { OrderSummary } from './components/OrderSummary';
+import { PublishSuccess } from './components/PublishSuccess';
 import CompanyLayout from '@/layouts/company-layout';
 import { type Auth, type BreadcrumbItem } from '@/types';
 import { ApplicationProcess } from '@/types/enums/ApplicationProcess';
@@ -65,6 +66,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
     const [currentStep, setCurrentStep] = useState(1);
     const [completedSteps, setCompletedSteps] = useState<number[]>([]);
     const [selectedTier, setSelectedTier] = useState<JobTier | null>(null);
+    const [createdJobId, setCreatedJobId] = useState<number | null>(null);
 
     // Predefined screening questions
     const predefinedQuestions: PredefinedQuestion[] = [
@@ -216,6 +218,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
     const isStep4Valid = () => step4Validation.isFormValid();
     const isStep5Valid = () => !!selectedTier;
     const isStep6Valid = () => true; // Review step is always valid if you reach it
+    const isStep7Valid = () => true; // Success step is always valid
 
     // Get current step validation
     const getCurrentStepValidation = () => {
@@ -232,6 +235,8 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                 return { isFormValid: isStep5Valid, errors: {}, touched: {}, validateAll: () => ({}), markFieldTouched: () => {}, isFieldValid: () => true };
             case 6:
                 return { isFormValid: isStep6Valid, errors: {}, touched: {}, validateAll: () => ({}), markFieldTouched: () => {}, isFieldValid: () => true };
+            case 7:
+                return { isFormValid: isStep7Valid, errors: {}, touched: {}, validateAll: () => ({}), markFieldTouched: () => {}, isFieldValid: () => true };
             default:
                 return step1Validation;
         }
@@ -294,12 +299,13 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
     // Calculate form progress based on completed steps
     const calculateProgress = useCallback(() => {
         let progress = 0;
-        if (isStep1Valid()) progress += 20; // Step 1 is 20%
-        if (isStep2Valid()) progress += 25; // Step 2 is 25%
-        if (completedSteps.includes(3)) progress += 20; // Step 3 is 20%
+        if (isStep1Valid()) progress += 15; // Step 1 is 15%
+        if (isStep2Valid()) progress += 20; // Step 2 is 20%
+        if (completedSteps.includes(3)) progress += 15; // Step 3 is 15%
         if (completedSteps.includes(4)) progress += 15; // Step 4 is 15%
-        if (completedSteps.includes(5)) progress += 10; // Step 5 is 10%
-        if (completedSteps.includes(6)) progress += 10; // Step 6 is 10%
+        if (completedSteps.includes(5)) progress += 15; // Step 5 is 15%
+        if (completedSteps.includes(6)) progress += 15; // Step 6 is 15%
+        if (completedSteps.includes(7)) progress += 5;  // Step 7 is 5% (completion)
         return Math.min(progress, 100);
     }, [isStep1Valid, isStep2Valid, completedSteps]);
 
@@ -514,10 +520,13 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
         post(route('company.job-listings.store-with-subscription'), {
             forceFormData: true,
             onSuccess: () => {
+                setCurrentStep(7);
+                setCompletedSteps(prev => [...prev, 6]);
                 setTimeout(() => {
                     localStorage.removeItem('job-listing-draft');
                     localStorage.removeItem('job-listing-current-step');
                     localStorage.removeItem('job-listing-completed-steps');
+                    localStorage.removeItem('job-listing-selected-tier');
                 }, 100);
             }
         });
@@ -560,6 +569,12 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
             description: 'Final review',
             isCompleted: completedSteps.includes(6),
             isCurrent: currentStep === 6,
+        },
+        {
+            title: 'Success',
+            description: 'Job published!',
+            isCompleted: completedSteps.includes(7),
+            isCurrent: currentStep === 7,
         },
     ];
 
@@ -1328,17 +1343,29 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                             />
                         )}
 
+                        {/* Step 7: Success */}
+                        {currentStep === 7 && (
+                            <PublishSuccess
+                                jobTitle={data.title}
+                                jobId={createdJobId || 1} // Will default to 1 if we don't have the ID
+                                companyName={auth.company?.name || 'Your Company'}
+                                selectedTier={selectedTier || { name: 'Unknown', duration_days: 0 }}
+                            />
+                        )}
+
                         {/* Step Navigation */}
+                        {currentStep !== 7 && (
                         <div className="bg-muted/30 mt-8 rounded-lg p-6">
                             <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
                                 <div className="text-muted-foreground text-sm">
                                     <div className="font-medium">
-                                        {currentStep === 1 && 'Step 1 of 6: Job Essentials'}
-                                        {currentStep === 2 && 'Step 2 of 6: Job Details & Description'}
-                                        {currentStep === 3 && 'Step 3 of 6: Job Settings'}
-                                        {currentStep === 4 && 'Step 4 of 6: Application Process'}
-                                        {currentStep === 5 && 'Step 5 of 6: Package Selection'}
-                                        {currentStep === 6 && 'Step 6 of 6: Review & Publish'}
+                                        {currentStep === 1 && 'Step 1 of 7: Job Essentials'}
+                                        {currentStep === 2 && 'Step 2 of 7: Job Details & Description'}
+                                        {currentStep === 3 && 'Step 3 of 7: Job Settings'}
+                                        {currentStep === 4 && 'Step 4 of 7: Application Process'}
+                                        {currentStep === 5 && 'Step 5 of 7: Package Selection'}
+                                        {currentStep === 6 && 'Step 6 of 7: Review & Publish'}
+                                        {currentStep === 7 && 'Step 7 of 7: Success!'}
                                     </div>
                                     <div>
                                         {currentStep === 1 && 'Fill in the basic information about your job'}
@@ -1347,6 +1374,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                         {currentStep === 4 && 'Set up application documents and screening questions'}
                                         {currentStep === 5 && 'Choose the right package for maximum visibility'}
                                         {currentStep === 6 && 'Review your job and complete payment to publish'}
+                                        {currentStep === 7 && 'Your job listing has been successfully published!'}
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4">
@@ -1378,7 +1406,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                     </Button>
 
                                     {/* Next/Submit Button */}
-                                    {currentStep < 6 ? (
+                                    {currentStep < 6 && (
                                         <Button
                                             type="button"
                                             onClick={(e) => {
@@ -1391,28 +1419,8 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                         >
                                             {currentStep === 5 ? 'Continue to Review' : 'Next'}
                                         </Button>
-                                    ) : (
-                                        currentStep === 6 && (
-                                            <Button 
-                                                type="button" 
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    goToNextStep();
-                                                }}
-                                                disabled={processing || !selectedTier} 
-                                                className="min-w-[200px]"
-                                            >
-                                                {processing ? (
-                                                    <>
-                                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                        Publishing...
-                                                    </>
-                                                ) : (
-                                                    'Continue to Payment'
-                                                )}
-                                            </Button>
-                                        )
                                     )}
+                                    {/* No button on step 6 - OrderSummary component handles the action */}
                                 </div>
                             </div>
                             {/* Progress feedback */}
@@ -1432,6 +1440,7 @@ export default function CreateJobListing({ auth, errors, categoryOptions, compan
                                 </div>
                             )}
                         </div>
+                        )}
                     </form>
                 </div>
             </div>

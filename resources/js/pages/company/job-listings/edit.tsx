@@ -1393,7 +1393,7 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
                                     </Button>
 
                                     {/* Next/Submit Button */}
-                                    {currentStep < 6 ? (
+                                    {currentStep < 6 && (
                                         <Button
                                             type="button"
                                             onClick={(e) => {
@@ -1406,28 +1406,8 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
                                         >
                                             {currentStep === 5 ? 'Continue to Review' : 'Next'}
                                         </Button>
-                                    ) : (
-                                        currentStep === 6 && (
-                                            <Button 
-                                                type="button" 
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    handleSubmit(e);
-                                                }}
-                                                disabled={processing || !selectedTier} 
-                                                className="min-w-[200px]"
-                                            >
-                                                {processing ? (
-                                                    <>
-                                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                        Updating...
-                                                    </>
-                                                ) : (
-                                                    selectedTier?.id !== currentSubscription?.job_tier_id ? 'Update & Pay' : 'Update Job'
-                                                )}
-                                            </Button>
-                                        )
                                     )}
+                                    {/* No button on step 6 - OrderSummary component handles the action */}
                                 </div>
                             </div>
                             {/* Progress feedback */}
