@@ -11,9 +11,6 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { Slider } from '@/components/ui/slider';
 import { Stepper } from '@/components/ui/stepper';
 import { Textarea } from '@/components/ui/textarea';
-import { PackageSelector, type JobTier } from './components/PackageSelector';
-import { OrderSummary } from './components/OrderSummary';
-import { PublishSuccess } from './components/PublishSuccess';
 import CompanyLayout from '@/layouts/company-layout';
 import { type Auth, type BreadcrumbItem } from '@/types';
 import { ApplicationProcess } from '@/types/enums/ApplicationProcess';
@@ -22,7 +19,7 @@ import { JobStatus } from '@/types/enums/JobStatus';
 import { SalaryPeriod } from '@/types/enums/SalaryPeriod';
 import { SeniorityLevel } from '@/types/enums/SeniorityLevel';
 import { Workplace } from '@/types/enums/Workplace';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 // @ts-ignore
 import { useFormValidation } from '@/hooks/use-form-validation';
@@ -81,7 +78,6 @@ interface Props {
     categoryOptions: Record<string, string>;
     companyLogo?: string | null;
     companyBanner?: string | null;
-    jobTiers: JobTier[];
     currentSubscription?: {
         id: number;
         job_tier_id: number;
@@ -97,12 +93,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function EditJobListing({ auth, jobListing, errors, categoryOptions, companyLogo, companyBanner, jobTiers, currentSubscription }: Props) {
+export default function EditJobListing({ auth, jobListing, errors, categoryOptions, companyLogo, companyBanner, currentSubscription }: Props) {
     const [currentStep, setCurrentStep] = useState(1);
     const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-    const [selectedTier, setSelectedTier] = useState<JobTier | null>(
-        currentSubscription ? jobTiers.find(t => t.id === currentSubscription.job_tier_id) || null : null
-    );
 
     // Predefined screening questions
     const predefinedQuestions: PredefinedQuestion[] = [
@@ -168,9 +161,6 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
         
         // Hidden fields for form processing
         status: jobListing.status || JobStatus.PUBLISHED,
-        
-        // Package selection (step 5)
-        selected_tier_id: currentSubscription?.job_tier_id || null,
     });
 
     const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
@@ -235,9 +225,6 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
     const isStep2Valid = () => step2Validation.isFormValid();
     const isStep3Valid = () => step3Validation.isFormValid(); // Always true since step 3 is optional
     const isStep4Valid = () => step4Validation.isFormValid();
-    const isStep5Valid = () => !!selectedTier;
-    const isStep6Valid = () => true; // Review step is always valid if you reach it
-    const isStep7Valid = () => true; // Success step is always valid
 
     // Get current step validation
     const getCurrentStepValidation = () => {
@@ -250,12 +237,6 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
                 return step3Validation;
             case 4:
                 return step4Validation;
-            case 5:
-                return { isFormValid: isStep5Valid, errors: {}, touched: {}, validateAll: () => ({}), markFieldTouched: () => {}, isFieldValid: () => true };
-            case 6:
-                return { isFormValid: isStep6Valid, errors: {}, touched: {}, validateAll: () => ({}), markFieldTouched: () => {}, isFieldValid: () => true };
-            case 7:
-                return { isFormValid: isStep7Valid, errors: {}, touched: {}, validateAll: () => ({}), markFieldTouched: () => {}, isFieldValid: () => true };
             default:
                 return step1Validation;
         }
@@ -266,13 +247,10 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
     // Calculate form progress based on completed steps
     const calculateProgress = useCallback(() => {
         let progress = 0;
-        if (isStep1Valid()) progress += 15; // Step 1 is 15%
-        if (isStep2Valid()) progress += 20; // Step 2 is 20%
-        if (completedSteps.includes(3)) progress += 15; // Step 3 is 15%
-        if (completedSteps.includes(4)) progress += 15; // Step 4 is 15%
-        if (completedSteps.includes(5)) progress += 15; // Step 5 is 15%
-        if (completedSteps.includes(6)) progress += 15; // Step 6 is 15%
-        if (completedSteps.includes(7)) progress += 5;  // Step 7 is 5% (completion)
+        if (isStep1Valid()) progress += 25; // Step 1 is 25%
+        if (isStep2Valid()) progress += 25; // Step 2 is 25%
+        if (completedSteps.includes(3)) progress += 25; // Step 3 is 25%
+        if (completedSteps.includes(4)) progress += 25; // Step 4 is 25%
         return Math.min(progress, 100);
     }, [isStep1Valid, isStep2Valid, completedSteps]);
 
@@ -305,10 +283,13 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
                 setCompletedSteps(newCompletedSteps);
                 localStorage.setItem(`job-listing-edit-completed-steps-${jobListing.id}`, JSON.stringify(newCompletedSteps));
             }
-            if (currentStep < 6) {
+            if (currentStep < 4) {
                 const nextStep = currentStep + 1;
                 setCurrentStep(nextStep);
                 localStorage.setItem(`job-listing-edit-current-step-${jobListing.id}`, nextStep.toString());
+            } else if (currentStep === 4) {
+                // After step 4, save changes and navigate to preview
+                handleSaveAndNavigateToPreview();
             }
         }
     };
@@ -322,6 +303,31 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
             setCurrentStep(prevStep);
             localStorage.setItem(`job-listing-edit-current-step-${jobListing.id}`, prevStep.toString());
         }
+    };
+
+    const handleSaveAndNavigateToPreview = () => {
+        if (!auth.company) {
+            window.location.href = route('company.login');
+            return;
+        }
+
+        if (!allFieldsValidation.isFormValid()) {
+            return;
+        }
+
+        // Update the job listing with current form data
+        post(route('company.job-listings.update', jobListing.id), {
+            forceFormData: true,
+            onSuccess: () => {
+                // Clear localStorage after successful save
+                localStorage.removeItem(`job-listing-edit-draft-${jobListing.id}`);
+                localStorage.removeItem(`job-listing-edit-current-step-${jobListing.id}`);
+                localStorage.removeItem(`job-listing-edit-completed-steps-${jobListing.id}`);
+                
+                // Navigate to preview page
+                router.visit(route('company.job-listings.preview', jobListing.id));
+            }
+        });
     };
 
     const goToStep = (step: number) => {
@@ -418,17 +424,6 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
             }
         }
 
-        // Load selected tier if different from current subscription
-        const savedTier = localStorage.getItem(`job-listing-edit-selected-tier-${jobListing.id}`);
-        if (savedTier) {
-            try {
-                const tierData = JSON.parse(savedTier);
-                setSelectedTier(tierData);
-                updates.selected_tier_id = tierData.id;
-            } catch (error) {
-                // Failed to load selected tier
-            }
-        }
 
         // Apply all data updates at once if we have data to restore
         if (hasDataToRestore) {
@@ -468,53 +463,6 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
         };
     }, [formProgress, processing, saveDataToLocalStorage]); // Include dependencies for the save function
 
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault();
-
-        if (!auth.company) {
-            window.location.href = route('company.login');
-            return;
-        }
-
-        if (!allFieldsValidation.isFormValid()) {
-            return;
-        }
-
-        // Set data for final submission if tier changed
-        if (selectedTier && selectedTier.id !== currentSubscription?.job_tier_id) {
-            setData('selected_tier_id', selectedTier.id);
-            
-            post(route('company.job-listings.update-with-subscription', jobListing.id), {
-                forceFormData: true,
-                onSuccess: () => {
-                    // Move to success step instead of redirecting immediately
-                    setCurrentStep(7);
-                    setCompletedSteps(prev => [...prev, 6]);
-                    setTimeout(() => {
-                        localStorage.removeItem(`job-listing-edit-draft-${jobListing.id}`);
-                        localStorage.removeItem(`job-listing-edit-current-step-${jobListing.id}`);
-                        localStorage.removeItem(`job-listing-edit-completed-steps-${jobListing.id}`);
-                        localStorage.removeItem(`job-listing-edit-selected-tier-${jobListing.id}`);
-                    }, 100);
-                }
-            });
-        } else {
-            post(route('company.job-listings.update', jobListing.id), {
-                forceFormData: true,
-                onSuccess: () => {
-                    // Move to success step instead of redirecting immediately
-                    setCurrentStep(7);
-                    setCompletedSteps(prev => [...prev, 6]);
-                    setTimeout(() => {
-                        localStorage.removeItem(`job-listing-edit-draft-${jobListing.id}`);
-                        localStorage.removeItem(`job-listing-edit-current-step-${jobListing.id}`);
-                        localStorage.removeItem(`job-listing-edit-completed-steps-${jobListing.id}`);
-                        localStorage.removeItem(`job-listing-edit-selected-tier-${jobListing.id}`);
-                    }, 100);
-                }
-            });
-        }
-    };
 
     // Stepper configuration - Reactive to current step and completed steps
     const stepperSteps = [
@@ -539,26 +487,8 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
         {
             title: 'Application',
             description: 'Screening & requirements',
-            isCompleted: completedSteps.includes(4) || (currentStep > 4 && isStep4Valid()),
+            isCompleted: completedSteps.includes(4) || isStep4Valid(),
             isCurrent: currentStep === 4,
-        },
-        {
-            title: 'Package Selection',
-            description: 'Choose subscription tier',
-            isCompleted: completedSteps.includes(5) || (currentStep > 5 && isStep5Valid()),
-            isCurrent: currentStep === 5,
-        },
-        {
-            title: 'Review & Publish',
-            description: 'Final review',
-            isCompleted: completedSteps.includes(6),
-            isCurrent: currentStep === 6,
-        },
-        {
-            title: 'Success',
-            description: 'Job updated!',
-            isCompleted: completedSteps.includes(7),
-            isCurrent: currentStep === 7,
         },
     ];
 
@@ -595,7 +525,7 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
                         </div>
                     </div>
 
-                    <form onSubmit={currentStep === 6 ? handleSubmit : (e) => e.preventDefault()} className="space-y-6">
+                    <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
                         {/* Step 1: Job Essentials */}
                         {currentStep === 1 && (
                             <Card>
@@ -1297,71 +1227,22 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
                             </div>
                         )}
 
-                        {/* Step 5: Package Selection */}
-                        {currentStep === 5 && (
-                            <PackageSelector
-                                tiers={jobTiers}
-                                selectedTier={selectedTier}
-                                onSelect={(tier) => {
-                                    setSelectedTier(tier);
-                                    setData('selected_tier_id', tier.id);
-                                    
-                                    // Save to localStorage
-                                    localStorage.setItem(`job-listing-edit-selected-tier-${jobListing.id}`, JSON.stringify(tier));
-                                }}
-                                disabled={processing}
-                            />
-                        )}
-
-                        {/* Step 6: Review & Publish */}
-                        {currentStep === 6 && selectedTier && (
-                            <OrderSummary
-                                jobData={data}
-                                selectedTier={selectedTier}
-                                companyName={auth.company?.name || 'Your Company'}
-                                onPublish={() => {
-                                    const mockEvent = {
-                                        preventDefault: () => {}
-                                    } as FormEvent;
-                                    handleSubmit(mockEvent);
-                                }}
-                                onGoBack={() => setCurrentStep(5)}
-                                isProcessing={processing}
-                            />
-                        )}
-
-                        {/* Step 7: Success */}
-                        {currentStep === 7 && (
-                            <PublishSuccess
-                                jobTitle={data.title}
-                                jobId={jobListing.id}
-                                companyName={auth.company?.name || 'Your Company'}
-                                selectedTier={selectedTier || { name: 'Unknown', duration_days: 0 }}
-                            />
-                        )}
-
                         {/* Step Navigation */}
-                        {currentStep !== 7 && (
+                        {currentStep <= 4 && (
                         <div className="bg-muted/30 mt-8 rounded-lg p-6">
                             <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
                                 <div className="text-muted-foreground text-sm">
                                     <div className="font-medium">
-                                        {currentStep === 1 && 'Step 1 of 7: Job Essentials'}
-                                        {currentStep === 2 && 'Step 2 of 7: Job Details & Description'}
-                                        {currentStep === 3 && 'Step 3 of 7: Job Settings'}
-                                        {currentStep === 4 && 'Step 4 of 7: Application Process'}
-                                        {currentStep === 5 && 'Step 5 of 7: Package Selection'}
-                                        {currentStep === 6 && 'Step 6 of 7: Review & Publish'}
-                                        {currentStep === 7 && 'Step 7 of 7: Success!'}
+                                        {currentStep === 1 && 'Step 1 of 4: Job Essentials'}
+                                        {currentStep === 2 && 'Step 2 of 4: Job Details & Description'}
+                                        {currentStep === 3 && 'Step 3 of 4: Job Settings'}
+                                        {currentStep === 4 && 'Step 4 of 4: Application Process'}
                                     </div>
                                     <div>
                                         {currentStep === 1 && 'Update the basic information about your job'}
                                         {currentStep === 2 && 'Update detailed descriptions and requirements'}
                                         {currentStep === 3 && 'Configure salary, experience level and branding'}
                                         {currentStep === 4 && 'Set up application documents and screening questions'}
-                                        {currentStep === 5 && 'Choose or update the package for maximum visibility'}
-                                        {currentStep === 6 && 'Review your changes and complete payment if upgrading'}
-                                        {currentStep === 7 && 'Your job listing has been successfully updated!'}
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4">
@@ -1384,7 +1265,7 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
                                         variant="outline"
                                         onClick={() => {
                                             // Navigate to job listing show instead of listing index
-                                            window.location.href = route('company.job-listings.show', jobListing.id);
+                                            router.visit(route('company.job-listings.show', jobListing.id));
                                         }}
                                         disabled={processing}
                                         className="min-w-[100px]"
@@ -1393,7 +1274,7 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
                                     </Button>
 
                                     {/* Next/Submit Button */}
-                                    {currentStep < 6 && (
+                                    {currentStep <= 4 && (
                                         <Button
                                             type="button"
                                             onClick={(e) => {
@@ -1404,26 +1285,15 @@ export default function EditJobListing({ auth, jobListing, errors, categoryOptio
                                             disabled={processing || !getCurrentStepValidation().isFormValid()}
                                             className="min-w-[140px]"
                                         >
-                                            {currentStep === 5 ? 'Continue to Review' : 'Next'}
+                                            {currentStep === 4 ? 'Continue to Preview' : 'Next'}
                                         </Button>
                                     )}
-                                    {/* No button on step 6 - OrderSummary component handles the action */}
                                 </div>
                             </div>
                             {/* Progress feedback */}
-                            {currentStep < 5 && !getCurrentStepValidation().isFormValid() && (
+                            {currentStep <= 4 && !getCurrentStepValidation().isFormValid() && (
                                 <div className="mt-2 text-center text-sm text-orange-600 sm:text-right">
                                     Please complete all required fields to continue
-                                </div>
-                            )}
-                            {currentStep === 5 && !selectedTier && (
-                                <div className="mt-2 text-center text-sm text-orange-600 sm:text-right">
-                                    Please select a package to continue
-                                </div>
-                            )}
-                            {currentStep === 6 && !selectedTier && (
-                                <div className="mt-2 text-center text-sm text-orange-600 sm:text-right">
-                                    Package selection is required
                                 </div>
                             )}
                         </div>

@@ -10,16 +10,19 @@ use App\Actions\JobListing\DeleteJobListingAction;
 use App\Actions\JobListing\UpdateJobListingAction;
 use App\Actions\JobListing\UpdateJobListingWithSubscriptionAction;
 use App\Enums\JobCategory;
+use App\Enums\JobStatus;
 use App\Http\Requests\JobListing\CreateJobListingCustomRequest;
 use App\Http\Requests\JobListing\DeleteJobListingRequest;
 use App\Http\Requests\JobListing\UpdateJobListingRequest;
 use App\Models\Company;
 use App\Models\JobListing;
+use App\Models\JobListingSubscription;
 use App\Models\JobTier;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
@@ -209,6 +212,138 @@ final class JobListingController
 
         return redirect()->route('company.job-listings.show', $updatedJobListing)
             ->with('success', 'Job listing updated successfully!');
+    }
+
+    /**
+     * Show job listing preview page
+     */
+    public function preview(JobListing $jobListing): Response
+    {
+        $this->authorize('view', $jobListing);
+
+        if ($jobListing->company_id !== auth('company')->id()) {
+            abort(403);
+        }
+
+        $jobListing->load('company');
+
+        return Inertia::render('company/job-listings/preview', [
+            'jobListing' => $jobListing,
+        ]);
+    }
+
+    /**
+     * Show package selection page
+     */
+    public function packageSelection(JobListing $jobListing): Response
+    {
+        $this->authorize('view', $jobListing);
+
+        if ($jobListing->company_id !== auth('company')->id()) {
+            abort(403);
+        }
+
+        $jobListing->load('company');
+
+        return Inertia::render('company/job-listings/package-selection', [
+            'jobListing' => $jobListing,
+            'jobTiers' => JobTier::all(),
+            'currentSubscription' => $jobListing->activeSubscription(),
+        ]);
+    }
+
+    /**
+     * Show order summary page
+     */
+    public function orderSummary(JobListing $jobListing): Response|RedirectResponse
+    {
+        $this->authorize('view', $jobListing);
+
+        if ($jobListing->company_id !== auth('company')->id()) {
+            abort(403);
+        }
+
+        $selectedTierId = request('selected_tier_id');
+        if (! $selectedTierId) {
+            return redirect()->route('company.job-listings.package-selection', $jobListing);
+        }
+
+        $selectedTier = JobTier::find($selectedTierId);
+        if (! $selectedTier) {
+            return redirect()->route('company.job-listings.package-selection', $jobListing)
+                ->with('error', 'Invalid package selection.');
+        }
+
+        $jobListing->load('company');
+
+        return Inertia::render('company/job-listings/order-summary', [
+            'jobListing' => $jobListing,
+            'selectedTier' => $selectedTier,
+            'currentSubscription' => $jobListing->activeSubscription(),
+        ]);
+    }
+
+    /**
+     * Show already published page
+     */
+    public function alreadyPublished(JobListing $jobListing): Response
+    {
+        $this->authorize('view', $jobListing);
+
+        if ($jobListing->company_id !== auth('company')->id()) {
+            abort(403);
+        }
+
+        $jobListing->load('company');
+
+        return Inertia::render('company/job-listings/already-published', [
+            'jobListing' => $jobListing,
+        ]);
+    }
+
+    /**
+     * Publish job listing with subscription
+     */
+    public function publishWithSubscription(Request $request, JobListing $jobListing): RedirectResponse
+    {
+        $this->authorize('update', $jobListing);
+
+        if ($jobListing->company_id !== auth('company')->id()) {
+            abort(403);
+        }
+
+        if ($jobListing->status === JobStatus::PUBLISHED) {
+            return redirect()->route('company.job-listings.already-published', $jobListing);
+        }
+
+        $validated = $request->validate([
+            'selected_tier_id' => 'required|exists:job_tiers,id',
+            'status' => 'sometimes|string',
+        ]);
+
+        /** @var JobTier $selectedTier */
+        $selectedTier = JobTier::findOrFail($validated['selected_tier_id']);
+
+        DB::transaction(function () use ($jobListing, $selectedTier): void {
+            $jobListing->update([
+                'status' => JobStatus::PUBLISHED,
+            ]);
+
+            // Create or update subscription
+            JobListingSubscription::updateOrCreate(
+                ['job_listing_id' => $jobListing->id],
+                [
+                    'job_tier_id' => $selectedTier->id,
+                    'expires_at' => now()->addDays($selectedTier->duration_days),
+                    'payment_status' => 'pending', // Simplified for now
+                    'purchased_at' => now(),
+                    'price_paid' => $selectedTier->price,
+                ]
+            );
+        });
+
+        return redirect()->route('company.job-listings.show', $jobListing)
+            ->with('success', 'Job listing published successfully!');
     }
 
     /**

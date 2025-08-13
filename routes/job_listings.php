@@ -25,6 +25,11 @@ Route::middleware(['auth:company', 'verified.company'])->group(function () {
     Route::post('company/job-listings/{jobListing}', [CompanyJobListingController::class, 'update'])->name('company.job-listings.update');
     Route::post('company/job-listings/{jobListing}/with-subscription', [CompanyJobListingController::class, 'updateWithSubscription'])->name('company.job-listings.update-with-subscription');
     Route::delete('company/job-listings/{jobListing}', [CompanyJobListingController::class, 'destroy'])->name('company.job-listings.destroy');
+    Route::get('company/job-listings/{jobListing}/preview', [CompanyJobListingController::class, 'preview'])->name('company.job-listings.preview');
+    Route::get('company/job-listings/{jobListing}/package-selection', [CompanyJobListingController::class, 'packageSelection'])->name('company.job-listings.package-selection');
+    Route::get('company/job-listings/{jobListing}/order-summary', [CompanyJobListingController::class, 'orderSummary'])->name('company.job-listings.order-summary');
+    Route::get('company/job-listings/{jobListing}/already-published', [CompanyJobListingController::class, 'alreadyPublished'])->name('company.job-listings.already-published');
+    Route::post('company/job-listings/{jobListing}/publish-with-subscription', [CompanyJobListingController::class, 'publishWithSubscription'])->name('company.job-listings.publish-with-subscription');
 
     // Job listing image management routes
     Route::prefix('company/job-listings/{jobListing}/images')->name('company.job-listings.images.')->group(function () {
