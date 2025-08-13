@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Company;
 use App\Actions\JobListing\CreateCustomJobListingAction;
 use App\Actions\JobListing\CreateJobListingWithSubscriptionAction;
 use App\Actions\JobListing\DeleteJobListingAction;
+use App\Actions\JobListing\PublishJobListingWithSubscriptionAction;
 use App\Actions\JobListing\UpdateJobListingAction;
 use App\Actions\JobListing\UpdateJobListingWithSubscriptionAction;
 use App\Enums\JobCategory;
@@ -16,13 +17,11 @@ use App\Http\Requests\JobListing\DeleteJobListingRequest;
 use App\Http\Requests\JobListing\UpdateJobListingRequest;
 use App\Models\Company;
 use App\Models\JobListing;
-use App\Models\JobListingSubscription;
 use App\Models\JobTier;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
@@ -303,9 +302,13 @@ final class JobListingController
 
     /**
      * Publish job listing with subscription
+     * @throws Throwable
      */
-    public function publishWithSubscription(Request $request, JobListing $jobListing): RedirectResponse
-    {
+    public function publishWithSubscription(
+        Request $request,
+        JobListing $jobListing,
+        PublishJobListingWithSubscriptionAction $action
+    ): RedirectResponse {
         $this->authorize('update', $jobListing);
 
         if ($jobListing->company_id !== auth('company')->id()) {
@@ -321,26 +324,7 @@ final class JobListingController
             'status' => 'sometimes|string',
         ]);
 
-        /** @var JobTier $selectedTier */
-        $selectedTier = JobTier::findOrFail($validated['selected_tier_id']);
-
-        DB::transaction(function () use ($jobListing, $selectedTier): void {
-            $jobListing->update([
-                'status' => JobStatus::PUBLISHED,
-            ]);
-
-            // Create or update subscription
-            JobListingSubscription::updateOrCreate(
-                ['job_listing_id' => $jobListing->id],
-                [
-                    'job_tier_id' => $selectedTier->id,
-                    'expires_at' => now()->addDays($selectedTier->duration_days),
-                    'payment_status' => 'pending', // Simplified for now
-                    'purchased_at' => now(),
-                    'price_paid' => $selectedTier->price,
-                ]
-            );
-        });
+        $action->execute($jobListing, $validated['selected_tier_id']);
 
         return redirect()->route('company.job-listings.show', $jobListing)
             ->with('success', 'Job listing published successfully!');
