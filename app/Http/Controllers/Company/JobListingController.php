@@ -226,8 +226,37 @@ final class JobListingController
 
         $jobListing->load('company');
 
+        // Transform enum values to include labels
+        $jobListingData = $jobListing->toArray();
+
+        if ($jobListing->experience_level) {
+            $jobListingData['experience_level'] = [
+                'value' => $jobListing->experience_level->value,
+                'label' => $jobListing->experience_level->label(),
+            ];
+        }
+
+        if ($jobListing->employment_type) {
+            $jobListingData['employment_type'] = [
+                'value' => $jobListing->employment_type->value,
+                'label' => $jobListing->employment_type->label(),
+            ];
+        }
+
+        if ($jobListing->salary_type) {
+            $jobListingData['salary_type'] = [
+                'value' => $jobListing->salary_type->value,
+                'label' => $jobListing->salary_type->label(),
+            ];
+        }
+
+        $jobListingData['status'] = [
+            'value' => $jobListing->status->value,
+            'label' => $jobListing->status->label(),
+        ];
+
         return Inertia::render('company/job-listings/preview', [
-            'jobListing' => $jobListing,
+            'jobListing' => $jobListingData,
         ]);
     }
 
@@ -302,6 +331,7 @@ final class JobListingController
 
     /**
      * Publish job listing with subscription
+     *
      * @throws Throwable
      */
     public function publishWithSubscription(
@@ -345,6 +375,7 @@ final class JobListingController
             'entry' => 'no_experience',
             'junior' => 'junior',
             'mid-level' => 'mid_level',
+            'professional' => 'professional',
             'senior' => 'senior',
             'executive' => 'lead',
             default => 'mid_level',

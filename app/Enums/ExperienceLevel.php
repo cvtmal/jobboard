@@ -9,6 +9,7 @@ enum ExperienceLevel: string
     case ENTRY = 'entry';
     case JUNIOR = 'junior';
     case MID_LEVEL = 'mid-level';
+    case PROFESSIONAL = 'professional';
     case SENIOR = 'senior';
     case EXECUTIVE = 'executive';
 
@@ -31,6 +32,7 @@ enum ExperienceLevel: string
             self::ENTRY => 'Entry Level',
             self::JUNIOR => 'Junior',
             self::MID_LEVEL => 'Mid-Level',
+            self::PROFESSIONAL => 'Professional',
             self::SENIOR => 'Senior',
             self::EXECUTIVE => 'Executive',
         };

@@ -42,7 +42,7 @@ final class CreateCustomJobListingAction
                     'no_experience' => 'entry',
                     'junior' => 'junior',
                     'mid_level' => 'mid-level',
-                    'professional' => 'mid-level',
+                    'professional' => 'professional',
                     'senior' => 'senior',
                     'lead' => 'executive',
                     default => 'mid-level',
